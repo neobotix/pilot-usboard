@@ -1,0 +1,17 @@
+package pilot.usboard;
+
+module USBoardModule {
+	
+	vnx.TopicPtr input_can;				// pilot.base.CAN_Frame
+	vnx.TopicPtr input_serial;			// pilot.base.DataPacket
+	
+	vnx.TopicPtr output_data;			// pilot.usboard.USBoardData
+	
+	
+	USBoardConfig* get_config() const;
+	
+	void set_config(USBoardConfig* config);
+	
+	void save_config();			// save to EEPROM
+	
+}

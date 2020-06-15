@@ -1,0 +1,15 @@
+package pilot.usboard;
+
+class USBoardData extends Sample {
+	
+	float sensor[16];				// distance, zero = no measurement [m]
+	
+	char signal_source[4];			// for each group of 4 sensors, index of the sensor which sent the pulse (-1 = normal mode) 
+	
+	short analog_input[4];			// 0 to 1023 (1023 = 5V)
+	
+	float analog_input_scale = 0.004887;		// factor to convert to volts
+	
+	bool is_cross_echo = false;		// if cross echo mode is enabled (only one sensor is sending per group of 4)
+	
+}
