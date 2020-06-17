@@ -19,9 +19,14 @@ public:
 	static const int32_t SENSOR_SETUP_4 = 2;
 	static const int32_t SENSOR_SETUP_8 = 3;
 	static const int32_t SENSOR_SETUP_16 = 4;
+	static const int32_t TRANSMIT_MODE_REQUEST = 1;
+	static const int32_t TRANSMIT_MODE_CAN = 2;
+	static const int32_t TRANSMIT_MODE_SERIAL = 3;
+	static const int32_t TRANSMIT_MODE_CAN_SERIAL = 4;
 	
 	int32_t interval_ms = 200;
 	int32_t sensor_setup = 4;
+	int32_t transmit_mode = 1;
 	std::array<::pilot::usboard::sensor_config_t, 16> sensor_config = {};
 	std::array<::pilot::usboard::group_config_t, 4> group_config = {};
 	vnx::float32_t low_pass_gain = 1;

@@ -17,9 +17,13 @@ namespace usboard {
 const int32_t USBoardConfig::SENSOR_SETUP_4;
 const int32_t USBoardConfig::SENSOR_SETUP_8;
 const int32_t USBoardConfig::SENSOR_SETUP_16;
+const int32_t USBoardConfig::TRANSMIT_MODE_REQUEST;
+const int32_t USBoardConfig::TRANSMIT_MODE_CAN;
+const int32_t USBoardConfig::TRANSMIT_MODE_SERIAL;
+const int32_t USBoardConfig::TRANSMIT_MODE_CAN_SERIAL;
 
 const vnx::Hash64 USBoardConfig::VNX_TYPE_HASH(0x9c0fb140354b6e4cull);
-const vnx::Hash64 USBoardConfig::VNX_CODE_HASH(0x7c43a56335141f98ull);
+const vnx::Hash64 USBoardConfig::VNX_CODE_HASH(0xa79209d0bd5ba202ull);
 
 vnx::Hash64 USBoardConfig::get_type_hash() const {
 	return VNX_TYPE_HASH;
@@ -53,10 +57,11 @@ void USBoardConfig::accept(vnx::Visitor& _visitor) const {
 	_visitor.type_begin(*_type_code);
 	_visitor.type_field(_type_code->fields[0], 0); vnx::accept(_visitor, interval_ms);
 	_visitor.type_field(_type_code->fields[1], 1); vnx::accept(_visitor, sensor_setup);
-	_visitor.type_field(_type_code->fields[2], 2); vnx::accept(_visitor, sensor_config);
-	_visitor.type_field(_type_code->fields[3], 3); vnx::accept(_visitor, group_config);
-	_visitor.type_field(_type_code->fields[4], 4); vnx::accept(_visitor, low_pass_gain);
-	_visitor.type_field(_type_code->fields[5], 5); vnx::accept(_visitor, enable_legacy_format);
+	_visitor.type_field(_type_code->fields[2], 2); vnx::accept(_visitor, transmit_mode);
+	_visitor.type_field(_type_code->fields[3], 3); vnx::accept(_visitor, sensor_config);
+	_visitor.type_field(_type_code->fields[4], 4); vnx::accept(_visitor, group_config);
+	_visitor.type_field(_type_code->fields[5], 5); vnx::accept(_visitor, low_pass_gain);
+	_visitor.type_field(_type_code->fields[6], 6); vnx::accept(_visitor, enable_legacy_format);
 	_visitor.type_end(*_type_code);
 }
 
@@ -64,6 +69,7 @@ void USBoardConfig::write(std::ostream& _out) const {
 	_out << "{\"__type\": \"pilot.usboard.USBoardConfig\"";
 	_out << ", \"interval_ms\": "; vnx::write(_out, interval_ms);
 	_out << ", \"sensor_setup\": "; vnx::write(_out, sensor_setup);
+	_out << ", \"transmit_mode\": "; vnx::write(_out, transmit_mode);
 	_out << ", \"sensor_config\": "; vnx::write(_out, sensor_config);
 	_out << ", \"group_config\": "; vnx::write(_out, group_config);
 	_out << ", \"low_pass_gain\": "; vnx::write(_out, low_pass_gain);
@@ -87,6 +93,8 @@ void USBoardConfig::read(std::istream& _in) {
 			vnx::from_string(_entry.second, sensor_config);
 		} else if(_entry.first == "sensor_setup") {
 			vnx::from_string(_entry.second, sensor_setup);
+		} else if(_entry.first == "transmit_mode") {
+			vnx::from_string(_entry.second, transmit_mode);
 		}
 	}
 }
@@ -96,6 +104,7 @@ vnx::Object USBoardConfig::to_object() const {
 	_object["__type"] = "pilot.usboard.USBoardConfig";
 	_object["interval_ms"] = interval_ms;
 	_object["sensor_setup"] = sensor_setup;
+	_object["transmit_mode"] = transmit_mode;
 	_object["sensor_config"] = sensor_config;
 	_object["group_config"] = group_config;
 	_object["low_pass_gain"] = low_pass_gain;
@@ -117,6 +126,8 @@ void USBoardConfig::from_object(const vnx::Object& _object) {
 			_entry.second.to(sensor_config);
 		} else if(_entry.first == "sensor_setup") {
 			_entry.second.to(sensor_setup);
+		} else if(_entry.first == "transmit_mode") {
+			_entry.second.to(transmit_mode);
 		}
 	}
 }
@@ -145,14 +156,14 @@ std::shared_ptr<vnx::TypeCode> USBoardConfig::static_create_type_code() {
 	std::shared_ptr<vnx::TypeCode> type_code = std::make_shared<vnx::TypeCode>();
 	type_code->name = "pilot.usboard.USBoardConfig";
 	type_code->type_hash = vnx::Hash64(0x9c0fb140354b6e4cull);
-	type_code->code_hash = vnx::Hash64(0x7c43a56335141f98ull);
+	type_code->code_hash = vnx::Hash64(0xa79209d0bd5ba202ull);
 	type_code->is_native = true;
 	type_code->is_class = true;
 	type_code->create_value = []() -> std::shared_ptr<vnx::Value> { return std::make_shared<USBoardConfig>(); };
 	type_code->depends.resize(2);
 	type_code->depends[0] = ::pilot::usboard::sensor_config_t::static_get_type_code();
 	type_code->depends[1] = ::pilot::usboard::group_config_t::static_get_type_code();
-	type_code->fields.resize(6);
+	type_code->fields.resize(7);
 	{
 		vnx::TypeField& field = type_code->fields[0];
 		field.name = "interval_ms";
@@ -167,24 +178,30 @@ std::shared_ptr<vnx::TypeCode> USBoardConfig::static_create_type_code() {
 	}
 	{
 		vnx::TypeField& field = type_code->fields[2];
+		field.name = "transmit_mode";
+		field.value = vnx::to_string(1);
+		field.code = {7};
+	}
+	{
+		vnx::TypeField& field = type_code->fields[3];
 		field.is_extended = true;
 		field.name = "sensor_config";
 		field.code = {11, 16, 19, 0};
 	}
 	{
-		vnx::TypeField& field = type_code->fields[3];
+		vnx::TypeField& field = type_code->fields[4];
 		field.is_extended = true;
 		field.name = "group_config";
 		field.code = {11, 4, 19, 1};
 	}
 	{
-		vnx::TypeField& field = type_code->fields[4];
+		vnx::TypeField& field = type_code->fields[5];
 		field.name = "low_pass_gain";
 		field.value = vnx::to_string(1);
 		field.code = {9};
 	}
 	{
-		vnx::TypeField& field = type_code->fields[5];
+		vnx::TypeField& field = type_code->fields[6];
 		field.name = "enable_legacy_format";
 		field.value = vnx::to_string(false);
 		field.code = {1};
@@ -226,13 +243,19 @@ void read(TypeInput& in, ::pilot::usboard::USBoardConfig& value, const TypeCode*
 			}
 		}
 		{
-			const vnx::TypeField* const _field = type_code->field_map[4];
+			const vnx::TypeField* const _field = type_code->field_map[2];
+			if(_field) {
+				vnx::read_value(_buf + _field->offset, value.transmit_mode, _field->code.data());
+			}
+		}
+		{
+			const vnx::TypeField* const _field = type_code->field_map[5];
 			if(_field) {
 				vnx::read_value(_buf + _field->offset, value.low_pass_gain, _field->code.data());
 			}
 		}
 		{
-			const vnx::TypeField* const _field = type_code->field_map[5];
+			const vnx::TypeField* const _field = type_code->field_map[6];
 			if(_field) {
 				vnx::read_value(_buf + _field->offset, value.enable_legacy_format, _field->code.data());
 			}
@@ -240,8 +263,8 @@ void read(TypeInput& in, ::pilot::usboard::USBoardConfig& value, const TypeCode*
 	}
 	for(const vnx::TypeField* _field : type_code->ext_fields) {
 		switch(_field->native_index) {
-			case 2: vnx::read(in, value.sensor_config, type_code, _field->code.data()); break;
-			case 3: vnx::read(in, value.group_config, type_code, _field->code.data()); break;
+			case 3: vnx::read(in, value.sensor_config, type_code, _field->code.data()); break;
+			case 4: vnx::read(in, value.group_config, type_code, _field->code.data()); break;
 			default: vnx::skip(in, type_code, _field->code.data());
 		}
 	}
@@ -256,13 +279,14 @@ void write(TypeOutput& out, const ::pilot::usboard::USBoardConfig& value, const 
 	if(code && code[0] == CODE_STRUCT) {
 		type_code = type_code->depends[code[1]];
 	}
-	char* const _buf = out.write(13);
+	char* const _buf = out.write(17);
 	vnx::write_value(_buf + 0, value.interval_ms);
 	vnx::write_value(_buf + 4, value.sensor_setup);
-	vnx::write_value(_buf + 8, value.low_pass_gain);
-	vnx::write_value(_buf + 12, value.enable_legacy_format);
-	vnx::write(out, value.sensor_config, type_code, type_code->fields[2].code.data());
-	vnx::write(out, value.group_config, type_code, type_code->fields[3].code.data());
+	vnx::write_value(_buf + 8, value.transmit_mode);
+	vnx::write_value(_buf + 12, value.low_pass_gain);
+	vnx::write_value(_buf + 16, value.enable_legacy_format);
+	vnx::write(out, value.sensor_config, type_code, type_code->fields[3].code.data());
+	vnx::write(out, value.group_config, type_code, type_code->fields[4].code.data());
 }
 
 void read(std::istream& in, ::pilot::usboard::USBoardConfig& value) {
