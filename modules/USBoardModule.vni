@@ -5,6 +5,9 @@ module USBoardModule {
 	vnx.TopicPtr input_can;				// pilot.base.CAN_Frame
 	vnx.TopicPtr input_serial;			// pilot.base.DataPacket
 	
+	vnx.TopicPtr topic_can_request;			// pilot.base.CAN_Frame
+	vnx.TopicPtr topic_serial_request;		// pilot.base.DataPacket
+	
 	vnx.TopicPtr output_data;			// pilot.usboard.USBoardData
 	vnx.TopicPtr output_config;			// pilot.usboard.USBoardConfig
 	
