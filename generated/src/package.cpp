@@ -8,6 +8,12 @@
 #include <pilot/usboard/USBoardModuleBase.hxx>
 #include <pilot/usboard/USBoardModule_get_config.hxx>
 #include <pilot/usboard/USBoardModule_get_config_return.hxx>
+#include <pilot/usboard/USBoardModule_is_connected.hxx>
+#include <pilot/usboard/USBoardModule_is_connected_return.hxx>
+#include <pilot/usboard/USBoardModule_request_config.hxx>
+#include <pilot/usboard/USBoardModule_request_config_return.hxx>
+#include <pilot/usboard/USBoardModule_request_data.hxx>
+#include <pilot/usboard/USBoardModule_request_data_return.hxx>
 #include <pilot/usboard/USBoardModule_save_config.hxx>
 #include <pilot/usboard/USBoardModule_save_config_return.hxx>
 #include <pilot/usboard/USBoardModule_set_config.hxx>
@@ -27,6 +33,12 @@ static void register_all_types() {
 	vnx::register_type_code(::pilot::usboard::USBoardModuleBase::static_create_type_code());
 	vnx::register_type_code(::pilot::usboard::USBoardModule_get_config::static_create_type_code());
 	vnx::register_type_code(::pilot::usboard::USBoardModule_get_config_return::static_create_type_code());
+	vnx::register_type_code(::pilot::usboard::USBoardModule_is_connected::static_create_type_code());
+	vnx::register_type_code(::pilot::usboard::USBoardModule_is_connected_return::static_create_type_code());
+	vnx::register_type_code(::pilot::usboard::USBoardModule_request_config::static_create_type_code());
+	vnx::register_type_code(::pilot::usboard::USBoardModule_request_config_return::static_create_type_code());
+	vnx::register_type_code(::pilot::usboard::USBoardModule_request_data::static_create_type_code());
+	vnx::register_type_code(::pilot::usboard::USBoardModule_request_data_return::static_create_type_code());
 	vnx::register_type_code(::pilot::usboard::USBoardModule_save_config::static_create_type_code());
 	vnx::register_type_code(::pilot::usboard::USBoardModule_save_config_return::static_create_type_code());
 	vnx::register_type_code(::pilot::usboard::USBoardModule_set_config::static_create_type_code());
@@ -46,6 +58,12 @@ const vnx::TypeCode* const vnx_native_type_code_USBoardData = vnx::get_type_code
 const vnx::TypeCode* const vnx_native_type_code_USBoardModuleBase = vnx::get_type_code(vnx::Hash64(0x43f03ccffe42b23full));
 const vnx::TypeCode* const vnx_native_type_code_USBoardModule_get_config = vnx::get_type_code(vnx::Hash64(0xe7bebc86c32def4eull));
 const vnx::TypeCode* const vnx_native_type_code_USBoardModule_get_config_return = vnx::get_type_code(vnx::Hash64(0x358de7d95fe51641ull));
+const vnx::TypeCode* const vnx_native_type_code_USBoardModule_is_connected = vnx::get_type_code(vnx::Hash64(0x67dc4b6f55cdaf01ull));
+const vnx::TypeCode* const vnx_native_type_code_USBoardModule_is_connected_return = vnx::get_type_code(vnx::Hash64(0x9f92f79790f0b41cull));
+const vnx::TypeCode* const vnx_native_type_code_USBoardModule_request_config = vnx::get_type_code(vnx::Hash64(0xf38e6a2521f9f008ull));
+const vnx::TypeCode* const vnx_native_type_code_USBoardModule_request_config_return = vnx::get_type_code(vnx::Hash64(0x33da5f4894481a92ull));
+const vnx::TypeCode* const vnx_native_type_code_USBoardModule_request_data = vnx::get_type_code(vnx::Hash64(0xc7bf45418c654bbfull));
+const vnx::TypeCode* const vnx_native_type_code_USBoardModule_request_data_return = vnx::get_type_code(vnx::Hash64(0xb6a4183451605df3ull));
 const vnx::TypeCode* const vnx_native_type_code_USBoardModule_save_config = vnx::get_type_code(vnx::Hash64(0xc5d8f1fd2323ac3bull));
 const vnx::TypeCode* const vnx_native_type_code_USBoardModule_save_config_return = vnx::get_type_code(vnx::Hash64(0x4a4217094e238854ull));
 const vnx::TypeCode* const vnx_native_type_code_USBoardModule_set_config = vnx::get_type_code(vnx::Hash64(0x6a53e1b7e450656dull));

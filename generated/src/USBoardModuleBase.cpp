@@ -8,6 +8,12 @@
 #include <pilot/usboard/USBoardConfig.hxx>
 #include <pilot/usboard/USBoardModule_get_config.hxx>
 #include <pilot/usboard/USBoardModule_get_config_return.hxx>
+#include <pilot/usboard/USBoardModule_is_connected.hxx>
+#include <pilot/usboard/USBoardModule_is_connected_return.hxx>
+#include <pilot/usboard/USBoardModule_request_config.hxx>
+#include <pilot/usboard/USBoardModule_request_config_return.hxx>
+#include <pilot/usboard/USBoardModule_request_data.hxx>
+#include <pilot/usboard/USBoardModule_request_data_return.hxx>
 #include <pilot/usboard/USBoardModule_save_config.hxx>
 #include <pilot/usboard/USBoardModule_save_config_return.hxx>
 #include <pilot/usboard/USBoardModule_set_config.hxx>
@@ -22,7 +28,7 @@ namespace usboard {
 
 
 const vnx::Hash64 USBoardModuleBase::VNX_TYPE_HASH(0x43f03ccffe42b23full);
-const vnx::Hash64 USBoardModuleBase::VNX_CODE_HASH(0xa558cc52f85f2c9bull);
+const vnx::Hash64 USBoardModuleBase::VNX_CODE_HASH(0x37629ab7f165c989ull);
 
 USBoardModuleBase::USBoardModuleBase(const std::string& _vnx_name)
 	:	Module::Module(_vnx_name)
@@ -30,6 +36,7 @@ USBoardModuleBase::USBoardModuleBase(const std::string& _vnx_name)
 	vnx::read_config(vnx_name + ".config_file", config_file);
 	vnx::read_config(vnx_name + ".input_can", input_can);
 	vnx::read_config(vnx_name + ".input_serial", input_serial);
+	vnx::read_config(vnx_name + ".output_config", output_config);
 	vnx::read_config(vnx_name + ".output_data", output_data);
 }
 
@@ -50,7 +57,8 @@ void USBoardModuleBase::accept(vnx::Visitor& _visitor) const {
 	_visitor.type_field(_type_code->fields[0], 0); vnx::accept(_visitor, input_can);
 	_visitor.type_field(_type_code->fields[1], 1); vnx::accept(_visitor, input_serial);
 	_visitor.type_field(_type_code->fields[2], 2); vnx::accept(_visitor, output_data);
-	_visitor.type_field(_type_code->fields[3], 3); vnx::accept(_visitor, config_file);
+	_visitor.type_field(_type_code->fields[3], 3); vnx::accept(_visitor, output_config);
+	_visitor.type_field(_type_code->fields[4], 4); vnx::accept(_visitor, config_file);
 	_visitor.type_end(*_type_code);
 }
 
@@ -59,6 +67,7 @@ void USBoardModuleBase::write(std::ostream& _out) const {
 	_out << ", \"input_can\": "; vnx::write(_out, input_can);
 	_out << ", \"input_serial\": "; vnx::write(_out, input_serial);
 	_out << ", \"output_data\": "; vnx::write(_out, output_data);
+	_out << ", \"output_config\": "; vnx::write(_out, output_config);
 	_out << ", \"config_file\": "; vnx::write(_out, config_file);
 	_out << "}";
 }
@@ -73,6 +82,8 @@ void USBoardModuleBase::read(std::istream& _in) {
 			vnx::from_string(_entry.second, input_can);
 		} else if(_entry.first == "input_serial") {
 			vnx::from_string(_entry.second, input_serial);
+		} else if(_entry.first == "output_config") {
+			vnx::from_string(_entry.second, output_config);
 		} else if(_entry.first == "output_data") {
 			vnx::from_string(_entry.second, output_data);
 		}
@@ -85,6 +96,7 @@ vnx::Object USBoardModuleBase::to_object() const {
 	_object["input_can"] = input_can;
 	_object["input_serial"] = input_serial;
 	_object["output_data"] = output_data;
+	_object["output_config"] = output_config;
 	_object["config_file"] = config_file;
 	return _object;
 }
@@ -97,6 +109,8 @@ void USBoardModuleBase::from_object(const vnx::Object& _object) {
 			_entry.second.to(input_can);
 		} else if(_entry.first == "input_serial") {
 			_entry.second.to(input_serial);
+		} else if(_entry.first == "output_config") {
+			_entry.second.to(output_config);
 		} else if(_entry.first == "output_data") {
 			_entry.second.to(output_data);
 		}
@@ -127,13 +141,16 @@ std::shared_ptr<vnx::TypeCode> USBoardModuleBase::static_create_type_code() {
 	std::shared_ptr<vnx::TypeCode> type_code = std::make_shared<vnx::TypeCode>();
 	type_code->name = "pilot.usboard.USBoardModule";
 	type_code->type_hash = vnx::Hash64(0x43f03ccffe42b23full);
-	type_code->code_hash = vnx::Hash64(0xa558cc52f85f2c9bull);
+	type_code->code_hash = vnx::Hash64(0x37629ab7f165c989ull);
 	type_code->is_native = true;
-	type_code->methods.resize(3);
+	type_code->methods.resize(6);
 	type_code->methods[0] = ::pilot::usboard::USBoardModule_get_config::static_get_type_code();
-	type_code->methods[1] = ::pilot::usboard::USBoardModule_save_config::static_get_type_code();
-	type_code->methods[2] = ::pilot::usboard::USBoardModule_set_config::static_get_type_code();
-	type_code->fields.resize(4);
+	type_code->methods[1] = ::pilot::usboard::USBoardModule_is_connected::static_get_type_code();
+	type_code->methods[2] = ::pilot::usboard::USBoardModule_request_config::static_get_type_code();
+	type_code->methods[3] = ::pilot::usboard::USBoardModule_request_data::static_get_type_code();
+	type_code->methods[4] = ::pilot::usboard::USBoardModule_save_config::static_get_type_code();
+	type_code->methods[5] = ::pilot::usboard::USBoardModule_set_config::static_get_type_code();
+	type_code->fields.resize(5);
 	{
 		vnx::TypeField& field = type_code->fields[0];
 		field.is_extended = true;
@@ -155,6 +172,12 @@ std::shared_ptr<vnx::TypeCode> USBoardModuleBase::static_create_type_code() {
 	{
 		vnx::TypeField& field = type_code->fields[3];
 		field.is_extended = true;
+		field.name = "output_config";
+		field.code = {12, 5};
+	}
+	{
+		vnx::TypeField& field = type_code->fields[4];
+		field.is_extended = true;
 		field.name = "config_file";
 		field.code = {12, 5};
 	}
@@ -172,8 +195,33 @@ std::shared_ptr<vnx::Value> USBoardModuleBase::vnx_call_switch(std::shared_ptr<c
 		if(!_args) {
 			throw std::logic_error("vnx_call_switch(): !_args");
 		}
-		get_config_async(_request_id);
-		return 0;
+		auto _return_value = ::pilot::usboard::USBoardModule_get_config_return::create();
+		_return_value->_ret_0 = get_config();
+		return _return_value;
+	} else if(_type_hash == vnx::Hash64(0x67dc4b6f55cdaf01ull)) {
+		auto _args = std::dynamic_pointer_cast<const ::pilot::usboard::USBoardModule_is_connected>(_method);
+		if(!_args) {
+			throw std::logic_error("vnx_call_switch(): !_args");
+		}
+		auto _return_value = ::pilot::usboard::USBoardModule_is_connected_return::create();
+		_return_value->_ret_0 = is_connected();
+		return _return_value;
+	} else if(_type_hash == vnx::Hash64(0xf38e6a2521f9f008ull)) {
+		auto _args = std::dynamic_pointer_cast<const ::pilot::usboard::USBoardModule_request_config>(_method);
+		if(!_args) {
+			throw std::logic_error("vnx_call_switch(): !_args");
+		}
+		auto _return_value = ::pilot::usboard::USBoardModule_request_config_return::create();
+		request_config();
+		return _return_value;
+	} else if(_type_hash == vnx::Hash64(0xc7bf45418c654bbfull)) {
+		auto _args = std::dynamic_pointer_cast<const ::pilot::usboard::USBoardModule_request_data>(_method);
+		if(!_args) {
+			throw std::logic_error("vnx_call_switch(): !_args");
+		}
+		auto _return_value = ::pilot::usboard::USBoardModule_request_data_return::create();
+		request_data(_args->group_set);
+		return _return_value;
 	} else if(_type_hash == vnx::Hash64(0xc5d8f1fd2323ac3bull)) {
 		auto _args = std::dynamic_pointer_cast<const ::pilot::usboard::USBoardModule_save_config>(_method);
 		if(!_args) {
@@ -195,12 +243,6 @@ std::shared_ptr<vnx::Value> USBoardModuleBase::vnx_call_switch(std::shared_ptr<c
 	_ex->dst_mac = vnx_request ? vnx_request->dst_mac : 0;
 	_ex->method = _method->get_type_name();
 	return _ex;
-}
-
-void USBoardModuleBase::get_config_async_return(const vnx::request_id_t& _request_id, const std::shared_ptr<const ::pilot::usboard::USBoardConfig>& _ret_0) const {
-	auto _return_value = ::pilot::usboard::USBoardModule_get_config_return::create();
-	_return_value->_ret_0 = _ret_0;
-	vnx_async_callback(_request_id, _return_value);
 }
 
 
@@ -229,7 +271,8 @@ void read(TypeInput& in, ::pilot::usboard::USBoardModuleBase& value, const TypeC
 			case 0: vnx::read(in, value.input_can, type_code, _field->code.data()); break;
 			case 1: vnx::read(in, value.input_serial, type_code, _field->code.data()); break;
 			case 2: vnx::read(in, value.output_data, type_code, _field->code.data()); break;
-			case 3: vnx::read(in, value.config_file, type_code, _field->code.data()); break;
+			case 3: vnx::read(in, value.output_config, type_code, _field->code.data()); break;
+			case 4: vnx::read(in, value.config_file, type_code, _field->code.data()); break;
 			default: vnx::skip(in, type_code, _field->code.data());
 		}
 	}
@@ -247,7 +290,8 @@ void write(TypeOutput& out, const ::pilot::usboard::USBoardModuleBase& value, co
 	vnx::write(out, value.input_can, type_code, type_code->fields[0].code.data());
 	vnx::write(out, value.input_serial, type_code, type_code->fields[1].code.data());
 	vnx::write(out, value.output_data, type_code, type_code->fields[2].code.data());
-	vnx::write(out, value.config_file, type_code, type_code->fields[3].code.data());
+	vnx::write(out, value.output_config, type_code, type_code->fields[3].code.data());
+	vnx::write(out, value.config_file, type_code, type_code->fields[4].code.data());
 }
 
 void read(std::istream& in, ::pilot::usboard::USBoardModuleBase& value) {

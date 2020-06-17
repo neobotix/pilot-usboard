@@ -23,6 +23,18 @@ public:
 			const std::function<void(std::shared_ptr<const ::pilot::usboard::USBoardConfig>)>& _callback = std::function<void(std::shared_ptr<const ::pilot::usboard::USBoardConfig>)>(),
 			const std::function<void(const std::exception&)>& _error_callback = std::function<void(const std::exception&)>());
 	
+	uint64_t is_connected(
+			const std::function<void(vnx::bool_t)>& _callback = std::function<void(vnx::bool_t)>(),
+			const std::function<void(const std::exception&)>& _error_callback = std::function<void(const std::exception&)>());
+	
+	uint64_t request_config(
+			const std::function<void()>& _callback = std::function<void()>(),
+			const std::function<void(const std::exception&)>& _error_callback = std::function<void(const std::exception&)>());
+	
+	uint64_t request_data(const int32_t& group_set, 
+			const std::function<void()>& _callback = std::function<void()>(),
+			const std::function<void(const std::exception&)>& _error_callback = std::function<void(const std::exception&)>());
+	
 	uint64_t save_config(
 			const std::function<void()>& _callback = std::function<void()>(),
 			const std::function<void(const std::exception&)>& _error_callback = std::function<void(const std::exception&)>());
@@ -40,6 +52,9 @@ protected:
 	
 private:
 	std::map<uint64_t, std::pair<std::function<void(std::shared_ptr<const ::pilot::usboard::USBoardConfig>)>, std::function<void(const std::exception&)>>> vnx_queue_get_config;
+	std::map<uint64_t, std::pair<std::function<void(vnx::bool_t)>, std::function<void(const std::exception&)>>> vnx_queue_is_connected;
+	std::map<uint64_t, std::pair<std::function<void()>, std::function<void(const std::exception&)>>> vnx_queue_request_config;
+	std::map<uint64_t, std::pair<std::function<void()>, std::function<void(const std::exception&)>>> vnx_queue_request_data;
 	std::map<uint64_t, std::pair<std::function<void()>, std::function<void(const std::exception&)>>> vnx_queue_save_config;
 	std::map<uint64_t, std::pair<std::function<void()>, std::function<void(const std::exception&)>>> vnx_queue_set_config;
 	

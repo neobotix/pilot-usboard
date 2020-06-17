@@ -21,6 +21,16 @@ public:
 	
 	std::shared_ptr<const ::pilot::usboard::USBoardConfig> get_config();
 	
+	vnx::bool_t is_connected();
+	
+	void request_config();
+	
+	void request_config_async();
+	
+	void request_data(const int32_t& group_set);
+	
+	void request_data_async(const int32_t& group_set);
+	
 	void save_config();
 	
 	void save_config_async();

@@ -19,6 +19,7 @@ public:
 	::vnx::TopicPtr input_can;
 	::vnx::TopicPtr input_serial;
 	::vnx::TopicPtr output_data;
+	::vnx::TopicPtr output_config;
 	std::string config_file;
 	
 	typedef ::vnx::Module Super;
@@ -47,8 +48,10 @@ public:
 	static std::shared_ptr<vnx::TypeCode> static_create_type_code();
 	
 protected:
-	virtual void get_config_async(const vnx::request_id_t& _request_id) const = 0;
-	void get_config_async_return(const vnx::request_id_t& _request_id, const std::shared_ptr<const ::pilot::usboard::USBoardConfig>& _ret_0) const;
+	virtual std::shared_ptr<const ::pilot::usboard::USBoardConfig> get_config() const = 0;
+	virtual vnx::bool_t is_connected() const = 0;
+	virtual void request_config() = 0;
+	virtual void request_data(const int32_t& group_set) = 0;
 	virtual void save_config() = 0;
 	virtual void set_config(const std::shared_ptr<const ::pilot::usboard::USBoardConfig>& config) = 0;
 	

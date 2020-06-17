@@ -7,6 +7,12 @@
 #include <pilot/usboard/USBoardConfig.hxx>
 #include <pilot/usboard/USBoardModule_get_config.hxx>
 #include <pilot/usboard/USBoardModule_get_config_return.hxx>
+#include <pilot/usboard/USBoardModule_is_connected.hxx>
+#include <pilot/usboard/USBoardModule_is_connected_return.hxx>
+#include <pilot/usboard/USBoardModule_request_config.hxx>
+#include <pilot/usboard/USBoardModule_request_config_return.hxx>
+#include <pilot/usboard/USBoardModule_request_data.hxx>
+#include <pilot/usboard/USBoardModule_request_data_return.hxx>
 #include <pilot/usboard/USBoardModule_save_config.hxx>
 #include <pilot/usboard/USBoardModule_save_config_return.hxx>
 #include <pilot/usboard/USBoardModule_set_config.hxx>
@@ -37,6 +43,31 @@ uint64_t USBoardModuleAsyncClient::get_config(const std::function<void(std::shar
 	return _request_id;
 }
 
+uint64_t USBoardModuleAsyncClient::is_connected(const std::function<void(vnx::bool_t)>& _callback, const std::function<void(const std::exception&)>& _error_callback) {
+	auto _method = ::pilot::usboard::USBoardModule_is_connected::create();
+	const auto _request_id = vnx_request(_method);
+	vnx_queue_is_connected[_request_id] = std::make_pair(_callback, _error_callback);
+	vnx_num_pending++;
+	return _request_id;
+}
+
+uint64_t USBoardModuleAsyncClient::request_config(const std::function<void()>& _callback, const std::function<void(const std::exception&)>& _error_callback) {
+	auto _method = ::pilot::usboard::USBoardModule_request_config::create();
+	const auto _request_id = vnx_request(_method);
+	vnx_queue_request_config[_request_id] = std::make_pair(_callback, _error_callback);
+	vnx_num_pending++;
+	return _request_id;
+}
+
+uint64_t USBoardModuleAsyncClient::request_data(const int32_t& group_set, const std::function<void()>& _callback, const std::function<void(const std::exception&)>& _error_callback) {
+	auto _method = ::pilot::usboard::USBoardModule_request_data::create();
+	_method->group_set = group_set;
+	const auto _request_id = vnx_request(_method);
+	vnx_queue_request_data[_request_id] = std::make_pair(_callback, _error_callback);
+	vnx_num_pending++;
+	return _request_id;
+}
+
 uint64_t USBoardModuleAsyncClient::save_config(const std::function<void()>& _callback, const std::function<void(const std::exception&)>& _error_callback) {
 	auto _method = ::pilot::usboard::USBoardModule_save_config::create();
 	const auto _request_id = vnx_request(_method);
@@ -59,6 +90,15 @@ std::vector<uint64_t> USBoardModuleAsyncClient::vnx_get_pending_ids() const {
 	for(const auto& entry : vnx_queue_get_config) {
 		_list.push_back(entry.first);
 	}
+	for(const auto& entry : vnx_queue_is_connected) {
+		_list.push_back(entry.first);
+	}
+	for(const auto& entry : vnx_queue_request_config) {
+		_list.push_back(entry.first);
+	}
+	for(const auto& entry : vnx_queue_request_data) {
+		_list.push_back(entry.first);
+	}
 	for(const auto& entry : vnx_queue_save_config) {
 		_list.push_back(entry.first);
 	}
@@ -76,6 +116,36 @@ void USBoardModuleAsyncClient::vnx_purge_request(uint64_t _request_id, const std
 				_iter->second.second(_ex);
 			}
 			vnx_queue_get_config.erase(_iter);
+			vnx_num_pending--;
+		}
+	}
+	{
+		const auto _iter = vnx_queue_is_connected.find(_request_id);
+		if(_iter != vnx_queue_is_connected.end()) {
+			if(_iter->second.second) {
+				_iter->second.second(_ex);
+			}
+			vnx_queue_is_connected.erase(_iter);
+			vnx_num_pending--;
+		}
+	}
+	{
+		const auto _iter = vnx_queue_request_config.find(_request_id);
+		if(_iter != vnx_queue_request_config.end()) {
+			if(_iter->second.second) {
+				_iter->second.second(_ex);
+			}
+			vnx_queue_request_config.erase(_iter);
+			vnx_num_pending--;
+		}
+	}
+	{
+		const auto _iter = vnx_queue_request_data.find(_request_id);
+		if(_iter != vnx_queue_request_data.end()) {
+			if(_iter->second.second) {
+				_iter->second.second(_ex);
+			}
+			vnx_queue_request_data.erase(_iter);
 			vnx_num_pending--;
 		}
 	}
@@ -115,6 +185,49 @@ void USBoardModuleAsyncClient::vnx_callback_switch(uint64_t _request_id, std::sh
 			vnx_num_pending--;
 			if(_callback) {
 				_callback(_result->_ret_0);
+			}
+		} else {
+			throw std::runtime_error("USBoardModuleAsyncClient: invalid return received");
+		}
+	}
+	else if(_type_hash == vnx::Hash64(0x9f92f79790f0b41cull)) {
+		auto _result = std::dynamic_pointer_cast<const ::pilot::usboard::USBoardModule_is_connected_return>(_value);
+		if(!_result) {
+			throw std::logic_error("USBoardModuleAsyncClient: !_result");
+		}
+		const auto _iter = vnx_queue_is_connected.find(_request_id);
+		if(_iter != vnx_queue_is_connected.end()) {
+			const auto _callback = std::move(_iter->second.first);
+			vnx_queue_is_connected.erase(_iter);
+			vnx_num_pending--;
+			if(_callback) {
+				_callback(_result->_ret_0);
+			}
+		} else {
+			throw std::runtime_error("USBoardModuleAsyncClient: invalid return received");
+		}
+	}
+	else if(_type_hash == vnx::Hash64(0x33da5f4894481a92ull)) {
+		const auto _iter = vnx_queue_request_config.find(_request_id);
+		if(_iter != vnx_queue_request_config.end()) {
+			const auto _callback = std::move(_iter->second.first);
+			vnx_queue_request_config.erase(_iter);
+			vnx_num_pending--;
+			if(_callback) {
+				_callback();
+			}
+		} else {
+			throw std::runtime_error("USBoardModuleAsyncClient: invalid return received");
+		}
+	}
+	else if(_type_hash == vnx::Hash64(0xb6a4183451605df3ull)) {
+		const auto _iter = vnx_queue_request_data.find(_request_id);
+		if(_iter != vnx_queue_request_data.end()) {
+			const auto _callback = std::move(_iter->second.first);
+			vnx_queue_request_data.erase(_iter);
+			vnx_num_pending--;
+			if(_callback) {
+				_callback();
 			}
 		} else {
 			throw std::runtime_error("USBoardModuleAsyncClient: invalid return received");
