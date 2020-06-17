@@ -18,6 +18,8 @@ public:
 	
 	::vnx::TopicPtr input_can;
 	::vnx::TopicPtr input_serial;
+	::vnx::TopicPtr topic_can_request;
+	::vnx::TopicPtr topic_serial_request;
 	::vnx::TopicPtr output_data;
 	::vnx::TopicPtr output_config;
 	std::string config_file;

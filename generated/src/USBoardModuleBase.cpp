@@ -28,7 +28,7 @@ namespace usboard {
 
 
 const vnx::Hash64 USBoardModuleBase::VNX_TYPE_HASH(0x43f03ccffe42b23full);
-const vnx::Hash64 USBoardModuleBase::VNX_CODE_HASH(0x37629ab7f165c989ull);
+const vnx::Hash64 USBoardModuleBase::VNX_CODE_HASH(0xe6617826230b7c1dull);
 
 USBoardModuleBase::USBoardModuleBase(const std::string& _vnx_name)
 	:	Module::Module(_vnx_name)
@@ -38,6 +38,8 @@ USBoardModuleBase::USBoardModuleBase(const std::string& _vnx_name)
 	vnx::read_config(vnx_name + ".input_serial", input_serial);
 	vnx::read_config(vnx_name + ".output_config", output_config);
 	vnx::read_config(vnx_name + ".output_data", output_data);
+	vnx::read_config(vnx_name + ".topic_can_request", topic_can_request);
+	vnx::read_config(vnx_name + ".topic_serial_request", topic_serial_request);
 }
 
 vnx::Hash64 USBoardModuleBase::get_type_hash() const {
@@ -56,9 +58,11 @@ void USBoardModuleBase::accept(vnx::Visitor& _visitor) const {
 	_visitor.type_begin(*_type_code);
 	_visitor.type_field(_type_code->fields[0], 0); vnx::accept(_visitor, input_can);
 	_visitor.type_field(_type_code->fields[1], 1); vnx::accept(_visitor, input_serial);
-	_visitor.type_field(_type_code->fields[2], 2); vnx::accept(_visitor, output_data);
-	_visitor.type_field(_type_code->fields[3], 3); vnx::accept(_visitor, output_config);
-	_visitor.type_field(_type_code->fields[4], 4); vnx::accept(_visitor, config_file);
+	_visitor.type_field(_type_code->fields[2], 2); vnx::accept(_visitor, topic_can_request);
+	_visitor.type_field(_type_code->fields[3], 3); vnx::accept(_visitor, topic_serial_request);
+	_visitor.type_field(_type_code->fields[4], 4); vnx::accept(_visitor, output_data);
+	_visitor.type_field(_type_code->fields[5], 5); vnx::accept(_visitor, output_config);
+	_visitor.type_field(_type_code->fields[6], 6); vnx::accept(_visitor, config_file);
 	_visitor.type_end(*_type_code);
 }
 
@@ -66,6 +70,8 @@ void USBoardModuleBase::write(std::ostream& _out) const {
 	_out << "{\"__type\": \"pilot.usboard.USBoardModule\"";
 	_out << ", \"input_can\": "; vnx::write(_out, input_can);
 	_out << ", \"input_serial\": "; vnx::write(_out, input_serial);
+	_out << ", \"topic_can_request\": "; vnx::write(_out, topic_can_request);
+	_out << ", \"topic_serial_request\": "; vnx::write(_out, topic_serial_request);
 	_out << ", \"output_data\": "; vnx::write(_out, output_data);
 	_out << ", \"output_config\": "; vnx::write(_out, output_config);
 	_out << ", \"config_file\": "; vnx::write(_out, config_file);
@@ -86,6 +92,10 @@ void USBoardModuleBase::read(std::istream& _in) {
 			vnx::from_string(_entry.second, output_config);
 		} else if(_entry.first == "output_data") {
 			vnx::from_string(_entry.second, output_data);
+		} else if(_entry.first == "topic_can_request") {
+			vnx::from_string(_entry.second, topic_can_request);
+		} else if(_entry.first == "topic_serial_request") {
+			vnx::from_string(_entry.second, topic_serial_request);
 		}
 	}
 }
@@ -95,6 +105,8 @@ vnx::Object USBoardModuleBase::to_object() const {
 	_object["__type"] = "pilot.usboard.USBoardModule";
 	_object["input_can"] = input_can;
 	_object["input_serial"] = input_serial;
+	_object["topic_can_request"] = topic_can_request;
+	_object["topic_serial_request"] = topic_serial_request;
 	_object["output_data"] = output_data;
 	_object["output_config"] = output_config;
 	_object["config_file"] = config_file;
@@ -113,6 +125,10 @@ void USBoardModuleBase::from_object(const vnx::Object& _object) {
 			_entry.second.to(output_config);
 		} else if(_entry.first == "output_data") {
 			_entry.second.to(output_data);
+		} else if(_entry.first == "topic_can_request") {
+			_entry.second.to(topic_can_request);
+		} else if(_entry.first == "topic_serial_request") {
+			_entry.second.to(topic_serial_request);
 		}
 	}
 }
@@ -141,7 +157,7 @@ std::shared_ptr<vnx::TypeCode> USBoardModuleBase::static_create_type_code() {
 	std::shared_ptr<vnx::TypeCode> type_code = std::make_shared<vnx::TypeCode>();
 	type_code->name = "pilot.usboard.USBoardModule";
 	type_code->type_hash = vnx::Hash64(0x43f03ccffe42b23full);
-	type_code->code_hash = vnx::Hash64(0x37629ab7f165c989ull);
+	type_code->code_hash = vnx::Hash64(0xe6617826230b7c1dull);
 	type_code->is_native = true;
 	type_code->methods.resize(6);
 	type_code->methods[0] = ::pilot::usboard::USBoardModule_get_config::static_get_type_code();
@@ -150,7 +166,7 @@ std::shared_ptr<vnx::TypeCode> USBoardModuleBase::static_create_type_code() {
 	type_code->methods[3] = ::pilot::usboard::USBoardModule_request_data::static_get_type_code();
 	type_code->methods[4] = ::pilot::usboard::USBoardModule_save_config::static_get_type_code();
 	type_code->methods[5] = ::pilot::usboard::USBoardModule_set_config::static_get_type_code();
-	type_code->fields.resize(5);
+	type_code->fields.resize(7);
 	{
 		vnx::TypeField& field = type_code->fields[0];
 		field.is_extended = true;
@@ -166,17 +182,29 @@ std::shared_ptr<vnx::TypeCode> USBoardModuleBase::static_create_type_code() {
 	{
 		vnx::TypeField& field = type_code->fields[2];
 		field.is_extended = true;
-		field.name = "output_data";
+		field.name = "topic_can_request";
 		field.code = {12, 5};
 	}
 	{
 		vnx::TypeField& field = type_code->fields[3];
 		field.is_extended = true;
-		field.name = "output_config";
+		field.name = "topic_serial_request";
 		field.code = {12, 5};
 	}
 	{
 		vnx::TypeField& field = type_code->fields[4];
+		field.is_extended = true;
+		field.name = "output_data";
+		field.code = {12, 5};
+	}
+	{
+		vnx::TypeField& field = type_code->fields[5];
+		field.is_extended = true;
+		field.name = "output_config";
+		field.code = {12, 5};
+	}
+	{
+		vnx::TypeField& field = type_code->fields[6];
 		field.is_extended = true;
 		field.name = "config_file";
 		field.code = {12, 5};
@@ -270,9 +298,11 @@ void read(TypeInput& in, ::pilot::usboard::USBoardModuleBase& value, const TypeC
 		switch(_field->native_index) {
 			case 0: vnx::read(in, value.input_can, type_code, _field->code.data()); break;
 			case 1: vnx::read(in, value.input_serial, type_code, _field->code.data()); break;
-			case 2: vnx::read(in, value.output_data, type_code, _field->code.data()); break;
-			case 3: vnx::read(in, value.output_config, type_code, _field->code.data()); break;
-			case 4: vnx::read(in, value.config_file, type_code, _field->code.data()); break;
+			case 2: vnx::read(in, value.topic_can_request, type_code, _field->code.data()); break;
+			case 3: vnx::read(in, value.topic_serial_request, type_code, _field->code.data()); break;
+			case 4: vnx::read(in, value.output_data, type_code, _field->code.data()); break;
+			case 5: vnx::read(in, value.output_config, type_code, _field->code.data()); break;
+			case 6: vnx::read(in, value.config_file, type_code, _field->code.data()); break;
 			default: vnx::skip(in, type_code, _field->code.data());
 		}
 	}
@@ -289,9 +319,11 @@ void write(TypeOutput& out, const ::pilot::usboard::USBoardModuleBase& value, co
 	}
 	vnx::write(out, value.input_can, type_code, type_code->fields[0].code.data());
 	vnx::write(out, value.input_serial, type_code, type_code->fields[1].code.data());
-	vnx::write(out, value.output_data, type_code, type_code->fields[2].code.data());
-	vnx::write(out, value.output_config, type_code, type_code->fields[3].code.data());
-	vnx::write(out, value.config_file, type_code, type_code->fields[4].code.data());
+	vnx::write(out, value.topic_can_request, type_code, type_code->fields[2].code.data());
+	vnx::write(out, value.topic_serial_request, type_code, type_code->fields[3].code.data());
+	vnx::write(out, value.output_data, type_code, type_code->fields[4].code.data());
+	vnx::write(out, value.output_config, type_code, type_code->fields[5].code.data());
+	vnx::write(out, value.config_file, type_code, type_code->fields[6].code.data());
 }
 
 void read(std::istream& in, ::pilot::usboard::USBoardModuleBase& value) {

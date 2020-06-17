@@ -24,12 +24,15 @@ public:
 	static const int32_t TRANSMIT_MODE_SERIAL = 3;
 	static const int32_t TRANSMIT_MODE_CAN_SERIAL = 4;
 	
+	int32_t can_id = 0;
+	int32_t can_baudrate = 1000000;
 	int32_t interval_ms = 200;
 	int32_t sensor_setup = 4;
 	int32_t transmit_mode = 1;
 	std::array<::pilot::usboard::sensor_config_t, 16> sensor_config = {};
 	std::array<::pilot::usboard::group_config_t, 4> group_config = {};
 	vnx::float32_t low_pass_gain = 1;
+	vnx::bool_t enable_analog_input = false;
 	vnx::bool_t enable_legacy_format = false;
 	
 	typedef ::vnx::Value Super;
