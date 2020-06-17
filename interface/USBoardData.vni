@@ -1,6 +1,6 @@
 package pilot.usboard;
 
-class USBoardData extends Sample {
+class USBoardData extends pilot.base.Sample {
 	
 	float sensor[16];				// distance, zero = no measurement [m]
 	
@@ -9,7 +9,5 @@ class USBoardData extends Sample {
 	short analog_input[4];			// 0 to 1023 (1023 = 5V)
 	
 	float analog_input_scale = 0.004887;		// factor to convert to volts
-	
-	bool is_cross_echo = false;		// if cross echo mode is enabled (only one sensor is sending per group of 4)
 	
 }

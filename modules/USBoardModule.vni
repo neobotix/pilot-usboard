@@ -7,11 +7,13 @@ module USBoardModule {
 	
 	vnx.TopicPtr output_data;			// pilot.usboard.USBoardData
 	
+	string config_file;					// pilot.usboard.USBoardConfig
 	
-	USBoardConfig* get_config() const;
+	
+	USBoardConfig* get_config() const async;
 	
 	void set_config(USBoardConfig* config);
 	
-	void save_config();			// save to EEPROM
+	void save_config();					// save to EEPROM
 	
 }

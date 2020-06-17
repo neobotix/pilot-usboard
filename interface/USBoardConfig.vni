@@ -4,23 +4,21 @@ import pilot.base.CAN_Frame;
 
 class USBoardConfig {
 	
-	static const int SENSOR_CONFIG_4 = 2;
-	static const int SENSOR_CONFIG_8 = 3;
-	static const int SENSOR_CONFIG_16 = 4;
+	static const int SENSOR_SETUP_4 = 2;
+	static const int SENSOR_SETUP_8 = 3;
+	static const int SENSOR_SETUP_16 = 4;
 	
-	int interval_ms = 50;					// firing interval
+	int interval_ms = 200;					// update interval (for all sensors) [ms]
 	
-	int sensor_config = 4;					// if using 4, 8 or 16 sensors
+	int sensor_setup = 4;					// if using 4, 8 or 16 sensors (see SENSOR_SETUP_* above)
 	
-	bool sensor_active[16];					// list of active sensors
+	sensor_config_t sensor_config[16];		// individual sensor configs
 	
-	char signal_source[4];					// for each group of 4 sensors, index of the sensor which will send the pulse (cross echo mode only)
+	group_config_t group_config[4];			// config for each group of 4 sensors
 	
 	float low_pass_gain = 1;				// low pass filter gain (1 = no filtering)
 	
-	bool enable_legacy_format = true;		// if to use old message format
-	
-	bool enable_cross_echo_mode = false;	// if to enable cross echo mode
+	bool enable_legacy_format = false;		// if to use old message format (when transmitting automatically)
 	
 	
 	vector<CAN_Frame> to_can_frames() const;
