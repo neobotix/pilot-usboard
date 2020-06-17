@@ -6,14 +6,21 @@ module USBoardModule {
 	vnx.TopicPtr input_serial;			// pilot.base.DataPacket
 	
 	vnx.TopicPtr output_data;			// pilot.usboard.USBoardData
+	vnx.TopicPtr output_config;			// pilot.usboard.USBoardConfig
 	
 	string config_file;					// pilot.usboard.USBoardConfig
 	
 	
-	USBoardConfig* get_config() const async;
+	bool is_connected() const;					// returns true if board is connected
 	
-	void set_config(USBoardConfig* config);
+	void request_data(int group_set);			// send request for data to board
 	
-	void save_config();					// save to EEPROM
+	void request_config();						// send request for config to board
+	
+	USBoardConfig* get_config() const;			// get buffered config
+	
+	void set_config(USBoardConfig* config);		// send new config to board
+	
+	void save_config();							// save config to EEPROM
 	
 }
