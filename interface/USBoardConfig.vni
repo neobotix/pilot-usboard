@@ -8,9 +8,16 @@ class USBoardConfig {
 	static const int SENSOR_SETUP_8 = 3;
 	static const int SENSOR_SETUP_16 = 4;
 	
+	static const int TRANSMIT_MODE_REQUEST = 1;
+	static const int TRANSMIT_MODE_CAN = 2;
+	static const int TRANSMIT_MODE_SERIAL = 3;
+	static const int TRANSMIT_MODE_CAN_SERIAL = 4;
+	
 	int interval_ms = 200;					// update interval (for all sensors) [ms]
 	
 	int sensor_setup = 4;					// if using 4, 8 or 16 sensors (see SENSOR_SETUP_* above)
+	
+	int transmit_mode = 1;					// transmission mode (see TRANSMIT_MODE_* above)
 	
 	sensor_config_t sensor_config[16];		// individual sensor configs
 	
