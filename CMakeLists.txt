@@ -10,6 +10,8 @@ file(GLOB GENERATED_SOURCE_FILES generated/src/*.cpp)
 
 add_library(pilot_usboard SHARED
 	${GENERATED_SOURCE_FILES}
+	src/USBoardModule.cpp
+	src/USBoardConfig.cpp
 )
 
 target_include_directories(pilot_usboard

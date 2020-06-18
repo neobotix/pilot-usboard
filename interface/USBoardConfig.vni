@@ -17,7 +17,7 @@ class USBoardConfig {
 	
 	int can_baudrate = 1000000;				// [bit/s]
 	
-	int interval_ms = 200;					// update interval (for all sensors) [ms]
+	int update_interval_ms = 200;			// data update interval (for all sensors) [ms]
 	
 	int sensor_setup = 4;					// if using 4, 8 or 16 sensors (see SENSOR_SETUP_* above)
 	

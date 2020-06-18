@@ -33,6 +33,9 @@ protected:
 
 	void set_config(const std::shared_ptr<const USBoardConfig>& config) override;
 
+private:
+	std::shared_ptr<const USBoardConfig> m_config;
+
 };
 
 
