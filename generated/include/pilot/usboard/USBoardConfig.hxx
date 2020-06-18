@@ -26,7 +26,8 @@ public:
 	
 	int32_t can_id = 0;
 	int32_t can_baudrate = 1000000;
-	int32_t interval_ms = 200;
+	int32_t fire_interval_ms = 16;
+	int32_t update_interval_ms = 200;
 	int32_t sensor_setup = 4;
 	int32_t transmit_mode = 1;
 	std::array<::pilot::usboard::sensor_config_t, 16> sensor_config = {};

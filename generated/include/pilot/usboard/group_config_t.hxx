@@ -19,6 +19,7 @@ struct group_config_t {
 	
 	int32_t resolution = 1;
 	int32_t sending_sensor = -1;
+	vnx::bool_t long_range = false;
 	vnx::bool_t cross_echo_mode = false;
 	
 	static const vnx::Hash64 VNX_TYPE_HASH;
