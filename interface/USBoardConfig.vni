@@ -13,7 +13,9 @@ class USBoardConfig {
 	static const int TRANSMIT_MODE_SERIAL = 3;
 	static const int TRANSMIT_MODE_CAN_SERIAL = 4;
 	
-	int can_id = 0;
+	int serial_number = -1;					// board serial number
+	
+	int can_id = 1024;						// CAN base address
 	
 	int can_baudrate = 1000000;				// [bit/s]
 	
@@ -32,6 +34,8 @@ class USBoardConfig {
 	bool enable_analog_input = false;		// if to enable reading analog inputs
 	
 	bool enable_legacy_format = false;		// if to use old message format (when transmitting automatically)
+	
+	bool enable_can_termination = false;	// if to connect CAN bus termination resistance on the board
 	
 	
 	vector<CAN_Frame> to_can_frames() const;
