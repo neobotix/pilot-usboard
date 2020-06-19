@@ -24,9 +24,9 @@ public:
 	static const int32_t TRANSMIT_MODE_SERIAL = 3;
 	static const int32_t TRANSMIT_MODE_CAN_SERIAL = 4;
 	
-	int32_t can_id = 0;
+	int32_t serial_number = -1;
+	int32_t can_id = 1024;
 	int32_t can_baudrate = 1000000;
-	int32_t fire_interval_ms = 16;
 	int32_t update_interval_ms = 200;
 	int32_t sensor_setup = 4;
 	int32_t transmit_mode = 1;
@@ -35,6 +35,7 @@ public:
 	vnx::float32_t low_pass_gain = 1;
 	vnx::bool_t enable_analog_input = false;
 	vnx::bool_t enable_legacy_format = false;
+	vnx::bool_t enable_can_termination = false;
 	
 	typedef ::vnx::Value Super;
 	
