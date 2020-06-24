@@ -15,7 +15,7 @@ const int32_t group_config_t::RESOLUTION_1_CM;
 const int32_t group_config_t::RESOLUTION_2_CM;
 
 const vnx::Hash64 group_config_t::VNX_TYPE_HASH(0x54c195694cac61efull);
-const vnx::Hash64 group_config_t::VNX_CODE_HASH(0x2816974648693f74ull);
+const vnx::Hash64 group_config_t::VNX_CODE_HASH(0x95e73f54d0c817full);
 
 vnx::Hash64 group_config_t::get_type_hash() const {
 	return VNX_TYPE_HASH;
@@ -134,7 +134,7 @@ std::shared_ptr<vnx::TypeCode> group_config_t::static_create_type_code() {
 	std::shared_ptr<vnx::TypeCode> type_code = std::make_shared<vnx::TypeCode>();
 	type_code->name = "pilot.usboard.group_config_t";
 	type_code->type_hash = vnx::Hash64(0x54c195694cac61efull);
-	type_code->code_hash = vnx::Hash64(0x2816974648693f74ull);
+	type_code->code_hash = vnx::Hash64(0x95e73f54d0c817full);
 	type_code->is_native = true;
 	type_code->create_value = []() -> std::shared_ptr<vnx::Value> { return std::make_shared<vnx::Struct<group_config_t>>(); };
 	type_code->fields.resize(5);
@@ -142,13 +142,13 @@ std::shared_ptr<vnx::TypeCode> group_config_t::static_create_type_code() {
 		vnx::TypeField& field = type_code->fields[0];
 		field.name = "resolution";
 		field.value = vnx::to_string(1);
-		field.code = {7};
+		field.code = {3};
 	}
 	{
 		vnx::TypeField& field = type_code->fields[1];
 		field.name = "fire_interval_ms";
 		field.value = vnx::to_string(16);
-		field.code = {7};
+		field.code = {3};
 	}
 	{
 		vnx::TypeField& field = type_code->fields[2];

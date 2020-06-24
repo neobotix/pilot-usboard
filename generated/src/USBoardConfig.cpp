@@ -24,7 +24,7 @@ const int32_t USBoardConfig::TRANSMIT_MODE_SERIAL;
 const int32_t USBoardConfig::TRANSMIT_MODE_CAN_SERIAL;
 
 const vnx::Hash64 USBoardConfig::VNX_TYPE_HASH(0x9c0fb140354b6e4cull);
-const vnx::Hash64 USBoardConfig::VNX_CODE_HASH(0xcb385929b1ef0e8dull);
+const vnx::Hash64 USBoardConfig::VNX_CODE_HASH(0x114a9292df647e1full);
 
 vnx::Hash64 USBoardConfig::get_type_hash() const {
 	return VNX_TYPE_HASH;
@@ -192,7 +192,7 @@ std::shared_ptr<vnx::TypeCode> USBoardConfig::static_create_type_code() {
 	std::shared_ptr<vnx::TypeCode> type_code = std::make_shared<vnx::TypeCode>();
 	type_code->name = "pilot.usboard.USBoardConfig";
 	type_code->type_hash = vnx::Hash64(0x9c0fb140354b6e4cull);
-	type_code->code_hash = vnx::Hash64(0xcb385929b1ef0e8dull);
+	type_code->code_hash = vnx::Hash64(0x114a9292df647e1full);
 	type_code->is_native = true;
 	type_code->is_class = true;
 	type_code->create_value = []() -> std::shared_ptr<vnx::Value> { return std::make_shared<USBoardConfig>(); };
@@ -203,38 +203,38 @@ std::shared_ptr<vnx::TypeCode> USBoardConfig::static_create_type_code() {
 	{
 		vnx::TypeField& field = type_code->fields[0];
 		field.name = "serial_number";
-		field.value = vnx::to_string(-1);
-		field.code = {7};
+		field.value = vnx::to_string(0);
+		field.code = {3};
 	}
 	{
 		vnx::TypeField& field = type_code->fields[1];
 		field.name = "can_id";
 		field.value = vnx::to_string(1024);
-		field.code = {7};
+		field.code = {3};
 	}
 	{
 		vnx::TypeField& field = type_code->fields[2];
 		field.name = "can_baudrate";
 		field.value = vnx::to_string(1000000);
-		field.code = {7};
+		field.code = {3};
 	}
 	{
 		vnx::TypeField& field = type_code->fields[3];
 		field.name = "update_interval_ms";
-		field.value = vnx::to_string(200);
-		field.code = {7};
+		field.value = vnx::to_string(500);
+		field.code = {3};
 	}
 	{
 		vnx::TypeField& field = type_code->fields[4];
 		field.name = "sensor_setup";
 		field.value = vnx::to_string(15);
-		field.code = {7};
+		field.code = {3};
 	}
 	{
 		vnx::TypeField& field = type_code->fields[5];
 		field.name = "transmit_mode";
-		field.value = vnx::to_string(1);
-		field.code = {7};
+		field.value = vnx::to_string(0);
+		field.code = {3};
 	}
 	{
 		vnx::TypeField& field = type_code->fields[6];

@@ -17,8 +17,8 @@ struct group_config_t {
 	static const int32_t RESOLUTION_1_CM = 1;
 	static const int32_t RESOLUTION_2_CM = 2;
 	
-	int32_t resolution = 1;
-	int32_t fire_interval_ms = 16;
+	uint32_t resolution = 1;
+	uint32_t fire_interval_ms = 16;
 	int32_t sending_sensor = -1;
 	vnx::bool_t long_range = false;
 	vnx::bool_t cross_echo_mode = false;

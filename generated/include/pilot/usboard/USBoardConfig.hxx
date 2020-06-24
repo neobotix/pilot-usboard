@@ -20,17 +20,17 @@ public:
 	static const int32_t SENSOR_SETUP_8 = 3;
 	static const int32_t SENSOR_SETUP_12 = 7;
 	static const int32_t SENSOR_SETUP_16 = 15;
-	static const int32_t TRANSMIT_MODE_REQUEST = 1;
-	static const int32_t TRANSMIT_MODE_CAN = 2;
-	static const int32_t TRANSMIT_MODE_SERIAL = 3;
-	static const int32_t TRANSMIT_MODE_CAN_SERIAL = 4;
+	static const int32_t TRANSMIT_MODE_REQUEST = 0;
+	static const int32_t TRANSMIT_MODE_CAN = 1;
+	static const int32_t TRANSMIT_MODE_SERIAL = 2;
+	static const int32_t TRANSMIT_MODE_CAN_SERIAL = 3;
 	
-	int32_t serial_number = -1;
-	int32_t can_id = 1024;
-	int32_t can_baudrate = 1000000;
-	int32_t update_interval_ms = 200;
-	int32_t sensor_setup = 15;
-	int32_t transmit_mode = 1;
+	uint32_t serial_number = 0;
+	uint32_t can_id = 1024;
+	uint32_t can_baudrate = 1000000;
+	uint32_t update_interval_ms = 500;
+	uint32_t sensor_setup = 15;
+	uint32_t transmit_mode = 0;
 	std::array<::pilot::usboard::sensor_config_t, 16> sensor_config = {};
 	std::array<::pilot::usboard::group_config_t, 4> group_config = {};
 	vnx::float32_t low_pass_gain = 1;
