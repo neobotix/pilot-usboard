@@ -55,8 +55,10 @@ protected:
 	virtual void request_analog_data() = 0;
 	virtual void request_config() = 0;
 	virtual void request_data(const std::vector<vnx::bool_t>& groups) = 0;
-	virtual void save_config(const std::shared_ptr<const ::pilot::usboard::USBoardConfig>& config) = 0;
-	virtual void send_config(const std::shared_ptr<const ::pilot::usboard::USBoardConfig>& config) = 0;
+	virtual void save_config_async(const std::shared_ptr<const ::pilot::usboard::USBoardConfig>& config, const vnx::request_id_t& _request_id) = 0;
+	void save_config_async_return(const vnx::request_id_t& _request_id) const;
+	virtual void send_config_async(const std::shared_ptr<const ::pilot::usboard::USBoardConfig>& config, const vnx::request_id_t& _request_id) = 0;
+	void send_config_async_return(const vnx::request_id_t& _request_id) const;
 	virtual void set_channel_active(const std::vector<vnx::bool_t>& sensors) = 0;
 	
 	void vnx_handle_switch(std::shared_ptr<const vnx::Sample> _sample) override;

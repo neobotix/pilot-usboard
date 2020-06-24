@@ -269,17 +269,15 @@ std::shared_ptr<vnx::Value> USBoardModuleBase::vnx_call_switch(std::shared_ptr<c
 		if(!_args) {
 			throw std::logic_error("vnx_call_switch(): !_args");
 		}
-		auto _return_value = ::pilot::usboard::USBoardModule_save_config_return::create();
-		save_config(_args->config);
-		return _return_value;
+		save_config_async(_args->config, _request_id);
+		return 0;
 	} else if(_type_hash == vnx::Hash64(0xc95ed3ee2bff3228ull)) {
 		auto _args = std::dynamic_pointer_cast<const ::pilot::usboard::USBoardModule_send_config>(_method);
 		if(!_args) {
 			throw std::logic_error("vnx_call_switch(): !_args");
 		}
-		auto _return_value = ::pilot::usboard::USBoardModule_send_config_return::create();
-		send_config(_args->config);
-		return _return_value;
+		send_config_async(_args->config, _request_id);
+		return 0;
 	} else if(_type_hash == vnx::Hash64(0x4d5fe6cf9c152a42ull)) {
 		auto _args = std::dynamic_pointer_cast<const ::pilot::usboard::USBoardModule_set_channel_active>(_method);
 		if(!_args) {
@@ -293,6 +291,16 @@ std::shared_ptr<vnx::Value> USBoardModuleBase::vnx_call_switch(std::shared_ptr<c
 	_ex->dst_mac = vnx_request ? vnx_request->dst_mac : 0;
 	_ex->method = _method->get_type_name();
 	return _ex;
+}
+
+void USBoardModuleBase::save_config_async_return(const vnx::request_id_t& _request_id) const {
+	auto _return_value = ::pilot::usboard::USBoardModule_save_config_return::create();
+	vnx_async_callback(_request_id, _return_value);
+}
+
+void USBoardModuleBase::send_config_async_return(const vnx::request_id_t& _request_id) const {
+	auto _return_value = ::pilot::usboard::USBoardModule_send_config_return::create();
+	vnx_async_callback(_request_id, _return_value);
 }
 
 
