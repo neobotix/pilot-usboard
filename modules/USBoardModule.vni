@@ -24,10 +24,10 @@ module USBoardModule {
 	
 	USBoardConfig* get_config() const;			// get buffered config
 	
-	void send_config(USBoardConfig* config);	// send new config to board
-	
 	void set_channel_active(vector<bool> sensors);	// send new channel active config
 	
-	void save_config(USBoardConfig* config);	// send and save config to EEPROM
+	void send_config(USBoardConfig* config) async;	// send new config to board
+	
+	void save_config(USBoardConfig* config) async;	// send and save config to EEPROM
 	
 }

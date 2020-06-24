@@ -33,9 +33,11 @@ protected:
 
 	void request_analog_data() override;
 
-	void save_config(const std::shared_ptr<const USBoardConfig>& config) override;
+	void send_config_async(	const std::shared_ptr<const USBoardConfig>& config,
+							const vnx::request_id_t& request_id) override;
 
-	void send_config(const std::shared_ptr<const USBoardConfig>& config) override;
+	void save_config_async(	const std::shared_ptr<const USBoardConfig>& config,
+							const vnx::request_id_t& request_id) override;
 
 	void set_channel_active(const std::vector<vnx::bool_t>& sensors) override;
 

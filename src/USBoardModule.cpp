@@ -56,17 +56,21 @@ void USBoardModule::request_analog_data()
 	// TODO
 }
 
-void USBoardModule::save_config(const std::shared_ptr<const USBoardConfig>& config)
+void USBoardModule::send_config_async(	const std::shared_ptr<const USBoardConfig>& config,
+										const vnx::request_id_t& request_id)
 {
-	// TODO
 	throw std::logic_error("not implemented yet");
+	// TODO: send to board and wait for return
+	m_config = config;
+	send_config_async_return(request_id);
 }
 
-void USBoardModule::send_config(const std::shared_ptr<const USBoardConfig>& config)
+void USBoardModule::save_config_async(	const std::shared_ptr<const USBoardConfig>& config,
+										const vnx::request_id_t& request_id)
 {
-	m_config = config;
-	// TODO: send to board
 	throw std::logic_error("not implemented yet");
+	// TODO: send to board and wait for return
+	save_config_async_return(request_id);
 }
 
 void USBoardModule::set_channel_active(const std::vector<vnx::bool_t>& sensors)
