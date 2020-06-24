@@ -4,15 +4,15 @@ import pilot.base.CAN_Frame;
 
 class USBoardConfig {
 	
-	static const int SENSOR_SETUP_4 = 1;
-	static const int SENSOR_SETUP_8 = 3;
-	static const int SENSOR_SETUP_12 = 7;
-	static const int SENSOR_SETUP_16 = 15;
+	static const uint SENSOR_SETUP_4 = 1;
+	static const uint SENSOR_SETUP_8 = 3;
+	static const uint SENSOR_SETUP_12 = 7;
+	static const uint SENSOR_SETUP_16 = 15;
 	
-	static const int TRANSMIT_MODE_REQUEST = 0;
-	static const int TRANSMIT_MODE_CAN = 1;
-	static const int TRANSMIT_MODE_SERIAL = 2;
-	static const int TRANSMIT_MODE_CAN_SERIAL = 3;
+	static const uint TRANSMIT_MODE_REQUEST = 0;
+	static const uint TRANSMIT_MODE_CAN = 1;
+	static const uint TRANSMIT_MODE_SERIAL = 2;
+	static const uint TRANSMIT_MODE_CAN_SERIAL = 3;
 	
 	uint serial_number = 0;					// board serial number
 	

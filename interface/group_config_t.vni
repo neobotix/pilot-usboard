@@ -2,9 +2,9 @@ package pilot.usboard;
 
 struct group_config_t {
 	
-	static const int RESOLUTION_05_CM = 0;		// 0.5 cm per increment
-	static const int RESOLUTION_1_CM = 1;		// 1 cm per increment
-	static const int RESOLUTION_2_CM = 2;		// 2 cm per increment
+	static const uint RESOLUTION_05_CM = 0;		// 0.5 cm per increment
+	static const uint RESOLUTION_1_CM = 1;		// 1 cm per increment
+	static const uint RESOLUTION_2_CM = 2;		// 2 cm per increment
 	
 	uint resolution = 1;				// sensor resolution config (see RESOLUTION_* above)
 	

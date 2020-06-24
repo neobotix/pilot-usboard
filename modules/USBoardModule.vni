@@ -28,6 +28,6 @@ module USBoardModule {
 	
 	void set_channel_active(vector<bool> sensors);	// send new channel active config
 	
-	void save_config();							// save config to EEPROM
+	void save_config(USBoardConfig* config);	// send and save config to EEPROM
 	
 }

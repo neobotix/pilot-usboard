@@ -19,6 +19,8 @@ public:
 	USBoardModule(const std::string& _vnx_name);
 
 protected:
+	void init() override;
+
 	void main() override;
 
 	std::shared_ptr<const USBoardConfig> get_config() const override;
@@ -31,7 +33,7 @@ protected:
 
 	void request_analog_data() override;
 
-	void save_config() override;
+	void save_config(const std::shared_ptr<const USBoardConfig>& config) override;
 
 	void send_config(const std::shared_ptr<const USBoardConfig>& config) override;
 
