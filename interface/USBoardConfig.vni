@@ -9,22 +9,22 @@ class USBoardConfig {
 	static const int SENSOR_SETUP_12 = 7;
 	static const int SENSOR_SETUP_16 = 15;
 	
-	static const int TRANSMIT_MODE_REQUEST = 1;
-	static const int TRANSMIT_MODE_CAN = 2;
-	static const int TRANSMIT_MODE_SERIAL = 3;
-	static const int TRANSMIT_MODE_CAN_SERIAL = 4;
+	static const int TRANSMIT_MODE_REQUEST = 0;
+	static const int TRANSMIT_MODE_CAN = 1;
+	static const int TRANSMIT_MODE_SERIAL = 2;
+	static const int TRANSMIT_MODE_CAN_SERIAL = 3;
 	
-	int serial_number = -1;					// board serial number
+	uint serial_number = 0;					// board serial number
 	
-	int can_id = 1024;						// CAN base address
+	uint can_id = 1024;						// CAN base address
 	
-	int can_baudrate = 1000000;				// [bit/s]
+	uint can_baudrate = 1000000;			// [bit/s]
 	
-	int update_interval_ms = 200;			// data update interval (for all sensors) [ms]
+	uint update_interval_ms = 500;			// data update interval (for all sensors) [ms]
 	
-	int sensor_setup = 15;					// if using 4, 8, 12 or 16 sensors (see SENSOR_SETUP_* above)
+	uint sensor_setup = 15;					// if using 4, 8, 12 or 16 sensors (see SENSOR_SETUP_* above)
 	
-	int transmit_mode = 1;					// transmission mode (see TRANSMIT_MODE_* above)
+	uint transmit_mode = 0;					// transmission mode (see TRANSMIT_MODE_* above)
 	
 	sensor_config_t sensor_config[16];		// individual sensor configs
 	

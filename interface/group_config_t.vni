@@ -6,14 +6,14 @@ struct group_config_t {
 	static const int RESOLUTION_1_CM = 1;		// 1 cm per increment
 	static const int RESOLUTION_2_CM = 2;		// 2 cm per increment
 	
-	int resolution = 1;				// sensor resolution config (see RESOLUTION_* above)
+	uint resolution = 1;				// sensor resolution config (see RESOLUTION_* above)
 	
-	int fire_interval_ms = 16;		// time between pulses [ms]
+	uint fire_interval_ms = 16;			// time between pulses [ms]
 	
-	int sending_sensor = -1;		// index of the sensor which will send the pulse (cross echo mode only)
+	int sending_sensor = -1;			// index of the sensor which will send the pulse (cross echo mode only)
 	
-	bool long_range = false;		// if to listen for long range returns
+	bool long_range = false;			// if to listen for long range returns
 	
-	bool cross_echo_mode = false;	// if to enable cross echo mode
+	bool cross_echo_mode = false;		// if to enable cross echo mode
 	
 }
