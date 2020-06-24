@@ -9,14 +9,18 @@
 #include <pilot/usboard/USBoardModule_get_config_return.hxx>
 #include <pilot/usboard/USBoardModule_is_connected.hxx>
 #include <pilot/usboard/USBoardModule_is_connected_return.hxx>
+#include <pilot/usboard/USBoardModule_request_analog_data.hxx>
+#include <pilot/usboard/USBoardModule_request_analog_data_return.hxx>
 #include <pilot/usboard/USBoardModule_request_config.hxx>
 #include <pilot/usboard/USBoardModule_request_config_return.hxx>
 #include <pilot/usboard/USBoardModule_request_data.hxx>
 #include <pilot/usboard/USBoardModule_request_data_return.hxx>
 #include <pilot/usboard/USBoardModule_save_config.hxx>
 #include <pilot/usboard/USBoardModule_save_config_return.hxx>
-#include <pilot/usboard/USBoardModule_set_config.hxx>
-#include <pilot/usboard/USBoardModule_set_config_return.hxx>
+#include <pilot/usboard/USBoardModule_send_config.hxx>
+#include <pilot/usboard/USBoardModule_send_config_return.hxx>
+#include <pilot/usboard/USBoardModule_set_channel_active.hxx>
+#include <pilot/usboard/USBoardModule_set_channel_active_return.hxx>
 #include <vnx/Module.h>
 #include <vnx/TopicPtr.hpp>
 
@@ -55,6 +59,16 @@ vnx::bool_t USBoardModuleClient::is_connected() {
 	return _result->_ret_0;
 }
 
+void USBoardModuleClient::request_analog_data() {
+	auto _method = ::pilot::usboard::USBoardModule_request_analog_data::create();
+	auto _return_value = vnx_request(_method);
+}
+
+void USBoardModuleClient::request_analog_data_async() {
+	vnx_is_async = true;
+	request_analog_data();
+}
+
 void USBoardModuleClient::request_config() {
 	auto _method = ::pilot::usboard::USBoardModule_request_config::create();
 	auto _return_value = vnx_request(_method);
@@ -86,15 +100,26 @@ void USBoardModuleClient::save_config_async() {
 	save_config();
 }
 
-void USBoardModuleClient::set_config(const std::shared_ptr<const ::pilot::usboard::USBoardConfig>& config) {
-	auto _method = ::pilot::usboard::USBoardModule_set_config::create();
+void USBoardModuleClient::send_config(const std::shared_ptr<const ::pilot::usboard::USBoardConfig>& config) {
+	auto _method = ::pilot::usboard::USBoardModule_send_config::create();
 	_method->config = config;
 	auto _return_value = vnx_request(_method);
 }
 
-void USBoardModuleClient::set_config_async(const std::shared_ptr<const ::pilot::usboard::USBoardConfig>& config) {
+void USBoardModuleClient::send_config_async(const std::shared_ptr<const ::pilot::usboard::USBoardConfig>& config) {
 	vnx_is_async = true;
-	set_config(config);
+	send_config(config);
+}
+
+void USBoardModuleClient::set_channel_active(const std::vector<vnx::bool_t>& sensors) {
+	auto _method = ::pilot::usboard::USBoardModule_set_channel_active::create();
+	_method->sensors = sensors;
+	auto _return_value = vnx_request(_method);
+}
+
+void USBoardModuleClient::set_channel_active_async(const std::vector<vnx::bool_t>& sensors) {
+	vnx_is_async = true;
+	set_channel_active(sensors);
 }
 
 

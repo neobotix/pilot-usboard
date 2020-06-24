@@ -16,8 +16,9 @@ namespace usboard {
 
 class USBoardConfig : public ::vnx::Value {
 public:
-	static const int32_t SENSOR_SETUP_4 = 2;
-	static const int32_t SENSOR_SETUP_8 = 3;
+	static const int32_t SENSOR_SETUP_4 = 1;
+	static const int32_t SENSOR_SETUP_8 = 2;
+	static const int32_t SENSOR_SETUP_12 = 3;
 	static const int32_t SENSOR_SETUP_16 = 4;
 	static const int32_t TRANSMIT_MODE_REQUEST = 1;
 	static const int32_t TRANSMIT_MODE_CAN = 2;

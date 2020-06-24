@@ -21,14 +21,18 @@ class USBoardModule_get_config;
 class USBoardModule_get_config_return;
 class USBoardModule_is_connected;
 class USBoardModule_is_connected_return;
+class USBoardModule_request_analog_data;
+class USBoardModule_request_analog_data_return;
 class USBoardModule_request_config;
 class USBoardModule_request_config_return;
 class USBoardModule_request_data;
 class USBoardModule_request_data_return;
 class USBoardModule_save_config;
 class USBoardModule_save_config_return;
-class USBoardModule_set_config;
-class USBoardModule_set_config_return;
+class USBoardModule_send_config;
+class USBoardModule_send_config_return;
+class USBoardModule_set_channel_active;
+class USBoardModule_set_channel_active_return;
 class group_config_t;
 class sensor_config_t;
 
@@ -39,14 +43,18 @@ extern const vnx::TypeCode* const vnx_native_type_code_USBoardModule_get_config;
 extern const vnx::TypeCode* const vnx_native_type_code_USBoardModule_get_config_return; ///< \private
 extern const vnx::TypeCode* const vnx_native_type_code_USBoardModule_is_connected; ///< \private
 extern const vnx::TypeCode* const vnx_native_type_code_USBoardModule_is_connected_return; ///< \private
+extern const vnx::TypeCode* const vnx_native_type_code_USBoardModule_request_analog_data; ///< \private
+extern const vnx::TypeCode* const vnx_native_type_code_USBoardModule_request_analog_data_return; ///< \private
 extern const vnx::TypeCode* const vnx_native_type_code_USBoardModule_request_config; ///< \private
 extern const vnx::TypeCode* const vnx_native_type_code_USBoardModule_request_config_return; ///< \private
 extern const vnx::TypeCode* const vnx_native_type_code_USBoardModule_request_data; ///< \private
 extern const vnx::TypeCode* const vnx_native_type_code_USBoardModule_request_data_return; ///< \private
 extern const vnx::TypeCode* const vnx_native_type_code_USBoardModule_save_config; ///< \private
 extern const vnx::TypeCode* const vnx_native_type_code_USBoardModule_save_config_return; ///< \private
-extern const vnx::TypeCode* const vnx_native_type_code_USBoardModule_set_config; ///< \private
-extern const vnx::TypeCode* const vnx_native_type_code_USBoardModule_set_config_return; ///< \private
+extern const vnx::TypeCode* const vnx_native_type_code_USBoardModule_send_config; ///< \private
+extern const vnx::TypeCode* const vnx_native_type_code_USBoardModule_send_config_return; ///< \private
+extern const vnx::TypeCode* const vnx_native_type_code_USBoardModule_set_channel_active; ///< \private
+extern const vnx::TypeCode* const vnx_native_type_code_USBoardModule_set_channel_active_return; ///< \private
 extern const vnx::TypeCode* const vnx_native_type_code_group_config_t; ///< \private
 extern const vnx::TypeCode* const vnx_native_type_code_sensor_config_t; ///< \private
 
@@ -63,14 +71,18 @@ void read(TypeInput& in, ::pilot::usboard::USBoardModule_get_config& value, cons
 void read(TypeInput& in, ::pilot::usboard::USBoardModule_get_config_return& value, const TypeCode* type_code, const uint16_t* code); ///< \private
 void read(TypeInput& in, ::pilot::usboard::USBoardModule_is_connected& value, const TypeCode* type_code, const uint16_t* code); ///< \private
 void read(TypeInput& in, ::pilot::usboard::USBoardModule_is_connected_return& value, const TypeCode* type_code, const uint16_t* code); ///< \private
+void read(TypeInput& in, ::pilot::usboard::USBoardModule_request_analog_data& value, const TypeCode* type_code, const uint16_t* code); ///< \private
+void read(TypeInput& in, ::pilot::usboard::USBoardModule_request_analog_data_return& value, const TypeCode* type_code, const uint16_t* code); ///< \private
 void read(TypeInput& in, ::pilot::usboard::USBoardModule_request_config& value, const TypeCode* type_code, const uint16_t* code); ///< \private
 void read(TypeInput& in, ::pilot::usboard::USBoardModule_request_config_return& value, const TypeCode* type_code, const uint16_t* code); ///< \private
 void read(TypeInput& in, ::pilot::usboard::USBoardModule_request_data& value, const TypeCode* type_code, const uint16_t* code); ///< \private
 void read(TypeInput& in, ::pilot::usboard::USBoardModule_request_data_return& value, const TypeCode* type_code, const uint16_t* code); ///< \private
 void read(TypeInput& in, ::pilot::usboard::USBoardModule_save_config& value, const TypeCode* type_code, const uint16_t* code); ///< \private
 void read(TypeInput& in, ::pilot::usboard::USBoardModule_save_config_return& value, const TypeCode* type_code, const uint16_t* code); ///< \private
-void read(TypeInput& in, ::pilot::usboard::USBoardModule_set_config& value, const TypeCode* type_code, const uint16_t* code); ///< \private
-void read(TypeInput& in, ::pilot::usboard::USBoardModule_set_config_return& value, const TypeCode* type_code, const uint16_t* code); ///< \private
+void read(TypeInput& in, ::pilot::usboard::USBoardModule_send_config& value, const TypeCode* type_code, const uint16_t* code); ///< \private
+void read(TypeInput& in, ::pilot::usboard::USBoardModule_send_config_return& value, const TypeCode* type_code, const uint16_t* code); ///< \private
+void read(TypeInput& in, ::pilot::usboard::USBoardModule_set_channel_active& value, const TypeCode* type_code, const uint16_t* code); ///< \private
+void read(TypeInput& in, ::pilot::usboard::USBoardModule_set_channel_active_return& value, const TypeCode* type_code, const uint16_t* code); ///< \private
 void read(TypeInput& in, ::pilot::usboard::group_config_t& value, const TypeCode* type_code, const uint16_t* code); ///< \private
 void read(TypeInput& in, ::pilot::usboard::sensor_config_t& value, const TypeCode* type_code, const uint16_t* code); ///< \private
 
@@ -81,14 +93,18 @@ void write(TypeOutput& out, const ::pilot::usboard::USBoardModule_get_config& va
 void write(TypeOutput& out, const ::pilot::usboard::USBoardModule_get_config_return& value, const TypeCode* type_code, const uint16_t* code); ///< \private
 void write(TypeOutput& out, const ::pilot::usboard::USBoardModule_is_connected& value, const TypeCode* type_code, const uint16_t* code); ///< \private
 void write(TypeOutput& out, const ::pilot::usboard::USBoardModule_is_connected_return& value, const TypeCode* type_code, const uint16_t* code); ///< \private
+void write(TypeOutput& out, const ::pilot::usboard::USBoardModule_request_analog_data& value, const TypeCode* type_code, const uint16_t* code); ///< \private
+void write(TypeOutput& out, const ::pilot::usboard::USBoardModule_request_analog_data_return& value, const TypeCode* type_code, const uint16_t* code); ///< \private
 void write(TypeOutput& out, const ::pilot::usboard::USBoardModule_request_config& value, const TypeCode* type_code, const uint16_t* code); ///< \private
 void write(TypeOutput& out, const ::pilot::usboard::USBoardModule_request_config_return& value, const TypeCode* type_code, const uint16_t* code); ///< \private
 void write(TypeOutput& out, const ::pilot::usboard::USBoardModule_request_data& value, const TypeCode* type_code, const uint16_t* code); ///< \private
 void write(TypeOutput& out, const ::pilot::usboard::USBoardModule_request_data_return& value, const TypeCode* type_code, const uint16_t* code); ///< \private
 void write(TypeOutput& out, const ::pilot::usboard::USBoardModule_save_config& value, const TypeCode* type_code, const uint16_t* code); ///< \private
 void write(TypeOutput& out, const ::pilot::usboard::USBoardModule_save_config_return& value, const TypeCode* type_code, const uint16_t* code); ///< \private
-void write(TypeOutput& out, const ::pilot::usboard::USBoardModule_set_config& value, const TypeCode* type_code, const uint16_t* code); ///< \private
-void write(TypeOutput& out, const ::pilot::usboard::USBoardModule_set_config_return& value, const TypeCode* type_code, const uint16_t* code); ///< \private
+void write(TypeOutput& out, const ::pilot::usboard::USBoardModule_send_config& value, const TypeCode* type_code, const uint16_t* code); ///< \private
+void write(TypeOutput& out, const ::pilot::usboard::USBoardModule_send_config_return& value, const TypeCode* type_code, const uint16_t* code); ///< \private
+void write(TypeOutput& out, const ::pilot::usboard::USBoardModule_set_channel_active& value, const TypeCode* type_code, const uint16_t* code); ///< \private
+void write(TypeOutput& out, const ::pilot::usboard::USBoardModule_set_channel_active_return& value, const TypeCode* type_code, const uint16_t* code); ///< \private
 void write(TypeOutput& out, const ::pilot::usboard::group_config_t& value, const TypeCode* type_code, const uint16_t* code); ///< \private
 void write(TypeOutput& out, const ::pilot::usboard::sensor_config_t& value, const TypeCode* type_code, const uint16_t* code); ///< \private
 
@@ -99,14 +115,18 @@ void read(std::istream& in, ::pilot::usboard::USBoardModule_get_config& value); 
 void read(std::istream& in, ::pilot::usboard::USBoardModule_get_config_return& value); ///< \private
 void read(std::istream& in, ::pilot::usboard::USBoardModule_is_connected& value); ///< \private
 void read(std::istream& in, ::pilot::usboard::USBoardModule_is_connected_return& value); ///< \private
+void read(std::istream& in, ::pilot::usboard::USBoardModule_request_analog_data& value); ///< \private
+void read(std::istream& in, ::pilot::usboard::USBoardModule_request_analog_data_return& value); ///< \private
 void read(std::istream& in, ::pilot::usboard::USBoardModule_request_config& value); ///< \private
 void read(std::istream& in, ::pilot::usboard::USBoardModule_request_config_return& value); ///< \private
 void read(std::istream& in, ::pilot::usboard::USBoardModule_request_data& value); ///< \private
 void read(std::istream& in, ::pilot::usboard::USBoardModule_request_data_return& value); ///< \private
 void read(std::istream& in, ::pilot::usboard::USBoardModule_save_config& value); ///< \private
 void read(std::istream& in, ::pilot::usboard::USBoardModule_save_config_return& value); ///< \private
-void read(std::istream& in, ::pilot::usboard::USBoardModule_set_config& value); ///< \private
-void read(std::istream& in, ::pilot::usboard::USBoardModule_set_config_return& value); ///< \private
+void read(std::istream& in, ::pilot::usboard::USBoardModule_send_config& value); ///< \private
+void read(std::istream& in, ::pilot::usboard::USBoardModule_send_config_return& value); ///< \private
+void read(std::istream& in, ::pilot::usboard::USBoardModule_set_channel_active& value); ///< \private
+void read(std::istream& in, ::pilot::usboard::USBoardModule_set_channel_active_return& value); ///< \private
 void read(std::istream& in, ::pilot::usboard::group_config_t& value); ///< \private
 void read(std::istream& in, ::pilot::usboard::sensor_config_t& value); ///< \private
 
@@ -117,14 +137,18 @@ void write(std::ostream& out, const ::pilot::usboard::USBoardModule_get_config& 
 void write(std::ostream& out, const ::pilot::usboard::USBoardModule_get_config_return& value); ///< \private
 void write(std::ostream& out, const ::pilot::usboard::USBoardModule_is_connected& value); ///< \private
 void write(std::ostream& out, const ::pilot::usboard::USBoardModule_is_connected_return& value); ///< \private
+void write(std::ostream& out, const ::pilot::usboard::USBoardModule_request_analog_data& value); ///< \private
+void write(std::ostream& out, const ::pilot::usboard::USBoardModule_request_analog_data_return& value); ///< \private
 void write(std::ostream& out, const ::pilot::usboard::USBoardModule_request_config& value); ///< \private
 void write(std::ostream& out, const ::pilot::usboard::USBoardModule_request_config_return& value); ///< \private
 void write(std::ostream& out, const ::pilot::usboard::USBoardModule_request_data& value); ///< \private
 void write(std::ostream& out, const ::pilot::usboard::USBoardModule_request_data_return& value); ///< \private
 void write(std::ostream& out, const ::pilot::usboard::USBoardModule_save_config& value); ///< \private
 void write(std::ostream& out, const ::pilot::usboard::USBoardModule_save_config_return& value); ///< \private
-void write(std::ostream& out, const ::pilot::usboard::USBoardModule_set_config& value); ///< \private
-void write(std::ostream& out, const ::pilot::usboard::USBoardModule_set_config_return& value); ///< \private
+void write(std::ostream& out, const ::pilot::usboard::USBoardModule_send_config& value); ///< \private
+void write(std::ostream& out, const ::pilot::usboard::USBoardModule_send_config_return& value); ///< \private
+void write(std::ostream& out, const ::pilot::usboard::USBoardModule_set_channel_active& value); ///< \private
+void write(std::ostream& out, const ::pilot::usboard::USBoardModule_set_channel_active_return& value); ///< \private
 void write(std::ostream& out, const ::pilot::usboard::group_config_t& value); ///< \private
 void write(std::ostream& out, const ::pilot::usboard::sensor_config_t& value); ///< \private
 
@@ -135,14 +159,18 @@ void accept(Visitor& visitor, const ::pilot::usboard::USBoardModule_get_config& 
 void accept(Visitor& visitor, const ::pilot::usboard::USBoardModule_get_config_return& value); ///< \private
 void accept(Visitor& visitor, const ::pilot::usboard::USBoardModule_is_connected& value); ///< \private
 void accept(Visitor& visitor, const ::pilot::usboard::USBoardModule_is_connected_return& value); ///< \private
+void accept(Visitor& visitor, const ::pilot::usboard::USBoardModule_request_analog_data& value); ///< \private
+void accept(Visitor& visitor, const ::pilot::usboard::USBoardModule_request_analog_data_return& value); ///< \private
 void accept(Visitor& visitor, const ::pilot::usboard::USBoardModule_request_config& value); ///< \private
 void accept(Visitor& visitor, const ::pilot::usboard::USBoardModule_request_config_return& value); ///< \private
 void accept(Visitor& visitor, const ::pilot::usboard::USBoardModule_request_data& value); ///< \private
 void accept(Visitor& visitor, const ::pilot::usboard::USBoardModule_request_data_return& value); ///< \private
 void accept(Visitor& visitor, const ::pilot::usboard::USBoardModule_save_config& value); ///< \private
 void accept(Visitor& visitor, const ::pilot::usboard::USBoardModule_save_config_return& value); ///< \private
-void accept(Visitor& visitor, const ::pilot::usboard::USBoardModule_set_config& value); ///< \private
-void accept(Visitor& visitor, const ::pilot::usboard::USBoardModule_set_config_return& value); ///< \private
+void accept(Visitor& visitor, const ::pilot::usboard::USBoardModule_send_config& value); ///< \private
+void accept(Visitor& visitor, const ::pilot::usboard::USBoardModule_send_config_return& value); ///< \private
+void accept(Visitor& visitor, const ::pilot::usboard::USBoardModule_set_channel_active& value); ///< \private
+void accept(Visitor& visitor, const ::pilot::usboard::USBoardModule_set_channel_active_return& value); ///< \private
 void accept(Visitor& visitor, const ::pilot::usboard::group_config_t& value); ///< \private
 void accept(Visitor& visitor, const ::pilot::usboard::sensor_config_t& value); ///< \private
 
@@ -309,6 +337,52 @@ struct type<::pilot::usboard::USBoardModule_is_connected_return> {
 
 /// \private
 template<>
+struct type<::pilot::usboard::USBoardModule_request_analog_data> {
+	void read(TypeInput& in, ::pilot::usboard::USBoardModule_request_analog_data& value, const TypeCode* type_code, const uint16_t* code) {
+		vnx::read(in, value, type_code, code);
+	}
+	void write(TypeOutput& out, const ::pilot::usboard::USBoardModule_request_analog_data& value, const TypeCode* type_code, const uint16_t* code) {
+		vnx::write(out, value, type_code, code);
+	}
+	void read(std::istream& in, ::pilot::usboard::USBoardModule_request_analog_data& value) {
+		vnx::read(in, value);
+	}
+	void write(std::ostream& out, const ::pilot::usboard::USBoardModule_request_analog_data& value) {
+		vnx::write(out, value);
+	}
+	void accept(Visitor& visitor, const ::pilot::usboard::USBoardModule_request_analog_data& value) {
+		vnx::accept(visitor, value);
+	}
+	void create_dynamic_code(std::vector<uint16_t>& code) {
+		code.push_back(CODE_ANY);
+	}
+};
+
+/// \private
+template<>
+struct type<::pilot::usboard::USBoardModule_request_analog_data_return> {
+	void read(TypeInput& in, ::pilot::usboard::USBoardModule_request_analog_data_return& value, const TypeCode* type_code, const uint16_t* code) {
+		vnx::read(in, value, type_code, code);
+	}
+	void write(TypeOutput& out, const ::pilot::usboard::USBoardModule_request_analog_data_return& value, const TypeCode* type_code, const uint16_t* code) {
+		vnx::write(out, value, type_code, code);
+	}
+	void read(std::istream& in, ::pilot::usboard::USBoardModule_request_analog_data_return& value) {
+		vnx::read(in, value);
+	}
+	void write(std::ostream& out, const ::pilot::usboard::USBoardModule_request_analog_data_return& value) {
+		vnx::write(out, value);
+	}
+	void accept(Visitor& visitor, const ::pilot::usboard::USBoardModule_request_analog_data_return& value) {
+		vnx::accept(visitor, value);
+	}
+	void create_dynamic_code(std::vector<uint16_t>& code) {
+		code.push_back(CODE_ANY);
+	}
+};
+
+/// \private
+template<>
 struct type<::pilot::usboard::USBoardModule_request_config> {
 	void read(TypeInput& in, ::pilot::usboard::USBoardModule_request_config& value, const TypeCode* type_code, const uint16_t* code) {
 		vnx::read(in, value, type_code, code);
@@ -447,20 +521,20 @@ struct type<::pilot::usboard::USBoardModule_save_config_return> {
 
 /// \private
 template<>
-struct type<::pilot::usboard::USBoardModule_set_config> {
-	void read(TypeInput& in, ::pilot::usboard::USBoardModule_set_config& value, const TypeCode* type_code, const uint16_t* code) {
+struct type<::pilot::usboard::USBoardModule_send_config> {
+	void read(TypeInput& in, ::pilot::usboard::USBoardModule_send_config& value, const TypeCode* type_code, const uint16_t* code) {
 		vnx::read(in, value, type_code, code);
 	}
-	void write(TypeOutput& out, const ::pilot::usboard::USBoardModule_set_config& value, const TypeCode* type_code, const uint16_t* code) {
+	void write(TypeOutput& out, const ::pilot::usboard::USBoardModule_send_config& value, const TypeCode* type_code, const uint16_t* code) {
 		vnx::write(out, value, type_code, code);
 	}
-	void read(std::istream& in, ::pilot::usboard::USBoardModule_set_config& value) {
+	void read(std::istream& in, ::pilot::usboard::USBoardModule_send_config& value) {
 		vnx::read(in, value);
 	}
-	void write(std::ostream& out, const ::pilot::usboard::USBoardModule_set_config& value) {
+	void write(std::ostream& out, const ::pilot::usboard::USBoardModule_send_config& value) {
 		vnx::write(out, value);
 	}
-	void accept(Visitor& visitor, const ::pilot::usboard::USBoardModule_set_config& value) {
+	void accept(Visitor& visitor, const ::pilot::usboard::USBoardModule_send_config& value) {
 		vnx::accept(visitor, value);
 	}
 	void create_dynamic_code(std::vector<uint16_t>& code) {
@@ -470,20 +544,66 @@ struct type<::pilot::usboard::USBoardModule_set_config> {
 
 /// \private
 template<>
-struct type<::pilot::usboard::USBoardModule_set_config_return> {
-	void read(TypeInput& in, ::pilot::usboard::USBoardModule_set_config_return& value, const TypeCode* type_code, const uint16_t* code) {
+struct type<::pilot::usboard::USBoardModule_send_config_return> {
+	void read(TypeInput& in, ::pilot::usboard::USBoardModule_send_config_return& value, const TypeCode* type_code, const uint16_t* code) {
 		vnx::read(in, value, type_code, code);
 	}
-	void write(TypeOutput& out, const ::pilot::usboard::USBoardModule_set_config_return& value, const TypeCode* type_code, const uint16_t* code) {
+	void write(TypeOutput& out, const ::pilot::usboard::USBoardModule_send_config_return& value, const TypeCode* type_code, const uint16_t* code) {
 		vnx::write(out, value, type_code, code);
 	}
-	void read(std::istream& in, ::pilot::usboard::USBoardModule_set_config_return& value) {
+	void read(std::istream& in, ::pilot::usboard::USBoardModule_send_config_return& value) {
 		vnx::read(in, value);
 	}
-	void write(std::ostream& out, const ::pilot::usboard::USBoardModule_set_config_return& value) {
+	void write(std::ostream& out, const ::pilot::usboard::USBoardModule_send_config_return& value) {
 		vnx::write(out, value);
 	}
-	void accept(Visitor& visitor, const ::pilot::usboard::USBoardModule_set_config_return& value) {
+	void accept(Visitor& visitor, const ::pilot::usboard::USBoardModule_send_config_return& value) {
+		vnx::accept(visitor, value);
+	}
+	void create_dynamic_code(std::vector<uint16_t>& code) {
+		code.push_back(CODE_ANY);
+	}
+};
+
+/// \private
+template<>
+struct type<::pilot::usboard::USBoardModule_set_channel_active> {
+	void read(TypeInput& in, ::pilot::usboard::USBoardModule_set_channel_active& value, const TypeCode* type_code, const uint16_t* code) {
+		vnx::read(in, value, type_code, code);
+	}
+	void write(TypeOutput& out, const ::pilot::usboard::USBoardModule_set_channel_active& value, const TypeCode* type_code, const uint16_t* code) {
+		vnx::write(out, value, type_code, code);
+	}
+	void read(std::istream& in, ::pilot::usboard::USBoardModule_set_channel_active& value) {
+		vnx::read(in, value);
+	}
+	void write(std::ostream& out, const ::pilot::usboard::USBoardModule_set_channel_active& value) {
+		vnx::write(out, value);
+	}
+	void accept(Visitor& visitor, const ::pilot::usboard::USBoardModule_set_channel_active& value) {
+		vnx::accept(visitor, value);
+	}
+	void create_dynamic_code(std::vector<uint16_t>& code) {
+		code.push_back(CODE_ANY);
+	}
+};
+
+/// \private
+template<>
+struct type<::pilot::usboard::USBoardModule_set_channel_active_return> {
+	void read(TypeInput& in, ::pilot::usboard::USBoardModule_set_channel_active_return& value, const TypeCode* type_code, const uint16_t* code) {
+		vnx::read(in, value, type_code, code);
+	}
+	void write(TypeOutput& out, const ::pilot::usboard::USBoardModule_set_channel_active_return& value, const TypeCode* type_code, const uint16_t* code) {
+		vnx::write(out, value, type_code, code);
+	}
+	void read(std::istream& in, ::pilot::usboard::USBoardModule_set_channel_active_return& value) {
+		vnx::read(in, value);
+	}
+	void write(std::ostream& out, const ::pilot::usboard::USBoardModule_set_channel_active_return& value) {
+		vnx::write(out, value);
+	}
+	void accept(Visitor& visitor, const ::pilot::usboard::USBoardModule_set_channel_active_return& value) {
 		vnx::accept(visitor, value);
 	}
 	void create_dynamic_code(std::vector<uint16_t>& code) {

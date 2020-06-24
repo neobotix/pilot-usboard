@@ -52,10 +52,12 @@ public:
 protected:
 	virtual std::shared_ptr<const ::pilot::usboard::USBoardConfig> get_config() const = 0;
 	virtual vnx::bool_t is_connected() const = 0;
+	virtual void request_analog_data() = 0;
 	virtual void request_config() = 0;
 	virtual void request_data(const int32_t& group_set) = 0;
 	virtual void save_config() = 0;
-	virtual void set_config(const std::shared_ptr<const ::pilot::usboard::USBoardConfig>& config) = 0;
+	virtual void send_config(const std::shared_ptr<const ::pilot::usboard::USBoardConfig>& config) = 0;
+	virtual void set_channel_active(const std::vector<vnx::bool_t>& sensors) = 0;
 	
 	void vnx_handle_switch(std::shared_ptr<const vnx::Sample> _sample) override;
 	std::shared_ptr<vnx::Value> vnx_call_switch(std::shared_ptr<const vnx::Value> _method, const vnx::request_id_t& _request_id) override;

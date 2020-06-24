@@ -23,6 +23,10 @@ public:
 	
 	vnx::bool_t is_connected();
 	
+	void request_analog_data();
+	
+	void request_analog_data_async();
+	
 	void request_config();
 	
 	void request_config_async();
@@ -35,9 +39,13 @@ public:
 	
 	void save_config_async();
 	
-	void set_config(const std::shared_ptr<const ::pilot::usboard::USBoardConfig>& config);
+	void send_config(const std::shared_ptr<const ::pilot::usboard::USBoardConfig>& config);
 	
-	void set_config_async(const std::shared_ptr<const ::pilot::usboard::USBoardConfig>& config);
+	void send_config_async(const std::shared_ptr<const ::pilot::usboard::USBoardConfig>& config);
+	
+	void set_channel_active(const std::vector<vnx::bool_t>& sensors);
+	
+	void set_channel_active_async(const std::vector<vnx::bool_t>& sensors);
 	
 };
 

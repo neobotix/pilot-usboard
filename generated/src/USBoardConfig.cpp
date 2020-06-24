@@ -16,6 +16,7 @@ namespace usboard {
 
 const int32_t USBoardConfig::SENSOR_SETUP_4;
 const int32_t USBoardConfig::SENSOR_SETUP_8;
+const int32_t USBoardConfig::SENSOR_SETUP_12;
 const int32_t USBoardConfig::SENSOR_SETUP_16;
 const int32_t USBoardConfig::TRANSMIT_MODE_REQUEST;
 const int32_t USBoardConfig::TRANSMIT_MODE_CAN;

@@ -4,6 +4,7 @@
 #include <vnx/vnx.h>
 #include <pilot/usboard/package.hxx>
 #include <pilot/usboard/USBoardData.hxx>
+#include <pilot/base/CAN_Frame.hxx>
 #include <pilot/base/Sample.hxx>
 
 
@@ -13,7 +14,7 @@ namespace usboard {
 
 
 const vnx::Hash64 USBoardData::VNX_TYPE_HASH(0xbd08b8f30252bcb1ull);
-const vnx::Hash64 USBoardData::VNX_CODE_HASH(0x66e73f707e53c6baull);
+const vnx::Hash64 USBoardData::VNX_CODE_HASH(0x58ed237e35f52fdull);
 
 vnx::Hash64 USBoardData::get_type_hash() const {
 	return VNX_TYPE_HASH;
@@ -132,7 +133,7 @@ std::shared_ptr<vnx::TypeCode> USBoardData::static_create_type_code() {
 	std::shared_ptr<vnx::TypeCode> type_code = std::make_shared<vnx::TypeCode>();
 	type_code->name = "pilot.usboard.USBoardData";
 	type_code->type_hash = vnx::Hash64(0xbd08b8f30252bcb1ull);
-	type_code->code_hash = vnx::Hash64(0x66e73f707e53c6baull);
+	type_code->code_hash = vnx::Hash64(0x58ed237e35f52fdull);
 	type_code->is_native = true;
 	type_code->is_class = true;
 	type_code->parents.resize(1);
@@ -162,7 +163,7 @@ std::shared_ptr<vnx::TypeCode> USBoardData::static_create_type_code() {
 	{
 		vnx::TypeField& field = type_code->fields[4];
 		field.name = "analog_input_scale";
-		field.value = vnx::to_string(0.004887);
+		field.value = vnx::to_string(0.001221);
 		field.code = {9};
 	}
 	type_code->build();

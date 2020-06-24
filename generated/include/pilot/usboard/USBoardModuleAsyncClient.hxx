@@ -27,6 +27,10 @@ public:
 			const std::function<void(vnx::bool_t)>& _callback = std::function<void(vnx::bool_t)>(),
 			const std::function<void(const std::exception&)>& _error_callback = std::function<void(const std::exception&)>());
 	
+	uint64_t request_analog_data(
+			const std::function<void()>& _callback = std::function<void()>(),
+			const std::function<void(const std::exception&)>& _error_callback = std::function<void(const std::exception&)>());
+	
 	uint64_t request_config(
 			const std::function<void()>& _callback = std::function<void()>(),
 			const std::function<void(const std::exception&)>& _error_callback = std::function<void(const std::exception&)>());
@@ -39,7 +43,11 @@ public:
 			const std::function<void()>& _callback = std::function<void()>(),
 			const std::function<void(const std::exception&)>& _error_callback = std::function<void(const std::exception&)>());
 	
-	uint64_t set_config(const std::shared_ptr<const ::pilot::usboard::USBoardConfig>& config, 
+	uint64_t send_config(const std::shared_ptr<const ::pilot::usboard::USBoardConfig>& config, 
+			const std::function<void()>& _callback = std::function<void()>(),
+			const std::function<void(const std::exception&)>& _error_callback = std::function<void(const std::exception&)>());
+	
+	uint64_t set_channel_active(const std::vector<vnx::bool_t>& sensors, 
 			const std::function<void()>& _callback = std::function<void()>(),
 			const std::function<void(const std::exception&)>& _error_callback = std::function<void(const std::exception&)>());
 	
@@ -53,10 +61,12 @@ protected:
 private:
 	std::map<uint64_t, std::pair<std::function<void(std::shared_ptr<const ::pilot::usboard::USBoardConfig>)>, std::function<void(const std::exception&)>>> vnx_queue_get_config;
 	std::map<uint64_t, std::pair<std::function<void(vnx::bool_t)>, std::function<void(const std::exception&)>>> vnx_queue_is_connected;
+	std::map<uint64_t, std::pair<std::function<void()>, std::function<void(const std::exception&)>>> vnx_queue_request_analog_data;
 	std::map<uint64_t, std::pair<std::function<void()>, std::function<void(const std::exception&)>>> vnx_queue_request_config;
 	std::map<uint64_t, std::pair<std::function<void()>, std::function<void(const std::exception&)>>> vnx_queue_request_data;
 	std::map<uint64_t, std::pair<std::function<void()>, std::function<void(const std::exception&)>>> vnx_queue_save_config;
-	std::map<uint64_t, std::pair<std::function<void()>, std::function<void(const std::exception&)>>> vnx_queue_set_config;
+	std::map<uint64_t, std::pair<std::function<void()>, std::function<void(const std::exception&)>>> vnx_queue_send_config;
+	std::map<uint64_t, std::pair<std::function<void()>, std::function<void(const std::exception&)>>> vnx_queue_set_channel_active;
 	
 };
 
