@@ -79,15 +79,15 @@ void USBoardModuleClient::request_config_async() {
 	request_config();
 }
 
-void USBoardModuleClient::request_data(const int32_t& group_set) {
+void USBoardModuleClient::request_data(const std::vector<vnx::bool_t>& groups) {
 	auto _method = ::pilot::usboard::USBoardModule_request_data::create();
-	_method->group_set = group_set;
+	_method->groups = groups;
 	auto _return_value = vnx_request(_method);
 }
 
-void USBoardModuleClient::request_data_async(const int32_t& group_set) {
+void USBoardModuleClient::request_data_async(const std::vector<vnx::bool_t>& groups) {
 	vnx_is_async = true;
-	request_data(group_set);
+	request_data(groups);
 }
 
 void USBoardModuleClient::save_config() {

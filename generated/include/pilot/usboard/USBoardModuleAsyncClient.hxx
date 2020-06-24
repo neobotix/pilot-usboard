@@ -35,7 +35,7 @@ public:
 			const std::function<void()>& _callback = std::function<void()>(),
 			const std::function<void(const std::exception&)>& _error_callback = std::function<void(const std::exception&)>());
 	
-	uint64_t request_data(const int32_t& group_set, 
+	uint64_t request_data(const std::vector<vnx::bool_t>& groups, 
 			const std::function<void()>& _callback = std::function<void()>(),
 			const std::function<void(const std::exception&)>& _error_callback = std::function<void(const std::exception&)>());
 	

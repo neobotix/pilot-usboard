@@ -14,7 +14,7 @@ namespace usboard {
 
 
 const vnx::Hash64 USBoardModule_request_data::VNX_TYPE_HASH(0xc7bf45418c654bbfull);
-const vnx::Hash64 USBoardModule_request_data::VNX_CODE_HASH(0x8de34564efdcc7ccull);
+const vnx::Hash64 USBoardModule_request_data::VNX_CODE_HASH(0x91a7279236063fb3ull);
 
 vnx::Hash64 USBoardModule_request_data::get_type_hash() const {
 	return VNX_TYPE_HASH;
@@ -46,13 +46,13 @@ void USBoardModule_request_data::write(vnx::TypeOutput& _out, const vnx::TypeCod
 void USBoardModule_request_data::accept(vnx::Visitor& _visitor) const {
 	const vnx::TypeCode* _type_code = pilot::usboard::vnx_native_type_code_USBoardModule_request_data;
 	_visitor.type_begin(*_type_code);
-	_visitor.type_field(_type_code->fields[0], 0); vnx::accept(_visitor, group_set);
+	_visitor.type_field(_type_code->fields[0], 0); vnx::accept(_visitor, groups);
 	_visitor.type_end(*_type_code);
 }
 
 void USBoardModule_request_data::write(std::ostream& _out) const {
 	_out << "{\"__type\": \"pilot.usboard.USBoardModule.request_data\"";
-	_out << ", \"group_set\": "; vnx::write(_out, group_set);
+	_out << ", \"groups\": "; vnx::write(_out, groups);
 	_out << "}";
 }
 
@@ -60,8 +60,8 @@ void USBoardModule_request_data::read(std::istream& _in) {
 	std::map<std::string, std::string> _object;
 	vnx::read_object(_in, _object);
 	for(const auto& _entry : _object) {
-		if(_entry.first == "group_set") {
-			vnx::from_string(_entry.second, group_set);
+		if(_entry.first == "groups") {
+			vnx::from_string(_entry.second, groups);
 		}
 	}
 }
@@ -69,14 +69,14 @@ void USBoardModule_request_data::read(std::istream& _in) {
 vnx::Object USBoardModule_request_data::to_object() const {
 	vnx::Object _object;
 	_object["__type"] = "pilot.usboard.USBoardModule.request_data";
-	_object["group_set"] = group_set;
+	_object["groups"] = groups;
 	return _object;
 }
 
 void USBoardModule_request_data::from_object(const vnx::Object& _object) {
 	for(const auto& _entry : _object.field) {
-		if(_entry.first == "group_set") {
-			_entry.second.to(group_set);
+		if(_entry.first == "groups") {
+			_entry.second.to(groups);
 		}
 	}
 }
@@ -105,7 +105,7 @@ std::shared_ptr<vnx::TypeCode> USBoardModule_request_data::static_create_type_co
 	std::shared_ptr<vnx::TypeCode> type_code = std::make_shared<vnx::TypeCode>();
 	type_code->name = "pilot.usboard.USBoardModule.request_data";
 	type_code->type_hash = vnx::Hash64(0xc7bf45418c654bbfull);
-	type_code->code_hash = vnx::Hash64(0x8de34564efdcc7ccull);
+	type_code->code_hash = vnx::Hash64(0x91a7279236063fb3ull);
 	type_code->is_native = true;
 	type_code->is_class = true;
 	type_code->is_method = true;
@@ -114,8 +114,9 @@ std::shared_ptr<vnx::TypeCode> USBoardModule_request_data::static_create_type_co
 	type_code->fields.resize(1);
 	{
 		vnx::TypeField& field = type_code->fields[0];
-		field.name = "group_set";
-		field.code = {7};
+		field.is_extended = true;
+		field.name = "groups";
+		field.code = {12, 1};
 	}
 	type_code->build();
 	return type_code;
@@ -141,15 +142,10 @@ void read(TypeInput& in, ::pilot::usboard::USBoardModule_request_data& value, co
 	}
 	const char* const _buf = in.read(type_code->total_field_size);
 	if(type_code->is_matched) {
-		{
-			const vnx::TypeField* const _field = type_code->field_map[0];
-			if(_field) {
-				vnx::read_value(_buf + _field->offset, value.group_set, _field->code.data());
-			}
-		}
 	}
 	for(const vnx::TypeField* _field : type_code->ext_fields) {
 		switch(_field->native_index) {
+			case 0: vnx::read(in, value.groups, type_code, _field->code.data()); break;
 			default: vnx::skip(in, type_code, _field->code.data());
 		}
 	}
@@ -164,8 +160,7 @@ void write(TypeOutput& out, const ::pilot::usboard::USBoardModule_request_data& 
 	if(code && code[0] == CODE_STRUCT) {
 		type_code = type_code->depends[code[1]];
 	}
-	char* const _buf = out.write(4);
-	vnx::write_value(_buf + 0, value.group_set);
+	vnx::write(out, value.groups, type_code, type_code->fields[0].code.data());
 }
 
 void read(std::istream& in, ::pilot::usboard::USBoardModule_request_data& value) {

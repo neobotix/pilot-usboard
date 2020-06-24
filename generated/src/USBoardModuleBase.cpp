@@ -262,7 +262,7 @@ std::shared_ptr<vnx::Value> USBoardModuleBase::vnx_call_switch(std::shared_ptr<c
 			throw std::logic_error("vnx_call_switch(): !_args");
 		}
 		auto _return_value = ::pilot::usboard::USBoardModule_request_data_return::create();
-		request_data(_args->group_set);
+		request_data(_args->groups);
 		return _return_value;
 	} else if(_type_hash == vnx::Hash64(0xc5d8f1fd2323ac3bull)) {
 		auto _args = std::dynamic_pointer_cast<const ::pilot::usboard::USBoardModule_save_config>(_method);

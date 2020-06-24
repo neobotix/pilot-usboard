@@ -31,9 +31,9 @@ public:
 	
 	void request_config_async();
 	
-	void request_data(const int32_t& group_set);
+	void request_data(const std::vector<vnx::bool_t>& groups);
 	
-	void request_data_async(const int32_t& group_set);
+	void request_data_async(const std::vector<vnx::bool_t>& groups);
 	
 	void save_config();
 	

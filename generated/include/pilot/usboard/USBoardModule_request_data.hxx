@@ -14,7 +14,7 @@ namespace usboard {
 class USBoardModule_request_data : public ::vnx::Value {
 public:
 	
-	int32_t group_set = 0;
+	std::vector<vnx::bool_t> groups;
 	
 	typedef ::vnx::Value Super;
 	

@@ -71,9 +71,9 @@ uint64_t USBoardModuleAsyncClient::request_config(const std::function<void()>& _
 	return _request_id;
 }
 
-uint64_t USBoardModuleAsyncClient::request_data(const int32_t& group_set, const std::function<void()>& _callback, const std::function<void(const std::exception&)>& _error_callback) {
+uint64_t USBoardModuleAsyncClient::request_data(const std::vector<vnx::bool_t>& groups, const std::function<void()>& _callback, const std::function<void(const std::exception&)>& _error_callback) {
 	auto _method = ::pilot::usboard::USBoardModule_request_data::create();
-	_method->group_set = group_set;
+	_method->groups = groups;
 	const auto _request_id = vnx_request(_method);
 	vnx_queue_request_data[_request_id] = std::make_pair(_callback, _error_callback);
 	vnx_num_pending++;
