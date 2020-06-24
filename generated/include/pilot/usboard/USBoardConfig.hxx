@@ -16,14 +16,14 @@ namespace usboard {
 
 class USBoardConfig : public ::vnx::Value {
 public:
-	static const int32_t SENSOR_SETUP_4 = 1;
-	static const int32_t SENSOR_SETUP_8 = 3;
-	static const int32_t SENSOR_SETUP_12 = 7;
-	static const int32_t SENSOR_SETUP_16 = 15;
-	static const int32_t TRANSMIT_MODE_REQUEST = 0;
-	static const int32_t TRANSMIT_MODE_CAN = 1;
-	static const int32_t TRANSMIT_MODE_SERIAL = 2;
-	static const int32_t TRANSMIT_MODE_CAN_SERIAL = 3;
+	static const uint32_t SENSOR_SETUP_4 = 1;
+	static const uint32_t SENSOR_SETUP_8 = 3;
+	static const uint32_t SENSOR_SETUP_12 = 7;
+	static const uint32_t SENSOR_SETUP_16 = 15;
+	static const uint32_t TRANSMIT_MODE_REQUEST = 0;
+	static const uint32_t TRANSMIT_MODE_CAN = 1;
+	static const uint32_t TRANSMIT_MODE_SERIAL = 2;
+	static const uint32_t TRANSMIT_MODE_CAN_SERIAL = 3;
 	
 	uint32_t serial_number = 0;
 	uint32_t can_id = 1024;

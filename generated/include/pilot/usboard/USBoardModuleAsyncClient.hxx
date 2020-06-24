@@ -39,7 +39,7 @@ public:
 			const std::function<void()>& _callback = std::function<void()>(),
 			const std::function<void(const std::exception&)>& _error_callback = std::function<void(const std::exception&)>());
 	
-	uint64_t save_config(
+	uint64_t save_config(const std::shared_ptr<const ::pilot::usboard::USBoardConfig>& config, 
 			const std::function<void()>& _callback = std::function<void()>(),
 			const std::function<void(const std::exception&)>& _error_callback = std::function<void(const std::exception&)>());
 	

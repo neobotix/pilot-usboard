@@ -4,6 +4,7 @@
 #include <vnx/vnx.h>
 #include <pilot/usboard/package.hxx>
 #include <pilot/usboard/USBoardModule_save_config.hxx>
+#include <pilot/usboard/USBoardConfig.hxx>
 #include <pilot/usboard/USBoardModule_save_config_return.hxx>
 #include <vnx/Value.h>
 
@@ -14,7 +15,7 @@ namespace usboard {
 
 
 const vnx::Hash64 USBoardModule_save_config::VNX_TYPE_HASH(0xc5d8f1fd2323ac3bull);
-const vnx::Hash64 USBoardModule_save_config::VNX_CODE_HASH(0x9d7fea76d047b71eull);
+const vnx::Hash64 USBoardModule_save_config::VNX_CODE_HASH(0x2a03fa3b4f5f4501ull);
 
 vnx::Hash64 USBoardModule_save_config::get_type_hash() const {
 	return VNX_TYPE_HASH;
@@ -46,11 +47,13 @@ void USBoardModule_save_config::write(vnx::TypeOutput& _out, const vnx::TypeCode
 void USBoardModule_save_config::accept(vnx::Visitor& _visitor) const {
 	const vnx::TypeCode* _type_code = pilot::usboard::vnx_native_type_code_USBoardModule_save_config;
 	_visitor.type_begin(*_type_code);
+	_visitor.type_field(_type_code->fields[0], 0); vnx::accept(_visitor, config);
 	_visitor.type_end(*_type_code);
 }
 
 void USBoardModule_save_config::write(std::ostream& _out) const {
 	_out << "{\"__type\": \"pilot.usboard.USBoardModule.save_config\"";
+	_out << ", \"config\": "; vnx::write(_out, config);
 	_out << "}";
 }
 
@@ -58,17 +61,24 @@ void USBoardModule_save_config::read(std::istream& _in) {
 	std::map<std::string, std::string> _object;
 	vnx::read_object(_in, _object);
 	for(const auto& _entry : _object) {
+		if(_entry.first == "config") {
+			vnx::from_string(_entry.second, config);
+		}
 	}
 }
 
 vnx::Object USBoardModule_save_config::to_object() const {
 	vnx::Object _object;
 	_object["__type"] = "pilot.usboard.USBoardModule.save_config";
+	_object["config"] = config;
 	return _object;
 }
 
 void USBoardModule_save_config::from_object(const vnx::Object& _object) {
 	for(const auto& _entry : _object.field) {
+		if(_entry.first == "config") {
+			_entry.second.to(config);
+		}
 	}
 }
 
@@ -96,12 +106,19 @@ std::shared_ptr<vnx::TypeCode> USBoardModule_save_config::static_create_type_cod
 	std::shared_ptr<vnx::TypeCode> type_code = std::make_shared<vnx::TypeCode>();
 	type_code->name = "pilot.usboard.USBoardModule.save_config";
 	type_code->type_hash = vnx::Hash64(0xc5d8f1fd2323ac3bull);
-	type_code->code_hash = vnx::Hash64(0x9d7fea76d047b71eull);
+	type_code->code_hash = vnx::Hash64(0x2a03fa3b4f5f4501ull);
 	type_code->is_native = true;
 	type_code->is_class = true;
 	type_code->is_method = true;
 	type_code->create_value = []() -> std::shared_ptr<vnx::Value> { return std::make_shared<USBoardModule_save_config>(); };
 	type_code->return_type = ::pilot::usboard::USBoardModule_save_config_return::static_get_type_code();
+	type_code->fields.resize(1);
+	{
+		vnx::TypeField& field = type_code->fields[0];
+		field.is_extended = true;
+		field.name = "config";
+		field.code = {16};
+	}
 	type_code->build();
 	return type_code;
 }
@@ -125,8 +142,11 @@ void read(TypeInput& in, ::pilot::usboard::USBoardModule_save_config& value, con
 		}
 	}
 	const char* const _buf = in.read(type_code->total_field_size);
+	if(type_code->is_matched) {
+	}
 	for(const vnx::TypeField* _field : type_code->ext_fields) {
 		switch(_field->native_index) {
+			case 0: vnx::read(in, value.config, type_code, _field->code.data()); break;
 			default: vnx::skip(in, type_code, _field->code.data());
 		}
 	}
@@ -141,6 +161,7 @@ void write(TypeOutput& out, const ::pilot::usboard::USBoardModule_save_config& v
 	if(code && code[0] == CODE_STRUCT) {
 		type_code = type_code->depends[code[1]];
 	}
+	vnx::write(out, value.config, type_code, type_code->fields[0].code.data());
 }
 
 void read(std::istream& in, ::pilot::usboard::USBoardModule_save_config& value) {

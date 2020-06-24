@@ -10,9 +10,9 @@
 namespace pilot {
 namespace usboard {
 
-const int32_t group_config_t::RESOLUTION_05_CM;
-const int32_t group_config_t::RESOLUTION_1_CM;
-const int32_t group_config_t::RESOLUTION_2_CM;
+const uint32_t group_config_t::RESOLUTION_05_CM;
+const uint32_t group_config_t::RESOLUTION_1_CM;
+const uint32_t group_config_t::RESOLUTION_2_CM;
 
 const vnx::Hash64 group_config_t::VNX_TYPE_HASH(0x54c195694cac61efull);
 const vnx::Hash64 group_config_t::VNX_CODE_HASH(0x95e73f54d0c817full);

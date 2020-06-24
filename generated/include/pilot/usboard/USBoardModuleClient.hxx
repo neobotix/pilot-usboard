@@ -35,9 +35,9 @@ public:
 	
 	void request_data_async(const std::vector<vnx::bool_t>& groups);
 	
-	void save_config();
+	void save_config(const std::shared_ptr<const ::pilot::usboard::USBoardConfig>& config);
 	
-	void save_config_async();
+	void save_config_async(const std::shared_ptr<const ::pilot::usboard::USBoardConfig>& config);
 	
 	void send_config(const std::shared_ptr<const ::pilot::usboard::USBoardConfig>& config);
 	

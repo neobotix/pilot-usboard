@@ -90,14 +90,15 @@ void USBoardModuleClient::request_data_async(const std::vector<vnx::bool_t>& gro
 	request_data(groups);
 }
 
-void USBoardModuleClient::save_config() {
+void USBoardModuleClient::save_config(const std::shared_ptr<const ::pilot::usboard::USBoardConfig>& config) {
 	auto _method = ::pilot::usboard::USBoardModule_save_config::create();
+	_method->config = config;
 	auto _return_value = vnx_request(_method);
 }
 
-void USBoardModuleClient::save_config_async() {
+void USBoardModuleClient::save_config_async(const std::shared_ptr<const ::pilot::usboard::USBoardConfig>& config) {
 	vnx_is_async = true;
-	save_config();
+	save_config(config);
 }
 
 void USBoardModuleClient::send_config(const std::shared_ptr<const ::pilot::usboard::USBoardConfig>& config) {

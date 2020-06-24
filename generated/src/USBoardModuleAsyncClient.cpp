@@ -80,8 +80,9 @@ uint64_t USBoardModuleAsyncClient::request_data(const std::vector<vnx::bool_t>& 
 	return _request_id;
 }
 
-uint64_t USBoardModuleAsyncClient::save_config(const std::function<void()>& _callback, const std::function<void(const std::exception&)>& _error_callback) {
+uint64_t USBoardModuleAsyncClient::save_config(const std::shared_ptr<const ::pilot::usboard::USBoardConfig>& config, const std::function<void()>& _callback, const std::function<void(const std::exception&)>& _error_callback) {
 	auto _method = ::pilot::usboard::USBoardModule_save_config::create();
+	_method->config = config;
 	const auto _request_id = vnx_request(_method);
 	vnx_queue_save_config[_request_id] = std::make_pair(_callback, _error_callback);
 	vnx_num_pending++;

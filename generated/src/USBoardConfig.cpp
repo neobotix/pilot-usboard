@@ -14,14 +14,14 @@
 namespace pilot {
 namespace usboard {
 
-const int32_t USBoardConfig::SENSOR_SETUP_4;
-const int32_t USBoardConfig::SENSOR_SETUP_8;
-const int32_t USBoardConfig::SENSOR_SETUP_12;
-const int32_t USBoardConfig::SENSOR_SETUP_16;
-const int32_t USBoardConfig::TRANSMIT_MODE_REQUEST;
-const int32_t USBoardConfig::TRANSMIT_MODE_CAN;
-const int32_t USBoardConfig::TRANSMIT_MODE_SERIAL;
-const int32_t USBoardConfig::TRANSMIT_MODE_CAN_SERIAL;
+const uint32_t USBoardConfig::SENSOR_SETUP_4;
+const uint32_t USBoardConfig::SENSOR_SETUP_8;
+const uint32_t USBoardConfig::SENSOR_SETUP_12;
+const uint32_t USBoardConfig::SENSOR_SETUP_16;
+const uint32_t USBoardConfig::TRANSMIT_MODE_REQUEST;
+const uint32_t USBoardConfig::TRANSMIT_MODE_CAN;
+const uint32_t USBoardConfig::TRANSMIT_MODE_SERIAL;
+const uint32_t USBoardConfig::TRANSMIT_MODE_CAN_SERIAL;
 
 const vnx::Hash64 USBoardConfig::VNX_TYPE_HASH(0x9c0fb140354b6e4cull);
 const vnx::Hash64 USBoardConfig::VNX_CODE_HASH(0x114a9292df647e1full);

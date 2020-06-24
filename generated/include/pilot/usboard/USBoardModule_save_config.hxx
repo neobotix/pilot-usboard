@@ -5,6 +5,7 @@
 #define INCLUDE_pilot_usboard_USBoardModule_save_config_HXX_
 
 #include <pilot/usboard/package.hxx>
+#include <pilot/usboard/USBoardConfig.hxx>
 #include <vnx/Value.h>
 
 
@@ -14,6 +15,7 @@ namespace usboard {
 class USBoardModule_save_config : public ::vnx::Value {
 public:
 	
+	std::shared_ptr<const ::pilot::usboard::USBoardConfig> config;
 	
 	typedef ::vnx::Value Super;
 	
