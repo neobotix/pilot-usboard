@@ -4,8 +4,9 @@ import pilot.base.CAN_Frame;
 
 class USBoardConfig {
 	
-	static const int SENSOR_SETUP_4 = 2;
-	static const int SENSOR_SETUP_8 = 3;
+	static const int SENSOR_SETUP_4 = 1;
+	static const int SENSOR_SETUP_8 = 2;
+	static const int SENSOR_SETUP_12 = 3;
 	static const int SENSOR_SETUP_16 = 4;
 	
 	static const int TRANSMIT_MODE_REQUEST = 1;
