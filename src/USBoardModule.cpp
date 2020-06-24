@@ -46,15 +46,25 @@ void USBoardModule::request_data(const int32_t& group_set)
 	// TODO
 }
 
+void USBoardModule::request_analog_data()
+{
+	// TODO
+}
+
 void USBoardModule::save_config()
 {
 	// TODO
 }
 
-void USBoardModule::set_config(const std::shared_ptr<const USBoardConfig>& config)
+void USBoardModule::send_config(const std::shared_ptr<const USBoardConfig>& config)
 {
 	m_config = config;
 	// TODO: send to board
+}
+
+void USBoardModule::set_channel_active(const std::vector<vnx::bool_t>& sensors)
+{
+	// TODO
 }
 
 

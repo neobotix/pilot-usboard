@@ -12,6 +12,7 @@ add_library(pilot_usboard SHARED
 	${GENERATED_SOURCE_FILES}
 	src/USBoardModule.cpp
 	src/USBoardConfig.cpp
+	src/USBoardData.cpp
 )
 
 target_include_directories(pilot_usboard
