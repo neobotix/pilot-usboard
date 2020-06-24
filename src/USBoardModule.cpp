@@ -41,7 +41,7 @@ void USBoardModule::request_config()
 	// TODO
 }
 
-void USBoardModule::request_data(const int32_t& group_set)
+void USBoardModule::request_data(const std::vector<vnx::bool_t>& groups)
 {
 	// TODO
 }

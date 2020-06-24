@@ -16,7 +16,7 @@ module USBoardModule {
 	
 	bool is_connected() const;					// returns true if board is connected
 	
-	void request_data(int group_set);			// send request for data to board
+	void request_data(vector<bool> groups);		// send request for data to board
 	
 	void request_analog_data();					// send request for analog data to board
 	

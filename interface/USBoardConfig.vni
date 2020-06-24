@@ -5,9 +5,9 @@ import pilot.base.CAN_Frame;
 class USBoardConfig {
 	
 	static const int SENSOR_SETUP_4 = 1;
-	static const int SENSOR_SETUP_8 = 2;
-	static const int SENSOR_SETUP_12 = 3;
-	static const int SENSOR_SETUP_16 = 4;
+	static const int SENSOR_SETUP_8 = 3;
+	static const int SENSOR_SETUP_12 = 7;
+	static const int SENSOR_SETUP_16 = 15;
 	
 	static const int TRANSMIT_MODE_REQUEST = 1;
 	static const int TRANSMIT_MODE_CAN = 2;
@@ -22,7 +22,7 @@ class USBoardConfig {
 	
 	int update_interval_ms = 200;			// data update interval (for all sensors) [ms]
 	
-	int sensor_setup = 4;					// if using 4, 8 or 16 sensors (see SENSOR_SETUP_* above)
+	int sensor_setup = 15;					// if using 4, 8, 12 or 16 sensors (see SENSOR_SETUP_* above)
 	
 	int transmit_mode = 1;					// transmission mode (see TRANSMIT_MODE_* above)
 	

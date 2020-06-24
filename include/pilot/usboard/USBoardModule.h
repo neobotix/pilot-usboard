@@ -27,7 +27,7 @@ protected:
 
 	void request_config() override;
 
-	void request_data(const int32_t& group_set) override;
+	void request_data(const std::vector<vnx::bool_t>& groups) override;
 
 	void request_analog_data() override;
 
