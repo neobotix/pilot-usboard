@@ -25,6 +25,7 @@ public:
 	static const uint32_t TRANSMIT_MODE_SERIAL = 2;
 	static const uint32_t TRANSMIT_MODE_CAN_SERIAL = 3;
 	
+	uint32_t hardware_version = 0;
 	uint32_t serial_number = 0;
 	uint32_t can_id = 1024;
 	uint32_t can_baudrate = 1000000;
