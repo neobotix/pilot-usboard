@@ -61,8 +61,18 @@ void USBoardModule::send_config_async(	const std::shared_ptr<const USBoardConfig
 {
 	throw std::logic_error("not implemented yet");
 	// TODO: send to board and wait for return
-	m_config = config;
-	send_config_async_return(request_id);
+
+	// create timeout callback
+//	timer = set_timeout_millis(5000, std::bind(&USBoardModule::async_timeout_callback, this, request_id));
+
+	// this will be called in handle() when we get the reply from the board
+//	send_config_async_return(request_id);
+
+	// once we got the reply we cancel the timeout callback also
+//	timer.get().stop();
+
+	// store the new config if it was set successfully
+//	m_config = config;
 }
 
 void USBoardModule::save_config_async(	const std::shared_ptr<const USBoardConfig>& config,
@@ -70,13 +80,31 @@ void USBoardModule::save_config_async(	const std::shared_ptr<const USBoardConfig
 {
 	throw std::logic_error("not implemented yet");
 	// TODO: send to board and wait for return
-	save_config_async_return(request_id);
+
+	// create timeout callback
+//	timer = set_timeout_millis(5000, std::bind(&USBoardModule::async_timeout_callback, this, request_id));
+
+	// this will be called in handle() when we get the reply from the board
+//	save_config_async_return(request_id);
+
+	// once we got the reply we cancel the timeout callback also
+//	timer.get().stop();
+
+	// store the new config if it was set successfully
+//	m_config = config;
 }
 
 void USBoardModule::set_channel_active(const std::vector<vnx::bool_t>& sensors)
 {
 	// TODO
 	throw std::logic_error("not implemented yet");
+}
+
+void USBoardModule::async_timeout_callback(const vnx::request_id_t& request_id)
+{
+	auto ex = vnx::Exception::create();
+	ex->what = "receive timeout";
+	vnx_async_callback(request_id, ex);
 }
 
 

@@ -42,6 +42,9 @@ protected:
 	void set_channel_active(const std::vector<vnx::bool_t>& sensors) override;
 
 private:
+	void async_timeout_callback(const vnx::request_id_t& request_id);
+
+private:
 	std::shared_ptr<const USBoardConfig> m_config;
 
 };
