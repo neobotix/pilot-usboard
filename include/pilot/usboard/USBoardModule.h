@@ -42,6 +42,18 @@ protected:
 	void set_channel_active(const std::vector<vnx::bool_t>& sensors) override;
 
 private:
+	enum Command{
+		CMD_CONNECT = 0,
+		CMD_SET_CHANNEL_ACTIVE = 1,
+		CMD_GET_DATA_1TO8 = 2,
+		CMD_GET_DATA_9TO16 = 3,
+		CMD_WRITE_PARASET = 4,
+		CMD_WRITE_PARASET_TO_EEPROM = 5,
+		CMD_READ_PARASET = 6,
+		CMD_GET_ANALOG_IN = 7,
+		CMD_GET_DATA = 11,
+	};
+
 	void async_timeout_callback(const vnx::request_id_t& request_id);
 
 private:

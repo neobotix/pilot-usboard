@@ -25,6 +25,7 @@ void USBoardModule::main()
 {
 	subscribe(input_can, 100);
 	subscribe(input_serial, 100);
+	subscribe(topic_can_request, 100);
 
 	request_config();
 
@@ -43,17 +44,42 @@ vnx::bool_t USBoardModule::is_connected() const
 
 void USBoardModule::request_config()
 {
-	// TODO
+	std::shared_ptr<base::CAN_Frame> frame = base::CAN_Frame::create();
+	frame->id = m_config->can_id;
+	frame->size = 8;
+	frame->set_int(0, 8, CMD_READ_PARASET, 0);
+	for(size_t i=8; i<64; i++){
+		frame->set_bit(i, false);
+	}
+	publish(frame, topic_can_request);
 }
 
 void USBoardModule::request_data(const std::vector<vnx::bool_t>& groups)
 {
-	// TODO
+	std::shared_ptr<base::CAN_Frame> frame = base::CAN_Frame::create();
+	frame->id = m_config->can_id;
+	frame->size = 8;
+	frame->set_int(0, 8, CMD_GET_DATA, 0);
+	size_t bitpos = 8;
+	for(const vnx::bool_t &bit : groups){
+		frame->set_bit(bitpos++, bit);
+	}
+	for(size_t i=bitpos; i<64; i++){
+		frame->set_bit(i, false);
+	}
+	publish(frame, topic_can_request);
 }
 
 void USBoardModule::request_analog_data()
 {
-	// TODO
+	std::shared_ptr<base::CAN_Frame> frame = base::CAN_Frame::create();
+	frame->id = m_config->can_id;
+	frame->size = 8;
+	frame->set_int(0, 8, CMD_GET_ANALOG_IN, 0);
+	for(size_t i=8; i<64; i++){
+		frame->set_bit(i, false);
+	}
+	publish(frame, topic_can_request);
 }
 
 void USBoardModule::send_config_async(	const std::shared_ptr<const USBoardConfig>& config,
@@ -96,8 +122,18 @@ void USBoardModule::save_config_async(	const std::shared_ptr<const USBoardConfig
 
 void USBoardModule::set_channel_active(const std::vector<vnx::bool_t>& sensors)
 {
-	// TODO
-	throw std::logic_error("not implemented yet");
+	std::shared_ptr<base::CAN_Frame> frame = base::CAN_Frame::create();
+	frame->id = m_config->can_id;
+	frame->size = 8;
+	frame->set_int(0, 8, CMD_SET_CHANNEL_ACTIVE, 0);
+	size_t bitpos = 8;
+	for(const vnx::bool_t &bit : sensors){
+		frame->set_bit(bitpos++, bit);
+	}
+	for(size_t i=bitpos; i<64; i++){
+		frame->set_bit(i, false);
+	}
+	publish(frame, topic_can_request);
 }
 
 void USBoardModule::async_timeout_callback(const vnx::request_id_t& request_id)
