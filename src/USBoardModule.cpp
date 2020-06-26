@@ -16,7 +16,8 @@ USBoardModule::USBoardModule(const std::string& _vnx_name)
 	:	USBoardModuleBase(_vnx_name),
 		m_gotConfig(9),
 		m_gotData1To8(2),
-		m_gotData9To16(2)
+		m_gotData9To16(2),
+		m_gotData(0)
 {
 }
 
@@ -64,9 +65,13 @@ void USBoardModule::request_data(const std::vector<vnx::bool_t>& groups)
 	frame->size = 8;
 	frame->set_int(0, 8, CMD_GET_DATA, 0);
 	size_t bitpos = 8;
+	size_t numreq = 0;
 	for(const vnx::bool_t &bit : groups){
 		frame->set_bit(bitpos++, bit);
+		if(bit) numreq++;
 	}
+	m_gotData.clear();
+	m_gotData.setTargetSize(numreq);
 	publish(frame, topic_can_request);
 }
 
@@ -187,7 +192,8 @@ void USBoardModule::handle(std::shared_ptr<const ::pilot::base::CAN_Frame> frame
 		uint8_t d2 = frame->get_uint(16, 8, 0);
 		if(m_sentConfigAck == 0 || d1 != 0 || d2 != 0){
 			// 9-th (final) frame arrived
-			m_sentConfigTimer.lock()->stop();
+			std::shared_ptr<vnx::Timer> t = m_sentConfigTimer.lock();
+			if(t) t->stop();
 			send_config_async_return(m_sentConfigRequest);
 
 			uint16_t bytesum = d1 + (d2 << 8);
@@ -201,8 +207,14 @@ void USBoardModule::handle(std::shared_ptr<const ::pilot::base::CAN_Frame> frame
 		}
 	}else if(baseplus >= 11 && baseplus <= 14){
 		// CMD_GET_DATA
-		uint8_t group = baseplus - 11;
-		// TODO
+		m_gotData.push_noindex(*frame);
+		std::shared_ptr<vnx::Timer> t = m_gotDataTimer.lock();
+		if(t) t->stop();
+		if(m_gotData.complete()){
+			getdata_send();
+		}else{
+			m_gotDataTimer = set_timeout_millis(25, std::bind(&USBoardModule::getdata_send, this));
+		}
 	}
 }
 
@@ -301,6 +313,13 @@ void USBoardModule::async_timeout_callback(const vnx::request_id_t& request_id)
 	auto ex = vnx::Exception::create();
 	ex->what = "receive timeout";
 	vnx_async_callback(request_id, ex);
+}
+
+
+void USBoardModule::getdata_send(){
+	std::shared_ptr<USBoardData> data = USBoardData::create();
+	data->from_can_frames(m_gotData.clear());
+	publish(data, output_data);
 }
 
 
