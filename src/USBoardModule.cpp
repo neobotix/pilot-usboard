@@ -6,13 +6,17 @@
  */
 
 #include <pilot/usboard/USBoardModule.h>
+#include <pilot/usboard/USBoardData.hxx>
 
 
 namespace pilot {
 namespace usboard {
 
 USBoardModule::USBoardModule(const std::string& _vnx_name)
-	:	USBoardModuleBase(_vnx_name)
+	:	USBoardModuleBase(_vnx_name),
+		m_gotConfig(9),
+		m_gotData1To8(2),
+		m_gotData9To16(2)
 {
 }
 
@@ -138,39 +142,62 @@ void USBoardModule::handle(std::shared_ptr<const ::pilot::base::CAN_Frame> frame
 	}else if(baseplus == 1){
 		// CMD_CONNECT
 		// TODO
-	}else if(baseplus == 2){
-		// CMD_GET_DATA_1TO8 part 1
-		// TODO
-	}else if(baseplus == 3){
-		// CMD_GET_DATA_1TO8 part 2
-		// TODO
-	}else if(baseplus == 4){
-		// CMD_GET_DATA_9To16 part 1
-		// TODO
-	}else if(baseplus == 5){
-		// CMD_GET_DATA_9TO16 part 2
-		// TODO
+	}else if(baseplus == 2 || baseplus == 3){
+		// CMD_GET_DATA_1TO8 part 1 + 2
+		uint8_t index = frame->get_uint(8, 8, 0);
+		m_gotData1To8.push(*frame, index);
+		if(m_gotData1To8.complete()){
+			// complete
+			std::shared_ptr<USBoardData> data = USBoardData::create();
+			data->from_can_frames(m_gotData1To8.clear());
+			publish(data, output_data);
+		}
+	}else if(baseplus == 4 || baseplus == 5){
+		// CMD_GET_DATA_9To16 part 1 + 2
+		uint8_t index = frame->get_uint(8, 8, 0);
+		m_gotData9To16.push(*frame, index);
+		if(m_gotData9To16.complete()){
+			// complete
+			std::shared_ptr<USBoardData> data = USBoardData::create();
+			data->from_can_frames(m_gotData9To16.clear());
+			publish(data, output_data);
+		}
 	}else if(baseplus == 6){
 		// CMD_READ_PARASET
-		// TODO
+		uint8_t index = frame->get_uint(8, 8, 0);
+		if(!m_gotConfig.push(*frame, index)){
+			throw new std::runtime_error("Received out of band part of parameter set");
+		}
+
+		if(m_gotConfig.complete()){
+			std::shared_ptr<USBoardConfig> config = USBoardConfig::create();
+			config->from_can_frames(m_gotConfig.clear());
+			m_config = config;
+			publish(config, output_config);
+		}
 	}else if(baseplus == 7){
 		// CMD_GET_ANALOGIN
-		// TODO
+		std::shared_ptr<USBoardData> data = USBoardData::create();
+		std::vector<base::CAN_Frame> frames = {*frame};
+		data->from_can_frames(frames);
+		publish(data, output_data);
 	}else if(baseplus == 8 || baseplus == 9){
 		// CMD_WRITE_PARASET  and  CMD_WRITE_PARASET_TO_EEPROM
-		if(m_sentConfigAck > 0){
-			m_sentConfigAck--;
-		}else{
+		uint8_t d1 = frame->get_uint(8, 8, 0);
+		uint8_t d2 = frame->get_uint(16, 8, 0);
+		if(m_sentConfigAck == 0 || d1 != 0 || d2 != 0){
 			// 9-th (final) frame arrived
 			m_sentConfigTimer.lock()->stop();
 			send_config_async_return(m_sentConfigRequest);
 
-			uint16_t bytesum = frame->get_uint(8, 8, 0) + (frame->get_uint(16, 8, 0) << 8);
+			uint16_t bytesum = d1 + (d2 << 8);
 			if(bytesum == m_sentConfigSum){
 				m_config = m_sentConfig;
 			}else{
 				throw std::runtime_error("Wrong config checksum");
 			}
+		}else{
+			m_sentConfigAck--;
 		}
 	}else if(baseplus >= 11 && baseplus <= 14){
 		// CMD_GET_DATA

@@ -9,6 +9,7 @@
 #define INCLUDE_PILOT_USBOARD_USBOARDMODULE_H_
 
 #include <pilot/usboard/USBoardModuleBase.hxx>
+#include <pilot/usboard/IndexCollector.h>
 
 
 namespace pilot {
@@ -61,11 +62,17 @@ private:
 
 private:
 	std::shared_ptr<const USBoardConfig> m_config;
+
 	vnx::request_id_t m_sentConfigRequest;
 	std::shared_ptr<const USBoardConfig> m_sentConfig;
 	std::weak_ptr<vnx::Timer> m_sentConfigTimer;
 	unsigned int m_sentConfigAck = 0;
 	uint16_t m_sentConfigSum;
+
+	IndexCollector<base::CAN_Frame> m_gotConfig;
+	IndexCollector<base::CAN_Frame> m_gotData1To8;
+	IndexCollector<base::CAN_Frame> m_gotData9To16;
+
 	bool check_checksum(const std::vector<uint8_t> &message, size_t offset=0);
 	void send_config(const std::shared_ptr<const USBoardConfig>& config, const vnx::request_id_t& request_id, Command command);
 
