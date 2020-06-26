@@ -41,6 +41,9 @@ protected:
 
 	void set_channel_active(const std::vector<vnx::bool_t>& sensors) override;
 
+	void handle(std::shared_ptr<const ::pilot::base::CAN_Frame> frame);
+	void handle(std::shared_ptr<const ::pilot::base::DataPacket> data);
+
 private:
 	enum Command{
 		CMD_CONNECT = 0,
@@ -58,6 +61,7 @@ private:
 
 private:
 	std::shared_ptr<const USBoardConfig> m_config;
+	bool check_checksum(const std::vector<uint8_t> &message, size_t offset=0);
 
 };
 

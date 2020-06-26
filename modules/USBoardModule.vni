@@ -30,4 +30,7 @@ module USBoardModule {
 	
 	void save_config(USBoardConfig* config) async;	// send and save config to EEPROM
 	
+	void handle(pilot.base.CAN_Frame frame);
+	void handle(pilot.base.DataPacket data);
+	
 }
