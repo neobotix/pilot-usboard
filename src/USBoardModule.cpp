@@ -49,9 +49,6 @@ void USBoardModule::request_config()
 	frame->id = m_config->can_id;
 	frame->size = 8;
 	frame->set_int(0, 8, CMD_READ_PARASET, 0);
-	for(size_t i=8; i<64; i++){
-		frame->set_bit(i, false);
-	}
 	publish(frame, topic_can_request);
 }
 
@@ -66,9 +63,6 @@ void USBoardModule::request_data(const std::vector<vnx::bool_t>& groups)
 	for(const vnx::bool_t &bit : groups){
 		frame->set_bit(bitpos++, bit);
 	}
-	for(size_t i=bitpos; i<64; i++){
-		frame->set_bit(i, false);
-	}
 	publish(frame, topic_can_request);
 }
 
@@ -79,49 +73,40 @@ void USBoardModule::request_analog_data()
 	frame->id = m_config->can_id;
 	frame->size = 8;
 	frame->set_int(0, 8, CMD_GET_ANALOG_IN, 0);
-	for(size_t i=8; i<64; i++){
-		frame->set_bit(i, false);
-	}
 	publish(frame, topic_can_request);
 }
 
 void USBoardModule::send_config_async(	const std::shared_ptr<const USBoardConfig>& config,
 										const vnx::request_id_t& request_id)
 {
-	throw std::logic_error("not implemented yet");
-	// TODO: send to board and wait for return
-
-	// create timeout callback
-//	timer = set_timeout_millis(5000, std::bind(&USBoardModule::async_timeout_callback, this, request_id));
-
-	// this will be called in handle() when we get the reply from the board
-//	send_config_async_return(request_id);
-
-	// once we got the reply we cancel the timeout callback also
-//	timer.get().stop();
-
-	// store the new config if it was set successfully
-//	m_config = config;
+	send_config(config, request_id, CMD_WRITE_PARASET);
 }
 
 void USBoardModule::save_config_async(	const std::shared_ptr<const USBoardConfig>& config,
 										const vnx::request_id_t& request_id)
 {
-	throw std::logic_error("not implemented yet");
-	// TODO: send to board and wait for return
-
-	// create timeout callback
-//	timer = set_timeout_millis(5000, std::bind(&USBoardModule::async_timeout_callback, this, request_id));
-
-	// this will be called in handle() when we get the reply from the board
-//	save_config_async_return(request_id);
-
-	// once we got the reply we cancel the timeout callback also
-//	timer.get().stop();
-
-	// store the new config if it was set successfully
-//	m_config = config;
+	send_config(config, request_id, CMD_WRITE_PARASET_TO_EEPROM);
 }
+
+void USBoardModule::send_config(const std::shared_ptr<const USBoardConfig>& config, const vnx::request_id_t& request_id, Command command){
+	m_sentConfigRequest = request_id;
+	m_sentConfig = config;
+	m_sentConfigAck = 8;
+
+	std::vector<base::CAN_Frame> frames = config->to_can_frames();
+	uint16_t bytesum = 0;
+	for(base::CAN_Frame &frame : frames){
+		frame.set_uint(0, 8, command, 0);
+		for(size_t i=2; i<8; i++){
+			bytesum += frame.get_uint(i*8, 8, 0);
+		}
+		publish(frame, topic_can_request);
+	}
+
+	m_sentConfigSum = bytesum;
+	m_sentConfigTimer = set_timeout_millis(5000, std::bind(&USBoardModule::async_timeout_callback, this, request_id));
+}
+
 
 void USBoardModule::set_channel_active(const std::vector<vnx::bool_t>& sensors)
 {
@@ -133,9 +118,6 @@ void USBoardModule::set_channel_active(const std::vector<vnx::bool_t>& sensors)
 	size_t bitpos = 8;
 	for(const vnx::bool_t &bit : sensors){
 		frame->set_bit(bitpos++, bit);
-	}
-	for(size_t i=bitpos; i<64; i++){
-		frame->set_bit(i, false);
 	}
 	publish(frame, topic_can_request);
 }
@@ -174,12 +156,22 @@ void USBoardModule::handle(std::shared_ptr<const ::pilot::base::CAN_Frame> frame
 	}else if(baseplus == 7){
 		// CMD_GET_ANALOGIN
 		// TODO
-	}else if(baseplus == 8){
-		// CMD_WRITE_PARASET
-		// TODO
-	}else if(baseplus == 9){
-		// CMD_WRITE_PARASET_TO_EEPROM
-		// TODO
+	}else if(baseplus == 8 || baseplus == 9){
+		// CMD_WRITE_PARASET  and  CMD_WRITE_PARASET_TO_EEPROM
+		if(m_sentConfigAck > 0){
+			m_sentConfigAck--;
+		}else{
+			// 9-th (final) frame arrived
+			m_sentConfigTimer.lock()->stop();
+			send_config_async_return(m_sentConfigRequest);
+
+			uint16_t bytesum = frame->get_uint(8, 8, 0) + (frame->get_uint(16, 8, 0) << 8);
+			if(bytesum == m_sentConfigSum){
+				m_config = m_sentConfig;
+			}else{
+				throw std::runtime_error("Wrong config checksum");
+			}
+		}
 	}else if(baseplus >= 11 && baseplus <= 14){
 		// CMD_GET_DATA
 		uint8_t group = baseplus - 11;
