@@ -28,7 +28,7 @@ void USBoardModule::init()
 
 void USBoardModule::main()
 {
-	subscribe(input_can, 100);
+	subscribe(input_can, UNLIMITED);
 	subscribe(input_serial, 100);
 	subscribe(topic_can_request, 100);
 
@@ -54,7 +54,7 @@ void USBoardModule::request_config()
 	frame->id = m_config->can_id;
 	frame->size = 8;
 	frame->set_int(0, 8, CMD_READ_PARASET, 0);
-	publish(frame, topic_can_request);
+	publish(frame, topic_can_request, BLOCKING);
 }
 
 void USBoardModule::request_data(const std::vector<vnx::bool_t>& groups)
@@ -112,7 +112,7 @@ void USBoardModule::send_config(const std::shared_ptr<const USBoardConfig>& conf
 		for(size_t i=2; i<8; i++){
 			bytesum += frame.get_uint(i*8, 8, 0);
 		}
-		publish(frame, topic_can_request);
+		publish(frame, topic_can_request, BLOCKING);
 	}
 
 	m_sentConfigSum = bytesum;
@@ -131,7 +131,7 @@ void USBoardModule::set_channel_active(const std::vector<vnx::bool_t>& sensors)
 	for(const vnx::bool_t &bit : sensors){
 		frame->set_bit(bitpos++, bit);
 	}
-	publish(frame, topic_can_request);
+	publish(frame, topic_can_request, BLOCKING);
 }
 
 
@@ -146,7 +146,7 @@ void USBoardModule::handle(std::shared_ptr<const ::pilot::base::CAN_Frame> frame
 		for(size_t i=0; i<frame->size; i++){
 			packet->payload[i] = frame->get_uint(i*8, 8, 0);
 		}
-		publish(packet, topic_serial_request);
+		publish(packet, topic_serial_request, vnx_sample->flags);
 	}else if(baseplus == 1){
 		// CMD_CONNECT
 		// TODO
@@ -181,7 +181,7 @@ void USBoardModule::handle(std::shared_ptr<const ::pilot::base::CAN_Frame> frame
 			std::shared_ptr<USBoardConfig> config = USBoardConfig::create();
 			config->from_can_frames(m_gotConfig.clear());
 			m_config = config;
-			publish(config, output_config);
+			publish(config, output_config, BLOCKING);
 		}
 	}else if(baseplus == 7){
 		// CMD_GET_ANALOGIN
@@ -240,6 +240,7 @@ void USBoardModule::handle(std::shared_ptr<const ::pilot::base::DataPacket> data
 	frame->size = datasize;
 	// set the frame id based on the first byte(s)
 	uint32_t baseplus = 0;
+	bool blocking = false;
 	switch(data->payload[1]){
 	case CMD_CONNECT:
 		baseplus = 1;
@@ -264,9 +265,11 @@ void USBoardModule::handle(std::shared_ptr<const ::pilot::base::DataPacket> data
 		break;
 	case CMD_WRITE_PARASET:
 		baseplus = 8;
+		blocking = true;
 		break;
 	case CMD_WRITE_PARASET_TO_EEPROM:
 		baseplus = 9;
+		blocking = true;
 		break;
 	case CMD_READ_PARASET:
 		baseplus = 6;
@@ -286,7 +289,11 @@ void USBoardModule::handle(std::shared_ptr<const ::pilot::base::DataPacket> data
 	for(size_t i=0; i<datasize; i++){
 		frame->set_uint(i*8, 8, data->payload[i+1], 0);
 	}
-	publish(frame, input_can);
+	if(blocking){
+		publish(frame, input_can, BLOCKING);
+	}else{
+		publish(frame, input_can);
+	}
 }
 
 

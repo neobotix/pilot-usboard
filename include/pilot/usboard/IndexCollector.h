@@ -11,7 +11,6 @@
 
 
 #include <vector>
-#include <mutex>
 
 
 /**
@@ -29,7 +28,6 @@ public:
 private:
 	size_t m_targetSize;
 	std::vector<T> m_objects;
-	std::mutex m_mutex;
 };
 
 
@@ -38,20 +36,16 @@ template <class T>
 IndexCollector<T>::IndexCollector(size_t targetSize):
 	m_targetSize(targetSize)
 {
-	m_objects.reserve(targetSize);
 }
 
 
 template <class T>
 void IndexCollector<T>::setTargetSize(size_t targetSize){
-	std::lock_guard<std::mutex> lock(m_mutex);
 	m_targetSize = targetSize;
-	m_objects.reserve(targetSize);
 }
 
 template <class T>
 bool IndexCollector<T>::push(const T &object, size_t index){
-	std::lock_guard<std::mutex> lock(m_mutex);
 	if(index == m_objects.size()){
 		m_objects.push_back(object);
 		return true;
@@ -65,7 +59,6 @@ bool IndexCollector<T>::push(const T &object, size_t index){
 
 template <class T>
 void IndexCollector<T>::push_noindex(const T &object){
-	std::lock_guard<std::mutex> lock(m_mutex);
 	m_objects.push_back(object);
 }
 
@@ -78,10 +71,8 @@ bool IndexCollector<T>::complete(){
 
 template <class T>
 std::vector<T> IndexCollector<T>::clear(){
-	std::lock_guard<std::mutex> lock(m_mutex);
 	std::vector<T> result = std::move(m_objects);
 	m_objects.clear();
-	m_objects.reserve(m_targetSize);
 	return result;
 }
 
