@@ -207,14 +207,19 @@ void USBoardModule::handle(std::shared_ptr<const ::pilot::base::CAN_Frame> frame
 		}
 	}else if(baseplus >= 11 && baseplus <= 14){
 		// CMD_GET_DATA
-		m_gotData.push_noindex(*frame);
 		std::shared_ptr<vnx::Timer> t = m_gotDataTimer.lock();
 		if(t) t->stop();
+
+		m_gotData.push_noindex(*frame);
 		if(m_gotData.complete()){
 			getdata_send();
+		}else if(t){
+			t->reset();
 		}else{
 			m_gotDataTimer = set_timeout_millis(25, std::bind(&USBoardModule::getdata_send, this));
 		}
+	}else{
+		throw std::runtime_error("Unknown CAN frame id " + std::to_string(frame->id));
 	}
 }
 
