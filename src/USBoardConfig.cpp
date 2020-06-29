@@ -70,31 +70,17 @@ std::vector<base::CAN_Frame> USBoardConfig::to_can_frames() const
 	for(size_t i=0; i<16; i++){
 		result[1].set_bool(32+i, sensor_config[i].active);
 	}
-	for(size_t i=0; i<2; i++){
-		result[1].set_uint(48+i*8, 8, sensor_config[i].warn_distance*100, 0);
+
+	for(size_t i=0; i<16; i++){
+		size_t frameindex = ((i + 4) / 6) + 1;
+		size_t byteindex  = ((i + 4) % 6) + 2;
+		result[frameindex].set_uint(byteindex*8, 8, sensor_config[i].warn_distance*100, 0);
 	}
 
-	for(size_t i=2; i<8; i++){
-		result[2].set_uint((2+i-2)*8, 8, sensor_config[i].warn_distance*100, 0);
-	}
-
-	for(size_t i=8; i<14; i++){
-		result[3].set_uint((2+i-8)*8, 8, sensor_config[i].warn_distance*100, 0);
-	}
-
-	for(size_t i=14; i<16; i++){
-		result[4].set_uint((2+i-14)*8, 8, sensor_config[i].warn_distance*100, 0);
-	}
-	for(size_t i=0; i<4; i++){
-		result[4].set_uint((2+2+i)*8, 8, sensor_config[i].alarm_distance*100, 0);
-	}
-
-	for(size_t i=4; i<10; i++){
-		result[5].set_uint((2+i-4)*8, 8, sensor_config[i].alarm_distance*100, 0);
-	}
-
-	for(size_t i=10; i<16; i++){
-		result[6].set_uint((2+i-10)*8, 8, sensor_config[i].alarm_distance*100, 0);
+	for(size_t i=0; i<16; i++){
+		size_t frameindex = ((i + 2) / 6) + 4;
+		size_t byteindex  = ((i + 2) % 6) + 2;
+		result[frameindex].set_uint(byteindex*8, 8, sensor_config[i].alarm_distance*100, 0);
 	}
 
 	result[8].set_uint(6*8, 16, serial_number, 0);
@@ -147,31 +133,17 @@ void USBoardConfig::from_can_frames(const std::vector<base::CAN_Frame>& frames)
 	for(size_t i=0; i<16; i++){
 		sensor_config[i].active = frames[1].get_bool(32+i);
 	}
-	for(size_t i=0; i<2; i++){
-		sensor_config[i].warn_distance = frames[1].get_uint(48+i*8, 8, 0) / 100.0;
+
+	for(size_t i=0; i<16; i++){
+		size_t frameindex = ((i + 4) / 6) + 1;
+		size_t byteindex  = ((i + 4) % 6) + 2;
+		sensor_config[i].warn_distance = frames[frameindex].get_uint(byteindex*8, 8, 0) / 100.0;
 	}
 
-	for(size_t i=2; i<8; i++){
-		sensor_config[i].warn_distance = frames[2].get_uint((2+i-2)*8, 8, 0) / 100.0;
-	}
-
-	for(size_t i=8; i<14; i++){
-		sensor_config[i].warn_distance = frames[3].get_uint((2+i-8)*8, 8, 0) / 100.0;
-	}
-
-	for(size_t i=14; i<16; i++){
-		sensor_config[i].warn_distance = frames[4].get_uint((2+i-14)*8, 8, 0) / 100.0;
-	}
-	for(size_t i=0; i<4; i++){
-		sensor_config[i].alarm_distance = frames[4].get_uint((2+2+i)*8, 8, 0) / 100.0;
-	}
-
-	for(size_t i=4; i<10; i++){
-		sensor_config[i].alarm_distance = frames[5].get_uint((2+i-4)*8, 8, 0) / 100.0;
-	}
-
-	for(size_t i=10; i<16; i++){
-		sensor_config[i].alarm_distance = frames[6].get_uint((2+i-10)*8, 8, 0) / 100.0;
+	for(size_t i=0; i<16; i++){
+		size_t frameindex = ((i + 2) / 6) + 4;
+		size_t byteindex  = ((i + 2) % 6) + 2;
+		sensor_config[i].alarm_distance = frames[frameindex].get_uint(byteindex*8, 8, 0) / 100.0;
 	}
 
 	serial_number = frames[8].get_uint(6*8, 16, 0);

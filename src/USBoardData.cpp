@@ -46,7 +46,7 @@ void USBoardData::from_can_frames_data(const std::vector<base::CAN_Frame> &frame
 	for(size_t i=0; i<numframes; i++){
 		const base::CAN_Frame &fr = frames[i];
 		uint8_t groupid = fr.get_uint(0, 2, 0);
-		uint8_t resolution_id = gr.get_uint(2, 2, 0);
+		uint8_t resolution_id = fr.get_uint(2, 2, 0);
 		unsigned int resolution = 0.01;
 		switch(resolution_id){
 		case 0:
