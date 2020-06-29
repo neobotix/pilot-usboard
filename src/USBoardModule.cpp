@@ -103,8 +103,11 @@ void USBoardModule::send_config(const std::shared_ptr<const USBoardConfig>& conf
 	m_sentConfigAck = 8;
 
 	std::vector<base::CAN_Frame> frames = config->to_can_frames();
+	uint8_t baseplus = (command == CMD_WRITE_PARASET) ? 8 : 9;
 	uint16_t bytesum = 0;
 	for(base::CAN_Frame &frame : frames){
+		frame.time = vnx::get_time_micros();
+		frame.id = m_config->can_id + baseplus;
 		frame.set_uint(0, 8, command, 0);
 		for(size_t i=2; i<8; i++){
 			bytesum += frame.get_uint(i*8, 8, 0);
