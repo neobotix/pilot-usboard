@@ -157,7 +157,7 @@ void USBoardModule::handle(std::shared_ptr<const ::pilot::base::CAN_Frame> frame
 		if(m_gotData1To8.complete()){
 			// complete
 			std::shared_ptr<USBoardData> data = USBoardData::create();
-			data->from_can_frames(m_gotData1To8.clear());
+			data->from_can_frames_1to8(m_gotData1To8.clear());
 			publish(data, output_data);
 		}
 	}else if(baseplus == 4 || baseplus == 5){
@@ -167,7 +167,7 @@ void USBoardModule::handle(std::shared_ptr<const ::pilot::base::CAN_Frame> frame
 		if(m_gotData9To16.complete()){
 			// complete
 			std::shared_ptr<USBoardData> data = USBoardData::create();
-			data->from_can_frames(m_gotData9To16.clear());
+			data->from_can_frames_9to16(m_gotData9To16.clear());
 			publish(data, output_data);
 		}
 	}else if(baseplus == 6){
@@ -187,7 +187,7 @@ void USBoardModule::handle(std::shared_ptr<const ::pilot::base::CAN_Frame> frame
 		// CMD_GET_ANALOGIN
 		std::shared_ptr<USBoardData> data = USBoardData::create();
 		std::vector<base::CAN_Frame> frames = {*frame};
-		data->from_can_frames(frames);
+		data->from_can_frames_analog(frames);
 		publish(data, output_data);
 	}else if(baseplus == 8 || baseplus == 9){
 		// CMD_WRITE_PARASET  and  CMD_WRITE_PARASET_TO_EEPROM
@@ -326,7 +326,7 @@ void USBoardModule::async_timeout_callback(const vnx::request_id_t& request_id)
 
 void USBoardModule::getdata_send(){
 	std::shared_ptr<USBoardData> data = USBoardData::create();
-	data->from_can_frames(m_gotData.clear());
+	data->from_can_frames_data(m_gotData.clear());
 	publish(data, output_data);
 }
 

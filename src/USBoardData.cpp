@@ -11,15 +11,59 @@
 namespace pilot {
 namespace usboard {
 
-std::vector<base::CAN_Frame> USBoardData::to_can_frames() const
+
+void USBoardData::from_can_frames_1to8(const std::vector<base::CAN_Frame> &frames)
 {
-	// TODO
-	return std::vector<base::CAN_Frame>();
+	for(size_t i=0; i<4; i++){
+		sensor[i] = frames[0].get_uint((2+i)*8, 8, 0) / 100.0;
+	}
+	for(size_t i=4; i<8; i++){
+		sensor[i] = frames[1].get_uint((2+i-4)*8, 8, 0) / 100.0;
+	}
 }
 
-void USBoardData::from_can_frames(const std::vector<base::CAN_Frame>& frames)
+void USBoardData::from_can_frames_9to16(const std::vector<base::CAN_Frame> &frames)
 {
-	// TODO
+	for(size_t i=8; i<12; i++){
+		sensor[i] = frames[0].get_uint((2+i-8)*8, 8, 0) / 100.0;
+	}
+	for(size_t i=12; i<16; i++){
+		sensor[i] = frames[1].get_uint((2+i-12)*8, 8, 0) / 100.0;
+	}
+}
+
+void USBoardData::from_can_frames_analog(const std::vector<base::CAN_Frame> &frames)
+{
+	const base::CAN_Frame &fr = frames[0];
+	for(size_t i=0; i<4; i++){
+		analog_input[i] = fr.get_uint(8+i*8, 8, 0)  + (fr.get_uint(40+i*4, 4, 0) << 8);
+	}
+}
+
+void USBoardData::from_can_frames_data(const std::vector<base::CAN_Frame> &frames)
+{
+	size_t numframes = frames.size();
+	for(size_t i=0; i<numframes; i++){
+		const base::CAN_Frame &fr = frames[i];
+		uint8_t groupid = fr.get_uint(0, 2, 0);
+		uint8_t resolution_id = gr.get_uint(2, 2, 0);
+		unsigned int resolution = 0.01;
+		switch(resolution_id){
+		case 0:
+			resolution = 0.005;
+			break;
+		case 1:
+			resolution = 0.01;
+			break;
+		case 2:
+			resolution = 0.02;
+			break;
+		}
+		for(size_t k=0; k<4; k++){
+			uint16_t sensork = (fr.get_uint(16+k*8, 8, 0) << 4) + fr.get_uint(48+k*4, 4, 0);
+			sensor[groupid*4 + k] = sensork*resolution;
+		}
+	}
 }
 
 
