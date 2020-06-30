@@ -44,4 +44,6 @@ class USBoardConfig {
 	
 	void from_can_frames(vector<CAN_Frame> frames);
 	
+	uint count_transmitting_groups() const;
+	
 }

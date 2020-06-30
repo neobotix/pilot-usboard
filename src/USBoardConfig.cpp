@@ -201,5 +201,15 @@ void USBoardConfig::from_can_frames(const std::vector<base::CAN_Frame>& frames)
 }
 
 
+uint32_t USBoardConfig::count_transmitting_groups() const{
+	if(transmit_mode == TRANSMIT_MODE_REQUEST) return 0;
+	uint32_t result = 0;
+	for(size_t i=0; i<4; i++){
+		if(group_config[i].transmission_enable) result++;
+	}
+	return result;
+}
+
+
 } // usboard
 } // pilot

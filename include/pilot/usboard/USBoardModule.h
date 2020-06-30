@@ -10,6 +10,7 @@
 
 #include <pilot/usboard/USBoardModuleBase.hxx>
 #include <pilot/usboard/IndexCollector.h>
+#include <pilot/usboard/USBoardData.hxx>
 
 
 namespace pilot {
@@ -59,6 +60,8 @@ private:
 	};
 
 	std::shared_ptr<const USBoardConfig> m_config;
+	// m_data collects all the most recent data. At certain events, the whole collection is published.
+	USBoardData m_data;
 
 	vnx::request_id_t m_sentConfigRequest;
 	std::shared_ptr<const USBoardConfig> m_sentConfig;

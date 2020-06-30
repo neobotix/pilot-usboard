@@ -70,8 +70,11 @@ void USBoardModule::request_data(const std::vector<vnx::bool_t>& groups)
 		frame->set_bit(bitpos++, bit);
 		if(bit) numreq++;
 	}
-	m_gotData.clear();
-	m_gotData.setTargetSize(numreq);
+
+	if(m_config->transmit_mode == USBoardConfig::TRANSMIT_MODE_REQUEST){
+		m_gotData.clear();
+		m_gotData.setTargetSize(numreq);
+	}
 	publish(frame, topic_can_request);
 }
 
@@ -98,9 +101,18 @@ void USBoardModule::save_config_async(	const std::shared_ptr<const USBoardConfig
 }
 
 void USBoardModule::send_config(const std::shared_ptr<const USBoardConfig>& config, const vnx::request_id_t& request_id, Command command){
+	if(m_sentConfigAck > 0){
+		// there is still a request pending
+		std::shared_ptr<vnx::Timer> t = m_sentConfigTimer.lock();
+		if(t) t->stop();
+
+		auto ex = vnx::Exception::create();
+		ex->what = "Config request expired";
+		vnx_async_callback(m_sentConfigRequest, ex);
+	}
 	m_sentConfigRequest = request_id;
 	m_sentConfig = config;
-	m_sentConfigAck = 8;
+	m_sentConfigAck = 9;
 
 	std::vector<base::CAN_Frame> frames = config->to_can_frames();
 	uint8_t baseplus = (command == CMD_WRITE_PARASET) ? 8 : 9;
@@ -156,8 +168,8 @@ void USBoardModule::handle(std::shared_ptr<const ::pilot::base::CAN_Frame> frame
 		m_gotData1To8.push(*frame, index);
 		if(m_gotData1To8.complete()){
 			// complete
-			std::shared_ptr<USBoardData> data = USBoardData::create();
-			data->from_can_frames_1to8(m_gotData1To8.clear());
+			m_data.from_can_frames_1to8(m_gotData1To8.clear());
+			std::shared_ptr<USBoardData> data = std::make_shared<USBoardData>(m_data);
 			publish(data, output_data);
 		}
 	}else if(baseplus == 4 || baseplus == 5){
@@ -166,8 +178,8 @@ void USBoardModule::handle(std::shared_ptr<const ::pilot::base::CAN_Frame> frame
 		m_gotData9To16.push(*frame, index);
 		if(m_gotData9To16.complete()){
 			// complete
-			std::shared_ptr<USBoardData> data = USBoardData::create();
-			data->from_can_frames_9to16(m_gotData9To16.clear());
+			m_data.from_can_frames_9to16(m_gotData9To16.clear());
+			std::shared_ptr<USBoardData> data = std::make_shared<USBoardData>(m_data);
 			publish(data, output_data);
 		}
 	}else if(baseplus == 6){
@@ -181,20 +193,22 @@ void USBoardModule::handle(std::shared_ptr<const ::pilot::base::CAN_Frame> frame
 			std::shared_ptr<USBoardConfig> config = USBoardConfig::create();
 			config->from_can_frames(m_gotConfig.clear());
 			m_config = config;
+			m_gotData.setTargetSize(m_config->count_transmitting_groups());
 			publish(config, output_config, BLOCKING);
 		}
 	}else if(baseplus == 7){
 		// CMD_GET_ANALOGIN
-		std::shared_ptr<USBoardData> data = USBoardData::create();
 		std::vector<base::CAN_Frame> frames = {*frame};
-		data->from_can_frames_analog(frames);
+		m_data.from_can_frames_analog(frames);
+		std::shared_ptr<USBoardData> data = std::make_shared<USBoardData>(m_data);
 		publish(data, output_data);
 	}else if(baseplus == 8 || baseplus == 9){
 		// CMD_WRITE_PARASET  and  CMD_WRITE_PARASET_TO_EEPROM
 		uint8_t d1 = frame->get_uint(8, 8, 0);
 		uint8_t d2 = frame->get_uint(16, 8, 0);
-		if(m_sentConfigAck == 0 || d1 != 0 || d2 != 0){
+		if(m_sentConfigAck == 1 || d1 != 0 || d2 != 0){
 			// 9-th (final) frame arrived
+			m_sentConfigAck = 0;
 			std::shared_ptr<vnx::Timer> t = m_sentConfigTimer.lock();
 			if(t) t->stop();
 
@@ -202,12 +216,13 @@ void USBoardModule::handle(std::shared_ptr<const ::pilot::base::CAN_Frame> frame
 			if(bytesum == m_sentConfigSum){
 				send_config_async_return(m_sentConfigRequest);
 				m_config = m_sentConfig;
+				m_gotData.setTargetSize(m_config->count_transmitting_groups());
 			}else{
 				auto ex = vnx::Exception::create();
 				ex->what = "wrong config checksum";
 				vnx_async_callback(m_sentConfigRequest, ex);
 			}
-		}else{
+		}else if(m_sentConfigAck > 0){
 			m_sentConfigAck--;
 		}
 	}else if(baseplus >= 11 && baseplus <= 14){
@@ -334,8 +349,9 @@ void USBoardModule::async_timeout_callback(const vnx::request_id_t& request_id)
 
 
 void USBoardModule::getdata_send(){
-	std::shared_ptr<USBoardData> data = USBoardData::create();
-	data->from_can_frames_data(m_gotData.clear());
+	m_data.from_can_frames_data(m_gotData.clear());
+	m_gotData.setTargetSize(m_config->count_transmitting_groups());
+	std::shared_ptr<USBoardData> data = std::make_shared<USBoardData>(m_data);
 	publish(data, output_data);
 }
 
