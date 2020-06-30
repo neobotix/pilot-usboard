@@ -6,7 +6,7 @@ struct group_config_t {
 	static const uint RESOLUTION_1_CM = 1;		// 1 cm per increment
 	static const uint RESOLUTION_2_CM = 2;		// 2 cm per increment
 	
-	bool transmission_enable = false;		// if this group transmits in continous mode
+	bool enable_transmission = true;		// if this group transmits in continous mode
 	
 	uint resolution = 1;				// sensor resolution config (see RESOLUTION_* above)
 	

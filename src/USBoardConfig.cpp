@@ -55,7 +55,7 @@ std::vector<base::CAN_Frame> USBoardConfig::to_can_frames() const
 
 	result[1].set_uint(16, 4, transmit_mode, 0);
 	for(size_t i=0; i<4; i++){
-		result[1].set_bool(20+i, group_config[i].transmission_enable);
+		result[1].set_bool(20+i, group_config[i].enable_transmission);
 	}
 	uint8_t interval_id = 0;
 	uint8_t custom_interval = 0;
@@ -146,7 +146,7 @@ void USBoardConfig::from_can_frames(const std::vector<base::CAN_Frame>& frames)
 
 	transmit_mode = frames[1].get_uint(16, 4, 0);
 	for(size_t i=0; i<4; i++){
-		group_config[i].transmission_enable = frames[1].get_bool(20+i);
+		group_config[i].enable_transmission = frames[1].get_bool(20+i);
 	}
 	uint8_t interval_id = frames[1].get_uint(24, 4, 0);
 	switch(interval_id){
@@ -205,7 +205,7 @@ uint32_t USBoardConfig::count_transmitting_groups() const{
 	if(transmit_mode == TRANSMIT_MODE_REQUEST) return 0;
 	uint32_t result = 0;
 	for(size_t i=0; i<4; i++){
-		if(group_config[i].transmission_enable) result++;
+		if(group_config[i].enable_transmission) result++;
 	}
 	return result;
 }
