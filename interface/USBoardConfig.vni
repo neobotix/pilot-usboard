@@ -14,6 +14,7 @@ class USBoardConfig {
 	static const uint TRANSMIT_MODE_SERIAL = 2;
 	static const uint TRANSMIT_MODE_CAN_SERIAL = 3;
 	
+	uint hardware_version = 0;				// 0 for USBoard V1, 20 for USBoard V2
 	uint serial_number = 0;					// board serial number
 	
 	uint can_id = 1024;						// CAN base address
