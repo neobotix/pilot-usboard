@@ -28,7 +28,7 @@ void USBoardModule::init()
 
 void USBoardModule::main()
 {
-	subscribe(input_can, UNLIMITED);
+	subscribe(input_can, 100);
 	subscribe(input_serial, 100);
 	subscribe(topic_can_request, 100);
 
@@ -197,13 +197,15 @@ void USBoardModule::handle(std::shared_ptr<const ::pilot::base::CAN_Frame> frame
 			// 9-th (final) frame arrived
 			std::shared_ptr<vnx::Timer> t = m_sentConfigTimer.lock();
 			if(t) t->stop();
-			send_config_async_return(m_sentConfigRequest);
 
 			uint16_t bytesum = d1 + (d2 << 8);
 			if(bytesum == m_sentConfigSum){
+				send_config_async_return(m_sentConfigRequest);
 				m_config = m_sentConfig;
 			}else{
-				throw std::runtime_error("Wrong config checksum");
+				auto ex = vnx::Exception::create();
+				ex->what = "wrong config checksum";
+				vnx_async_callback(m_sentConfigRequest, ex);
 			}
 		}else{
 			m_sentConfigAck--;
@@ -290,7 +292,7 @@ void USBoardModule::handle(std::shared_ptr<const ::pilot::base::DataPacket> data
 		frame->set_uint(i*8, 8, data->payload[i+1], 0);
 	}
 	if(blocking){
-		publish(frame, input_can, BLOCKING);
+		publish(frame, input_can);
 	}else{
 		publish(frame, input_can);
 	}
