@@ -103,23 +103,17 @@ void USBoardModule::save_config_async(	const std::shared_ptr<const USBoardConfig
 void USBoardModule::send_config(const std::shared_ptr<const USBoardConfig>& config, const vnx::request_id_t& request_id, Command command){
 	if(m_sentConfigAck > 0){
 		// there is still a request pending
-		std::shared_ptr<vnx::Timer> t = m_sentConfigTimer.lock();
-		if(t) t->stop();
-
-		auto ex = vnx::Exception::create();
-		ex->what = "Config request expired";
-		vnx_async_callback(m_sentConfigRequest, ex);
+		throw std::runtime_error("Attempt to send another parameter set while the last one is still pending");
 	}
 	m_sentConfigRequest = request_id;
 	m_sentConfig = config;
 	m_sentConfigAck = 9;
 
 	std::vector<base::CAN_Frame> frames = config->to_can_frames();
-	uint8_t baseplus = (command == CMD_WRITE_PARASET) ? 8 : 9;
 	uint16_t bytesum = 0;
 	for(base::CAN_Frame &frame : frames){
 		frame.time = vnx::get_time_micros();
-		frame.id = m_config->can_id + baseplus;
+		frame.id = m_config->can_id;
 		frame.set_uint(0, 8, command, 0);
 		for(size_t i=2; i<8; i++){
 			bytesum += frame.get_uint(i*8, 8, 0);
@@ -128,7 +122,7 @@ void USBoardModule::send_config(const std::shared_ptr<const USBoardConfig>& conf
 	}
 
 	m_sentConfigSum = bytesum;
-	m_sentConfigTimer = set_timeout_millis(5000, std::bind(&USBoardModule::async_timeout_callback, this, request_id));
+	m_sentConfigTimer = set_timeout_millis(5000, std::bind(&USBoardModule::sendconfig_timeout, this, request_id));
 }
 
 
@@ -169,8 +163,7 @@ void USBoardModule::handle(std::shared_ptr<const ::pilot::base::CAN_Frame> frame
 		if(m_gotData1To8.complete()){
 			// complete
 			m_data.from_can_frames_1to8(m_gotData1To8.clear());
-			std::shared_ptr<USBoardData> data = std::make_shared<USBoardData>(m_data);
-			publish(data, output_data);
+			publish(m_data, output_data);
 		}
 	}else if(baseplus == 4 || baseplus == 5){
 		// CMD_GET_DATA_9To16 part 1 + 2
@@ -179,8 +172,7 @@ void USBoardModule::handle(std::shared_ptr<const ::pilot::base::CAN_Frame> frame
 		if(m_gotData9To16.complete()){
 			// complete
 			m_data.from_can_frames_9to16(m_gotData9To16.clear());
-			std::shared_ptr<USBoardData> data = std::make_shared<USBoardData>(m_data);
-			publish(data, output_data);
+			publish(m_data, output_data);
 		}
 	}else if(baseplus == 6){
 		// CMD_READ_PARASET
@@ -200,8 +192,7 @@ void USBoardModule::handle(std::shared_ptr<const ::pilot::base::CAN_Frame> frame
 		// CMD_GET_ANALOGIN
 		std::vector<base::CAN_Frame> frames = {*frame};
 		m_data.from_can_frames_analog(frames);
-		std::shared_ptr<USBoardData> data = std::make_shared<USBoardData>(m_data);
-		publish(data, output_data);
+		publish(m_data, output_data);
 	}else if(baseplus == 8 || baseplus == 9){
 		// CMD_WRITE_PARASET  and  CMD_WRITE_PARASET_TO_EEPROM
 		uint8_t d1 = frame->get_uint(8, 8, 0);
@@ -340,10 +331,11 @@ bool USBoardModule::check_checksum(const std::vector<uint8_t> &message, size_t o
 }
 
 
-void USBoardModule::async_timeout_callback(const vnx::request_id_t& request_id)
+void USBoardModule::sendconfig_timeout(const vnx::request_id_t& request_id)
 {
+	m_sentConfigAck = 0;
 	auto ex = vnx::Exception::create();
-	ex->what = "receive timeout";
+	ex->what = "Timeout while waiting for parameter set answer";
 	vnx_async_callback(request_id, ex);
 }
 
@@ -351,8 +343,7 @@ void USBoardModule::async_timeout_callback(const vnx::request_id_t& request_id)
 void USBoardModule::getdata_send(){
 	m_data.from_can_frames_data(m_gotData.clear());
 	m_gotData.setTargetSize(m_config->count_transmitting_groups());
-	std::shared_ptr<USBoardData> data = std::make_shared<USBoardData>(m_data);
-	publish(data, output_data);
+	publish(m_data, output_data);
 }
 
 
