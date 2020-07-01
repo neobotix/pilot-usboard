@@ -60,8 +60,13 @@ private:
 	};
 
 	std::shared_ptr<const USBoardConfig> m_config;
+	bool m_configIsReal = false;
 	// m_data collects all the most recent data. At certain events, the whole collection is published.
 	USBoardData m_data;
+
+	const unsigned int m_reconnectPeriod_ms = 1000;
+	std::shared_ptr<vnx::Timer> m_reconnectTimer;
+	int64_t m_lastConnect = 0;
 
 	vnx::request_id_t m_sentConfigRequest;
 	std::shared_ptr<const USBoardConfig> m_sentConfig;
@@ -77,8 +82,10 @@ private:
 
 	void sendconfig_timeout(const vnx::request_id_t& request_id);
 	void getdata_send();
+	void connect();
 	bool check_checksum(const std::vector<uint8_t> &message, size_t offset=0);
 	void send_config(const std::shared_ptr<const USBoardConfig>& config, const vnx::request_id_t& request_id, Command command);
+	void handle_canframe(std::shared_ptr<const ::pilot::base::CAN_Frame> frame, unsigned int basecanid);
 
 };
 

@@ -7,6 +7,7 @@
 
 #include <pilot/usboard/USBoardModule.h>
 #include <pilot/usboard/USBoardData.hxx>
+#include <unistd.h>
 
 
 namespace pilot {
@@ -32,7 +33,11 @@ void USBoardModule::main()
 	subscribe(input_serial, 100);
 	subscribe(topic_can_request, 100);
 
-	request_config();
+	std::shared_ptr<USBoardConfig> fakeConfig = std::make_shared<USBoardConfig>();
+	fakeConfig->can_id = can_id;
+	m_config = fakeConfig;
+	m_reconnectTimer = set_timer_millis(m_reconnectPeriod_ms, std::bind(&USBoardModule::connect, this));
+	connect();
 
 	Super::main();
 }
@@ -44,7 +49,8 @@ std::shared_ptr<const USBoardConfig> USBoardModule::get_config() const
 
 vnx::bool_t USBoardModule::is_connected() const
 {
-	return false;
+	int64_t timeNow = vnx::get_time_millis();
+	return (timeNow - m_lastConnect) < 3*m_reconnectPeriod_ms;
 }
 
 void USBoardModule::request_config()
@@ -105,9 +111,6 @@ void USBoardModule::send_config(const std::shared_ptr<const USBoardConfig>& conf
 		// there is still a request pending
 		throw std::runtime_error("Attempt to send another parameter set while the last one is still pending");
 	}
-	m_sentConfigRequest = request_id;
-	m_sentConfig = config;
-	m_sentConfigAck = 9;
 
 	std::vector<base::CAN_Frame> frames = config->to_can_frames();
 	uint16_t bytesum = 0;
@@ -119,8 +122,12 @@ void USBoardModule::send_config(const std::shared_ptr<const USBoardConfig>& conf
 			bytesum += frame.get_uint(i*8, 8, 0);
 		}
 		publish(frame, topic_can_request, BLOCKING);
+		::usleep(10000);
 	}
 
+	m_sentConfigRequest = request_id;
+	m_sentConfig = config;
+	m_sentConfigAck = 9;
 	m_sentConfigSum = bytesum;
 	m_sentConfigTimer = set_timeout_millis(5000, std::bind(&USBoardModule::sendconfig_timeout, this, request_id));
 }
@@ -141,8 +148,8 @@ void USBoardModule::set_channel_active(const std::vector<vnx::bool_t>& sensors)
 }
 
 
-void USBoardModule::handle(std::shared_ptr<const ::pilot::base::CAN_Frame> frame){
-	uint32_t baseplus = frame->id - m_config->can_id;
+void USBoardModule::handle_canframe(std::shared_ptr<const ::pilot::base::CAN_Frame> frame, unsigned int basecanid){
+	unsigned int baseplus = frame->id - basecanid;
 	// the frame is either a command message that we relayed to ourselves or an actual answer
 	if(baseplus == 0){
 		// one of our own messages -> wrap into serial data
@@ -155,7 +162,11 @@ void USBoardModule::handle(std::shared_ptr<const ::pilot::base::CAN_Frame> frame
 		publish(packet, topic_serial_request, vnx_sample->flags);
 	}else if(baseplus == 1){
 		// CMD_CONNECT
-		// TODO
+		// check for content? Nah.
+		m_lastConnect = vnx::get_time_millis();
+		if(!m_configIsReal || !is_connected()){
+			request_config();
+		}
 	}else if(baseplus == 2 || baseplus == 3){
 		// CMD_GET_DATA_1TO8 part 1 + 2
 		uint8_t index = frame->get_uint(8, 8, 0);
@@ -231,6 +242,22 @@ void USBoardModule::handle(std::shared_ptr<const ::pilot::base::CAN_Frame> frame
 		}
 	}else{
 		throw std::runtime_error("Unknown CAN frame id " + std::to_string(frame->id));
+	}
+}
+
+
+void USBoardModule::handle(std::shared_ptr<const ::pilot::base::CAN_Frame> frame){
+	bool newConfigSent = (m_sentConfigAck > 0);
+	bool oldMatch = (frame->id >= m_config->can_id);
+	bool newMatch = newConfigSent && (frame->id >= m_sentConfig->can_id);
+
+	if(!oldMatch && !newMatch){
+		throw std::runtime_error("CAN id is wrong");
+	}else if(newConfigSent && newMatch){
+		handle_canframe(frame, m_sentConfig->can_id);
+	}else if(oldMatch){
+		if(newConfigSent) log(WARN) << "Using old base can id although new config should be on the way";
+		handle_canframe(frame, m_config->can_id);
 	}
 }
 
@@ -344,6 +371,16 @@ void USBoardModule::getdata_send(){
 	m_data.from_can_frames_data(m_gotData.clear());
 	m_gotData.setTargetSize(m_config->count_transmitting_groups());
 	publish(m_data, output_data);
+}
+
+
+void USBoardModule::connect(){
+	std::shared_ptr<base::CAN_Frame> frame = base::CAN_Frame::create();
+	frame->time = vnx::get_time_micros();
+	frame->id = m_config->can_id;
+	frame->size = 8;
+	frame->set_int(0, 8, CMD_CONNECT, 0);
+	publish(frame, topic_can_request, BLOCKING);
 }
 
 

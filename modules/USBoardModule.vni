@@ -12,6 +12,7 @@ module USBoardModule {
 	vnx.TopicPtr output_config;					// pilot.usboard.USBoardConfig
 	
 	string config_file;							// pilot.usboard.USBoardConfig
+	uint can_id;								// base CAN id to use before we have the real parameter set
 	
 	
 	bool is_connected() const;					// returns true if board is connected
