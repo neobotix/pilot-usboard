@@ -31,7 +31,7 @@ void USBoardModule::main()
 {
 	subscribe(input_can, 100);
 	subscribe(input_serial, 100);
-	subscribe(topic_can_request, 100);
+	subscribe(topic_can_request, UNLIMITED);
 
 	std::shared_ptr<USBoardConfig> fakeConfig = std::make_shared<USBoardConfig>();
 	fakeConfig->can_id = can_id;
@@ -50,7 +50,7 @@ std::shared_ptr<const USBoardConfig> USBoardModule::get_config() const
 vnx::bool_t USBoardModule::is_connected() const
 {
 	int64_t timeNow = vnx::get_time_millis();
-	return (timeNow - m_lastConnect) < 3*m_reconnectPeriod_ms;
+	return (timeNow - m_lastConnect_ms) < 3*m_reconnectPeriod_ms;
 }
 
 void USBoardModule::request_config()
@@ -163,10 +163,10 @@ void USBoardModule::handle_canframe(std::shared_ptr<const ::pilot::base::CAN_Fra
 	}else if(baseplus == 1){
 		// CMD_CONNECT
 		// check for content? Nah.
-		m_lastConnect = vnx::get_time_millis();
 		if(!m_configIsReal || !is_connected()){
 			request_config();
 		}
+		m_lastConnect_ms = vnx::get_time_millis();
 	}else if(baseplus == 2 || baseplus == 3){
 		// CMD_GET_DATA_1TO8 part 1 + 2
 		uint8_t index = frame->get_uint(8, 8, 0);
@@ -248,11 +248,11 @@ void USBoardModule::handle_canframe(std::shared_ptr<const ::pilot::base::CAN_Fra
 
 void USBoardModule::handle(std::shared_ptr<const ::pilot::base::CAN_Frame> frame){
 	bool newConfigSent = (m_sentConfigAck > 0);
-	bool oldMatch = (frame->id >= m_config->can_id);
-	bool newMatch = newConfigSent && (frame->id >= m_sentConfig->can_id);
+	bool oldMatch = (m_config->can_id <= frame->id && frame->id <= m_config->can_id+20);
+	bool newMatch = newConfigSent && (m_sentConfig->can_id <= frame->id && frame->id <= m_sentConfig->can_id+20);
 
 	if(!oldMatch && !newMatch){
-		throw std::runtime_error("CAN id is wrong");
+		throw std::runtime_error("CAN id " + std::to_string(frame->id) + " does not fit anywhere");
 	}else if(newConfigSent && newMatch){
 		handle_canframe(frame, m_sentConfig->can_id);
 	}else if(oldMatch){
@@ -275,7 +275,6 @@ void USBoardModule::handle(std::shared_ptr<const ::pilot::base::DataPacket> data
 	frame->size = datasize;
 	// set the frame id based on the first byte(s)
 	uint32_t baseplus = 0;
-	bool blocking = false;
 	switch(data->payload[1]){
 	case CMD_CONNECT:
 		baseplus = 1;
@@ -300,11 +299,9 @@ void USBoardModule::handle(std::shared_ptr<const ::pilot::base::DataPacket> data
 		break;
 	case CMD_WRITE_PARASET:
 		baseplus = 8;
-		blocking = true;
 		break;
 	case CMD_WRITE_PARASET_TO_EEPROM:
 		baseplus = 9;
-		blocking = true;
 		break;
 	case CMD_READ_PARASET:
 		baseplus = 6;
@@ -324,11 +321,7 @@ void USBoardModule::handle(std::shared_ptr<const ::pilot::base::DataPacket> data
 	for(size_t i=0; i<datasize; i++){
 		frame->set_uint(i*8, 8, data->payload[i+1], 0);
 	}
-	if(blocking){
-		publish(frame, input_can);
-	}else{
-		publish(frame, input_can);
-	}
+	publish(frame, input_can);
 }
 
 

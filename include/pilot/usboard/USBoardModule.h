@@ -66,7 +66,7 @@ private:
 
 	const unsigned int m_reconnectPeriod_ms = 1000;
 	std::shared_ptr<vnx::Timer> m_reconnectTimer;
-	int64_t m_lastConnect = 0;
+	int64_t m_lastConnect_ms = 0;
 
 	vnx::request_id_t m_sentConfigRequest;
 	std::shared_ptr<const USBoardConfig> m_sentConfig;
