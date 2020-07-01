@@ -5,6 +5,8 @@
 #define INCLUDE_pilot_usboard_USBoardModuleBase_HXX_
 
 #include <pilot/usboard/package.hxx>
+#include <pilot/base/CAN_Frame.hxx>
+#include <pilot/base/DataPacket.hxx>
 #include <pilot/usboard/USBoardConfig.hxx>
 #include <vnx/Module.h>
 #include <vnx/TopicPtr.hpp>
@@ -23,6 +25,7 @@ public:
 	::vnx::TopicPtr output_data;
 	::vnx::TopicPtr output_config;
 	std::string config_file;
+	uint32_t can_id = 0;
 	
 	typedef ::vnx::Module Super;
 	
@@ -51,6 +54,10 @@ public:
 	
 protected:
 	virtual std::shared_ptr<const ::pilot::usboard::USBoardConfig> get_config() const = 0;
+	virtual void handle(std::shared_ptr<const ::pilot::base::CAN_Frame> _value, std::shared_ptr<const vnx::Sample> _sample) { handle(_value); }
+	virtual void handle(std::shared_ptr<const ::pilot::base::CAN_Frame> _value) {}
+	virtual void handle(std::shared_ptr<const ::pilot::base::DataPacket> _value, std::shared_ptr<const vnx::Sample> _sample) { handle(_value); }
+	virtual void handle(std::shared_ptr<const ::pilot::base::DataPacket> _value) {}
 	virtual vnx::bool_t is_connected() const = 0;
 	virtual void request_analog_data() = 0;
 	virtual void request_config() = 0;

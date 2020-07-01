@@ -5,6 +5,8 @@
 #define INCLUDE_pilot_usboard_USBoardModule_CLIENT_HXX_
 
 #include <vnx/Client.h>
+#include <pilot/base/CAN_Frame.hxx>
+#include <pilot/base/DataPacket.hxx>
 #include <pilot/usboard/USBoardConfig.hxx>
 #include <vnx/Module.h>
 #include <vnx/TopicPtr.hpp>

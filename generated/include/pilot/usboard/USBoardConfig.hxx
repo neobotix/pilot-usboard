@@ -16,10 +16,6 @@ namespace usboard {
 
 class USBoardConfig : public ::vnx::Value {
 public:
-	static const uint32_t SENSOR_SETUP_4 = 1;
-	static const uint32_t SENSOR_SETUP_8 = 3;
-	static const uint32_t SENSOR_SETUP_12 = 7;
-	static const uint32_t SENSOR_SETUP_16 = 15;
 	static const uint32_t TRANSMIT_MODE_REQUEST = 0;
 	static const uint32_t TRANSMIT_MODE_CAN = 1;
 	static const uint32_t TRANSMIT_MODE_SERIAL = 2;
@@ -30,7 +26,6 @@ public:
 	uint32_t can_id = 1024;
 	uint32_t can_baudrate = 1000000;
 	uint32_t update_interval_ms = 500;
-	uint32_t sensor_setup = 15;
 	uint32_t transmit_mode = 0;
 	std::array<::pilot::usboard::sensor_config_t, 16> sensor_config = {};
 	std::array<::pilot::usboard::group_config_t, 4> group_config = {};
@@ -50,6 +45,7 @@ public:
 	
 	virtual std::vector<::pilot::base::CAN_Frame> to_can_frames() const;
 	virtual void from_can_frames(const std::vector<::pilot::base::CAN_Frame>& frames);
+	virtual uint32_t count_transmitting_groups() const;
 	
 	static std::shared_ptr<USBoardConfig> create();
 	std::shared_ptr<vnx::Value> clone() const;

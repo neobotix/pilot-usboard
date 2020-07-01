@@ -29,8 +29,10 @@ public:
 	const char* get_type_name() const override;
 	const vnx::TypeCode* get_type_code() const override;
 	
-	virtual std::vector<::pilot::base::CAN_Frame> to_can_frames() const;
-	virtual void from_can_frames(const std::vector<::pilot::base::CAN_Frame>& frames);
+	virtual void from_can_frames_1to8(const std::vector<::pilot::base::CAN_Frame>& frames);
+	virtual void from_can_frames_9to16(const std::vector<::pilot::base::CAN_Frame>& frames);
+	virtual void from_can_frames_analog(const std::vector<::pilot::base::CAN_Frame>& frames);
+	virtual void from_can_frames_data(const std::vector<::pilot::base::CAN_Frame>& frames);
 	
 	static std::shared_ptr<USBoardData> create();
 	std::shared_ptr<vnx::Value> clone() const;
