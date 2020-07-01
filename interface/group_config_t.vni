@@ -6,6 +6,8 @@ struct group_config_t {
 	static const uint RESOLUTION_1_CM = 1;		// 1 cm per increment
 	static const uint RESOLUTION_2_CM = 2;		// 2 cm per increment
 	
+	bool enable_transmission = true;		// if this group transmits in continous mode
+	
 	uint resolution = 1;				// sensor resolution config (see RESOLUTION_* above)
 	
 	uint fire_interval_ms = 16;			// time between pulses [ms]

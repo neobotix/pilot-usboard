@@ -13,8 +13,9 @@ class USBoardData extends pilot.base.Sample {
 	float analog_input_scale = 0.001221;		// factor to convert to volts
 	
 	
-	vector<CAN_Frame> to_can_frames() const;
-	
-	void from_can_frames(vector<CAN_Frame> frames);
+	void from_can_frames_1to8(vector<CAN_Frame> frames);
+	void from_can_frames_9to16(vector<CAN_Frame> frames);
+	void from_can_frames_analog(vector<CAN_Frame> frames);
+	void from_can_frames_data(vector<CAN_Frame> frames);
 	
 }
