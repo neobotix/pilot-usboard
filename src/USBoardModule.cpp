@@ -252,7 +252,8 @@ void USBoardModule::handle(std::shared_ptr<const ::pilot::base::CAN_Frame> frame
 	bool newMatch = newConfigSent && (m_sentConfig->can_id <= frame->id && frame->id <= m_sentConfig->can_id+20);
 
 	if(!oldMatch && !newMatch){
-		throw std::runtime_error("CAN id " + std::to_string(frame->id) + " does not fit anywhere");
+		// does not fit in any range
+		// but it might be an external message -> ignore
 	}else if(newConfigSent && newMatch){
 		handle_canframe(frame, m_sentConfig->can_id);
 	}else if(oldMatch){
