@@ -56,7 +56,7 @@ private:
 		CMD_WRITE_PARASET_TO_EEPROM = 5,
 		CMD_READ_PARASET = 6,
 		CMD_GET_ANALOG_IN = 7,
-		CMD_GET_DATA = 11,
+		CMD_GET_DATA = 13,
 	};
 
 	std::shared_ptr<const USBoardConfig> m_config;

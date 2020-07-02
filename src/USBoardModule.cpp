@@ -231,7 +231,7 @@ void USBoardModule::handle_canframe(std::shared_ptr<const ::pilot::base::CAN_Fra
 		}else if(m_sentConfigAck > 0){
 			m_sentConfigAck--;
 		}
-	}else if(baseplus >= 11 && baseplus <= 14){
+	}else if(baseplus >= 13 && baseplus <= 16){
 		// CMD_GET_DATA
 		std::shared_ptr<vnx::Timer> t = m_gotDataTimer.lock();
 		if(t) t->stop();
@@ -328,7 +328,7 @@ void USBoardModule::handle_serialpacket(const std::vector<uint8_t> &data, int64_
 		break;
 	case CMD_GET_DATA:{
 		uint8_t group = (data[2] & 0b11000000) >> 6;
-		baseplus = 11 + group;
+		baseplus = 13 + group;
 		break;
 	}
 	default:
