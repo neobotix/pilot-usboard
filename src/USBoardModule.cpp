@@ -15,6 +15,7 @@ namespace usboard {
 
 USBoardModule::USBoardModule(const std::string& _vnx_name)
 	:	USBoardModuleBase(_vnx_name),
+		m_serialBuffer(m_serialSize),
 		m_gotConfig(9),
 		m_gotData1To8(2),
 		m_gotData9To16(2),
@@ -44,6 +45,7 @@ void USBoardModule::main()
 
 std::shared_ptr<const USBoardConfig> USBoardModule::get_config() const
 {
+	if(!m_configIsReal) log(WARN) << "returning dummy parameter set";
 	return m_config;
 }
 
@@ -189,13 +191,14 @@ void USBoardModule::handle_canframe(std::shared_ptr<const ::pilot::base::CAN_Fra
 		// CMD_READ_PARASET
 		uint8_t index = frame->get_uint(8, 8, 0);
 		if(!m_gotConfig.push(*frame, index)){
-			throw new std::runtime_error("Received out of band part of parameter set");
+			throw std::runtime_error("Received out of band part of parameter set");
 		}
 
 		if(m_gotConfig.complete()){
 			std::shared_ptr<USBoardConfig> config = USBoardConfig::create();
 			config->from_can_frames(m_gotConfig.clear());
 			m_config = config;
+			m_configIsReal = true;
 			m_gotData.setTargetSize(m_config->count_transmitting_groups());
 			publish(config, output_config, BLOCKING);
 		}
@@ -218,6 +221,7 @@ void USBoardModule::handle_canframe(std::shared_ptr<const ::pilot::base::CAN_Fra
 			if(bytesum == m_sentConfigSum){
 				send_config_async_return(m_sentConfigRequest);
 				m_config = m_sentConfig;
+				m_configIsReal = true;
 				m_gotData.setTargetSize(m_config->count_transmitting_groups());
 			}else{
 				auto ex = vnx::Exception::create();
@@ -264,24 +268,36 @@ void USBoardModule::handle(std::shared_ptr<const ::pilot::base::CAN_Frame> frame
 
 
 void USBoardModule::handle(std::shared_ptr<const ::pilot::base::DataPacket> data){
+	size_t inputsize = data->payload.size();
+	for(size_t i=0; i<inputsize; i++){
+		uint8_t nextByte = data->payload[i];
+		if(m_serialBufferIndex == 0 && nextByte != 0xFF) continue;
+		m_serialBuffer[m_serialBufferIndex++] = nextByte;
+
+		if(m_serialBufferIndex >= m_serialSize){
+			handle_serialpacket(m_serialBuffer, data->time);
+			m_serialBufferIndex = 0;
+		}
+	}
+}
+
+void USBoardModule::handle_serialpacket(const std::vector<uint8_t> &data, int64_t time){
 	// input as serial data -> convert to CAN frame
 	// 1 byte 0xFF  +  n[=8] byte data  +  2 byte checksum
-	size_t totalsize = data->payload.size();
-	if(totalsize != 11) throw std::runtime_error("invalid data package: length " + std::to_string(totalsize) + " bytes");
-	if(!check_checksum(data->payload, 1)) throw std::runtime_error("Wrong checksum");
+	if(!check_checksum(data, 1)) throw std::runtime_error("Wrong checksum");
 
-	size_t datasize = totalsize - 3;
+	size_t datasize = m_serialSize - 3;
 	std::shared_ptr<base::CAN_Frame> frame = base::CAN_Frame::create();
-	frame->time = data->time;
+	frame->time = time;
 	frame->size = datasize;
 	// set the frame id based on the first byte(s)
 	uint32_t baseplus = 0;
-	switch(data->payload[1]){
+	switch(data[1]){
 	case CMD_CONNECT:
 		baseplus = 1;
 		break;
 	case CMD_GET_DATA_1TO8:
-		if(data->payload[2] == 0){
+		if(data[2] == 0){
 			// part 1
 			baseplus = 2;
 		}else{
@@ -290,7 +306,7 @@ void USBoardModule::handle(std::shared_ptr<const ::pilot::base::DataPacket> data
 		}
 		break;
 	case CMD_GET_DATA_9TO16:
-		if(data->payload[2] == 0){
+		if(data[2] == 0){
 			// part 1
 			baseplus = 4;
 		}else{
@@ -311,16 +327,16 @@ void USBoardModule::handle(std::shared_ptr<const ::pilot::base::DataPacket> data
 		baseplus = 7;
 		break;
 	case CMD_GET_DATA:{
-		uint8_t group = (data->payload[2] & 0b11000000) >> 6;
+		uint8_t group = (data[2] & 0b11000000) >> 6;
 		baseplus = 11 + group;
 		break;
 	}
 	default:
-		throw std::runtime_error("received packet with invalid command byte " + std::to_string(data->payload[1]));
+		throw std::runtime_error("received packet with invalid command byte " + std::to_string(data[1]));
 	}
 	frame->id = m_config->can_id + baseplus;
 	for(size_t i=0; i<datasize; i++){
-		frame->set_uint(i*8, 8, data->payload[i+1], 0);
+		frame->set_uint(i*8, 8, data[i+1], 0);
 	}
 	publish(frame, input_can);
 }
