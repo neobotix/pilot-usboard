@@ -34,7 +34,7 @@ namespace usboard {
 
 
 const vnx::Hash64 USBoardModuleBase::VNX_TYPE_HASH(0x43f03ccffe42b23full);
-const vnx::Hash64 USBoardModuleBase::VNX_CODE_HASH(0x50294fd69386aab7ull);
+const vnx::Hash64 USBoardModuleBase::VNX_CODE_HASH(0x469148337d28909dull);
 
 USBoardModuleBase::USBoardModuleBase(const std::string& _vnx_name)
 	:	Module::Module(_vnx_name)
@@ -171,7 +171,7 @@ std::shared_ptr<vnx::TypeCode> USBoardModuleBase::static_create_type_code() {
 	std::shared_ptr<vnx::TypeCode> type_code = std::make_shared<vnx::TypeCode>();
 	type_code->name = "pilot.usboard.USBoardModule";
 	type_code->type_hash = vnx::Hash64(0x43f03ccffe42b23full);
-	type_code->code_hash = vnx::Hash64(0x50294fd69386aab7ull);
+	type_code->code_hash = vnx::Hash64(0x469148337d28909dull);
 	type_code->is_native = true;
 	type_code->methods.resize(8);
 	type_code->methods[0] = ::pilot::usboard::USBoardModule_get_config::static_get_type_code();
@@ -228,6 +228,7 @@ std::shared_ptr<vnx::TypeCode> USBoardModuleBase::static_create_type_code() {
 	{
 		vnx::TypeField& field = type_code->fields[7];
 		field.name = "can_id";
+		field.value = vnx::to_string(1024);
 		field.code = {3};
 	}
 	type_code->build();

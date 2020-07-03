@@ -13,9 +13,10 @@ namespace usboard {
 
 struct group_config_t {
 	
-	static const uint32_t RESOLUTION_05_CM = 0;
-	static const uint32_t RESOLUTION_1_CM = 1;
-	static const uint32_t RESOLUTION_2_CM = 2;
+	static const uint32_t RESOLUTION_0125_CM = 3;
+	static const uint32_t RESOLUTION_025_CM = 2;
+	static const uint32_t RESOLUTION_05_CM = 1;
+	static const uint32_t RESOLUTION_1_CM = 0;
 	
 	vnx::bool_t enable_transmission = true;
 	uint32_t resolution = 1;

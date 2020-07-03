@@ -25,7 +25,7 @@ public:
 	::vnx::TopicPtr output_data;
 	::vnx::TopicPtr output_config;
 	std::string config_file;
-	uint32_t can_id = 0;
+	uint32_t can_id = 1024;
 	
 	typedef ::vnx::Module Super;
 	
