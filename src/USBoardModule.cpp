@@ -211,8 +211,11 @@ void USBoardModule::handle_canframe(std::shared_ptr<const ::pilot::base::CAN_Fra
 		// CMD_WRITE_PARASET  and  CMD_WRITE_PARASET_TO_EEPROM
 		uint8_t d1 = frame->get_uint(8, 8, 0);
 		uint8_t d2 = frame->get_uint(16, 8, 0);
-		if(m_sentConfigAck == 1 || d1 != 0 || d2 != 0){
+		if(m_sentConfigAck == 0){
+			log(WARN) << "Unexpected config ACK";
+		}else if(m_sentConfigAck == 1 || d1 != 0 || d2 != 0){
 			// 9-th (final) frame arrived
+			if(m_sentConfigAck > 1) log(WARN) << "missing " << (m_sentConfigAck - 1) << " config ACKs";
 			m_sentConfigAck = 0;
 			std::shared_ptr<vnx::Timer> t = m_sentConfigTimer.lock();
 			if(t) t->stop();
@@ -225,10 +228,10 @@ void USBoardModule::handle_canframe(std::shared_ptr<const ::pilot::base::CAN_Fra
 				m_gotData.setTargetSize(m_config->count_transmitting_groups());
 			}else{
 				auto ex = vnx::Exception::create();
-				ex->what = "wrong config checksum";
+				ex->what = "wrong config checksum " + std::to_string(bytesum) + " when " + std::to_string(m_sentConfigSum) + " was expected";
 				vnx_async_callback(m_sentConfigRequest, ex);
 			}
-		}else if(m_sentConfigAck > 0){
+		}else{
 			m_sentConfigAck--;
 		}
 	}else if(baseplus >= 13 && baseplus <= 16){
@@ -261,7 +264,6 @@ void USBoardModule::handle(std::shared_ptr<const ::pilot::base::CAN_Frame> frame
 	}else if(newConfigSent && newMatch){
 		handle_canframe(frame, m_sentConfig->can_id);
 	}else if(oldMatch){
-		if(newConfigSent) log(WARN) << "Using old base can id although new config should be on the way";
 		handle_canframe(frame, m_config->can_id);
 	}
 }

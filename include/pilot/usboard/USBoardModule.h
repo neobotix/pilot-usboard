@@ -72,7 +72,7 @@ private:
 	std::shared_ptr<const USBoardConfig> m_sentConfig;
 	std::weak_ptr<vnx::Timer> m_sentConfigTimer;
 	unsigned int m_sentConfigAck = 0;
-	uint16_t m_sentConfigSum;
+	uint16_t m_sentConfigSum = 0;
 
 	const size_t m_serialSize = 11;
 	std::vector<uint8_t> m_serialBuffer;
