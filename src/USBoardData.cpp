@@ -45,22 +45,35 @@ void USBoardData::from_can_frames_data(const std::vector<base::CAN_Frame> &frame
 	size_t numframes = frames.size();
 	for(size_t i=0; i<numframes; i++){
 		const base::CAN_Frame &fr = frames[i];
-		uint8_t groupid = fr.get_uint(0, 2, 0);
-		uint8_t resolution_id = fr.get_uint(2, 2, 0);
+		uint8_t groupid = fr.get_uint(8, 2, 0);
+		uint8_t resolution_id = fr.get_uint(8+2, 2, 0);
 		unsigned int resolution = 0.01;
 		switch(resolution_id){
 		case 0:
-			resolution = 0.005;
-			break;
-		case 1:
 			resolution = 0.01;
 			break;
+		case 1:
+			resolution = 0.005;
+			break;
 		case 2:
-			resolution = 0.02;
+			resolution = 0.0025;
+			break;
+		case 3:
+			resolution = 0.00125;
 			break;
 		}
+		if(fr.get_uint(8+4, 4, 0) == 0xF){
+			signal_source[groupid] = -1;
+		}else{
+			for(char j=0; j<4; j++){
+				if(fr.get_bool(8+4+j*4)){
+					signal_source[groupid] = j;
+					break;
+				}
+			}
+		}
 		for(size_t k=0; k<4; k++){
-			uint16_t sensork = (fr.get_uint(16+k*8, 8, 0) << 4) + fr.get_uint(48+k*4, 4, 0);
+			uint16_t sensork = fr.get_uint(16+k*8, 8, 0) + (fr.get_uint(48+k*4, 4, 0) << 4);
 			sensor[groupid*4 + k] = sensork*resolution;
 		}
 	}
