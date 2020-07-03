@@ -56,7 +56,7 @@ private:
 		CMD_WRITE_PARASET_TO_EEPROM = 5,
 		CMD_READ_PARASET = 6,
 		CMD_GET_ANALOG_IN = 7,
-		CMD_GET_DATA = 11,
+		CMD_GET_DATA = 13,
 	};
 
 	std::shared_ptr<const USBoardConfig> m_config;
@@ -72,7 +72,11 @@ private:
 	std::shared_ptr<const USBoardConfig> m_sentConfig;
 	std::weak_ptr<vnx::Timer> m_sentConfigTimer;
 	unsigned int m_sentConfigAck = 0;
-	uint16_t m_sentConfigSum;
+	uint16_t m_sentConfigSum = 0;
+
+	const size_t m_serialSize = 11;
+	std::vector<uint8_t> m_serialBuffer;
+	size_t m_serialBufferIndex = 0;
 
 	IndexCollector<base::CAN_Frame> m_gotConfig;
 	IndexCollector<base::CAN_Frame> m_gotData1To8;
@@ -86,6 +90,7 @@ private:
 	bool check_checksum(const std::vector<uint8_t> &message, size_t offset=0);
 	void send_config(const std::shared_ptr<const USBoardConfig>& config, const vnx::request_id_t& request_id, Command command);
 	void handle_canframe(std::shared_ptr<const ::pilot::base::CAN_Frame> frame, unsigned int basecanid);
+	void handle_serialpacket(const std::vector<uint8_t> &data, int64_t time);
 
 };
 

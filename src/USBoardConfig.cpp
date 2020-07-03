@@ -101,15 +101,15 @@ std::vector<base::CAN_Frame> USBoardConfig::to_can_frames() const
 		result[7].set_uint(32+i*2, 2, group_config[i].sending_sensor, 0);
 		result[7].set_uint(40+i*4, 4, group_config[i].fire_interval_ms / 16, 0);
 	}
-	result[7].set_uint(56, 8, low_pass_gain * 100, 0);
+	result[7].set_uint(7*8, 8, low_pass_gain * 100, 0);
 
-	result[8].set_uint(24*8, 8, hardware_version, 0);
-	if(hardware_version == 0){
-		// USBoard V1
-		result[8].set_uint(40*8, 3, serial_number, 0);
-	}else if(hardware_version == 20){
+	result[8].set_uint(3*8, 8, hardware_version, 0);
+	if(hardware_version == 20){
 		// USBoard V2 (USS5)
-		result[8].set_uint(32*8, 4, serial_number, 0);
+		result[8].set_uint(4*8, 32, serial_number, 0);
+	}else{
+		// USBoard V1
+		result[8].set_uint(5*8, 24, serial_number, 0);
 	}
 
 	return result;
@@ -188,15 +188,15 @@ void USBoardConfig::from_can_frames(const std::vector<base::CAN_Frame>& frames)
 		group_config[i].sending_sensor = frames[7].get_uint(32+i*2, 2, 0);
 		group_config[i].fire_interval_ms = frames[7].get_uint(40+i*4, 4, 0) * 16;
 	}
-	low_pass_gain = frames[7].get_uint(56, 8, 0) * 0.01;
+	low_pass_gain = frames[7].get_uint(7*8, 8, 0) * 0.01;
 
-	hardware_version = frames[8].get_uint(24*8, 8, 0);
+	hardware_version = frames[8].get_uint(3*8, 8, 0);
 	if(hardware_version == 0){
 		// USBoard V1
-		serial_number = frames[8].get_uint(40*8, 3, 0);
+		serial_number = frames[8].get_uint(5*8, 24, 0);
 	}else if(hardware_version == 20){
 		// USBoard V2 (USS5)
-		serial_number = frames[8].get_uint(32*8, 4, 0);
+		serial_number = frames[8].get_uint(4*8, 32, 0);
 	}
 }
 
