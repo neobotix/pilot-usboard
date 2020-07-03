@@ -3,7 +3,7 @@ package pilot.usboard;
 struct group_config_t {
 	
 	static const uint RESOLUTION_0125_CM = 3;	// 0.125 cm per increment
-	static const uint RESOLUTION_025_cm = 2;	// 0.25 cm per increment
+	static const uint RESOLUTION_025_CM = 2;	// 0.25 cm per increment
 	static const uint RESOLUTION_05_CM = 1;		// 0.5 cm per increment
 	static const uint RESOLUTION_1_CM = 0;		// 1 cm per increment
 	
