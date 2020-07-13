@@ -229,7 +229,7 @@ void USBoardModule::handle_canframe(std::shared_ptr<const ::pilot::base::CAN_Fra
 			}else{
 				auto ex = vnx::Exception::create();
 				ex->what = "wrong config checksum " + std::to_string(bytesum) + " when " + std::to_string(m_sentConfigSum) + " was expected";
-				vnx_async_callback(m_sentConfigRequest, ex);
+				vnx_async_return(m_sentConfigRequest, ex);
 			}
 		}else{
 			m_sentConfigAck--;
@@ -375,7 +375,7 @@ void USBoardModule::sendconfig_timeout(const vnx::request_id_t& request_id)
 	m_sentConfigAck = 0;
 	auto ex = vnx::Exception::create();
 	ex->what = "Timeout while waiting for parameter set answer";
-	vnx_async_callback(request_id, ex);
+	vnx_async_return(request_id, ex);
 }
 
 
