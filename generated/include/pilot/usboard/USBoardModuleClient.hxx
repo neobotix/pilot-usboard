@@ -21,9 +21,11 @@ public:
 	
 	USBoardModuleClient(vnx::Hash64 service_addr);
 	
-	std::shared_ptr<const ::pilot::usboard::USBoardConfig> get_config();
-	
 	vnx::bool_t is_connected();
+	
+	void request_data(const std::vector<vnx::bool_t>& groups);
+	
+	void request_data_async(const std::vector<vnx::bool_t>& groups);
 	
 	void request_analog_data();
 	
@@ -33,21 +35,19 @@ public:
 	
 	void request_config_async();
 	
-	void request_data(const std::vector<vnx::bool_t>& groups);
+	std::shared_ptr<const ::pilot::usboard::USBoardConfig> get_config();
 	
-	void request_data_async(const std::vector<vnx::bool_t>& groups);
+	void set_channel_active(const std::vector<vnx::bool_t>& sensors);
 	
-	void save_config(const std::shared_ptr<const ::pilot::usboard::USBoardConfig>& config);
-	
-	void save_config_async(const std::shared_ptr<const ::pilot::usboard::USBoardConfig>& config);
+	void set_channel_active_async(const std::vector<vnx::bool_t>& sensors);
 	
 	void send_config(const std::shared_ptr<const ::pilot::usboard::USBoardConfig>& config);
 	
 	void send_config_async(const std::shared_ptr<const ::pilot::usboard::USBoardConfig>& config);
 	
-	void set_channel_active(const std::vector<vnx::bool_t>& sensors);
+	void save_config(const std::shared_ptr<const ::pilot::usboard::USBoardConfig>& config);
 	
-	void set_channel_active_async(const std::vector<vnx::bool_t>& sensors);
+	void save_config_async(const std::shared_ptr<const ::pilot::usboard::USBoardConfig>& config);
 	
 };
 

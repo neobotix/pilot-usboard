@@ -53,20 +53,20 @@ public:
 	static std::shared_ptr<vnx::TypeCode> static_create_type_code();
 	
 protected:
+	virtual vnx::bool_t is_connected() const = 0;
+	virtual void request_data(const std::vector<vnx::bool_t>& groups) = 0;
+	virtual void request_analog_data() = 0;
+	virtual void request_config() = 0;
 	virtual std::shared_ptr<const ::pilot::usboard::USBoardConfig> get_config() const = 0;
+	virtual void set_channel_active(const std::vector<vnx::bool_t>& sensors) = 0;
+	virtual void send_config_async(const std::shared_ptr<const ::pilot::usboard::USBoardConfig>& config, const vnx::request_id_t& _request_id) = 0;
+	void send_config_async_return(const vnx::request_id_t& _request_id) const;
+	virtual void save_config_async(const std::shared_ptr<const ::pilot::usboard::USBoardConfig>& config, const vnx::request_id_t& _request_id) = 0;
+	void save_config_async_return(const vnx::request_id_t& _request_id) const;
 	virtual void handle(std::shared_ptr<const ::pilot::base::CAN_Frame> _value, std::shared_ptr<const vnx::Sample> _sample) { handle(_value); }
 	virtual void handle(std::shared_ptr<const ::pilot::base::CAN_Frame> _value) {}
 	virtual void handle(std::shared_ptr<const ::pilot::base::DataPacket> _value, std::shared_ptr<const vnx::Sample> _sample) { handle(_value); }
 	virtual void handle(std::shared_ptr<const ::pilot::base::DataPacket> _value) {}
-	virtual vnx::bool_t is_connected() const = 0;
-	virtual void request_analog_data() = 0;
-	virtual void request_config() = 0;
-	virtual void request_data(const std::vector<vnx::bool_t>& groups) = 0;
-	virtual void save_config_async(const std::shared_ptr<const ::pilot::usboard::USBoardConfig>& config, const vnx::request_id_t& _request_id) = 0;
-	void save_config_async_return(const vnx::request_id_t& _request_id) const;
-	virtual void send_config_async(const std::shared_ptr<const ::pilot::usboard::USBoardConfig>& config, const vnx::request_id_t& _request_id) = 0;
-	void send_config_async_return(const vnx::request_id_t& _request_id) const;
-	virtual void set_channel_active(const std::vector<vnx::bool_t>& sensors) = 0;
 	
 	void vnx_handle_switch(std::shared_ptr<const vnx::Sample> _sample) override;
 	std::shared_ptr<vnx::Value> vnx_call_switch(std::shared_ptr<const vnx::Value> _method, const vnx::request_id_t& _request_id) override;
