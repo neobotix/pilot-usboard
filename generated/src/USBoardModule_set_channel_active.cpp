@@ -116,7 +116,7 @@ std::shared_ptr<vnx::TypeCode> USBoardModule_set_channel_active::static_create_t
 		vnx::TypeField& field = type_code->fields[0];
 		field.is_extended = true;
 		field.name = "sensors";
-		field.code = {12, 1};
+		field.code = {12, 31};
 	}
 	type_code->build();
 	return type_code;

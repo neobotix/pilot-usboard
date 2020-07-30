@@ -113,7 +113,7 @@ std::shared_ptr<vnx::TypeCode> USBoardModule_is_connected_return::static_create_
 	{
 		vnx::TypeField& field = type_code->fields[0];
 		field.name = "_ret_0";
-		field.code = {1};
+		field.code = {31};
 	}
 	type_code->build();
 	return type_code;

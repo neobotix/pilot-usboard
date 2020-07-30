@@ -254,19 +254,19 @@ std::shared_ptr<vnx::TypeCode> USBoardConfig::static_create_type_code() {
 		vnx::TypeField& field = type_code->fields[9];
 		field.name = "enable_analog_input";
 		field.value = vnx::to_string(false);
-		field.code = {1};
+		field.code = {31};
 	}
 	{
 		vnx::TypeField& field = type_code->fields[10];
 		field.name = "enable_legacy_format";
 		field.value = vnx::to_string(false);
-		field.code = {1};
+		field.code = {31};
 	}
 	{
 		vnx::TypeField& field = type_code->fields[11];
 		field.name = "enable_can_termination";
 		field.value = vnx::to_string(false);
-		field.code = {1};
+		field.code = {31};
 	}
 	type_code->build();
 	return type_code;

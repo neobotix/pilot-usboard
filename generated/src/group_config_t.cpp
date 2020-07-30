@@ -58,8 +58,8 @@ void group_config_t::accept(vnx::Visitor& _visitor) const {
 }
 
 void group_config_t::write(std::ostream& _out) const {
-	_out << "{\"__type\": \"pilot.usboard.group_config_t\"";
-	_out << ", \"enable_transmission\": "; vnx::write(_out, enable_transmission);
+	_out << "{";
+	_out << "\"enable_transmission\": "; vnx::write(_out, enable_transmission);
 	_out << ", \"resolution\": "; vnx::write(_out, resolution);
 	_out << ", \"fire_interval_ms\": "; vnx::write(_out, fire_interval_ms);
 	_out << ", \"sending_sensor\": "; vnx::write(_out, sending_sensor);
@@ -90,7 +90,6 @@ void group_config_t::read(std::istream& _in) {
 
 vnx::Object group_config_t::to_object() const {
 	vnx::Object _object;
-	_object["__type"] = "pilot.usboard.group_config_t";
 	_object["enable_transmission"] = enable_transmission;
 	_object["resolution"] = resolution;
 	_object["fire_interval_ms"] = fire_interval_ms;
@@ -150,7 +149,7 @@ std::shared_ptr<vnx::TypeCode> group_config_t::static_create_type_code() {
 		vnx::TypeField& field = type_code->fields[0];
 		field.name = "enable_transmission";
 		field.value = vnx::to_string(true);
-		field.code = {1};
+		field.code = {31};
 	}
 	{
 		vnx::TypeField& field = type_code->fields[1];
@@ -174,13 +173,13 @@ std::shared_ptr<vnx::TypeCode> group_config_t::static_create_type_code() {
 		vnx::TypeField& field = type_code->fields[4];
 		field.name = "long_range";
 		field.value = vnx::to_string(false);
-		field.code = {1};
+		field.code = {31};
 	}
 	{
 		vnx::TypeField& field = type_code->fields[5];
 		field.name = "cross_echo_mode";
 		field.value = vnx::to_string(false);
-		field.code = {1};
+		field.code = {31};
 	}
 	type_code->build();
 	return type_code;

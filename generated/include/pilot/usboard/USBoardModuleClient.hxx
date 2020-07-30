@@ -21,6 +21,8 @@ public:
 	
 	USBoardModuleClient(vnx::Hash64 service_addr);
 	
+	::vnx::TypeCode vnx_get_type_code();
+	
 	vnx::bool_t is_connected();
 	
 	void request_data(const std::vector<vnx::bool_t>& groups);

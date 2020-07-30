@@ -51,8 +51,8 @@ void sensor_config_t::accept(vnx::Visitor& _visitor) const {
 }
 
 void sensor_config_t::write(std::ostream& _out) const {
-	_out << "{\"__type\": \"pilot.usboard.sensor_config_t\"";
-	_out << ", \"active\": "; vnx::write(_out, active);
+	_out << "{";
+	_out << "\"active\": "; vnx::write(_out, active);
 	_out << ", \"warn_distance\": "; vnx::write(_out, warn_distance);
 	_out << ", \"alarm_distance\": "; vnx::write(_out, alarm_distance);
 	_out << "}";
@@ -74,7 +74,6 @@ void sensor_config_t::read(std::istream& _in) {
 
 vnx::Object sensor_config_t::to_object() const {
 	vnx::Object _object;
-	_object["__type"] = "pilot.usboard.sensor_config_t";
 	_object["active"] = active;
 	_object["warn_distance"] = warn_distance;
 	_object["alarm_distance"] = alarm_distance;
@@ -124,7 +123,7 @@ std::shared_ptr<vnx::TypeCode> sensor_config_t::static_create_type_code() {
 	{
 		vnx::TypeField& field = type_code->fields[0];
 		field.name = "active";
-		field.code = {1};
+		field.code = {31};
 	}
 	{
 		vnx::TypeField& field = type_code->fields[1];

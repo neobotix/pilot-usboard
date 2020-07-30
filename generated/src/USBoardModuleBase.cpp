@@ -24,6 +24,8 @@
 #include <pilot/usboard/USBoardModule_set_channel_active.hxx>
 #include <pilot/usboard/USBoardModule_set_channel_active_return.hxx>
 #include <vnx/Module.h>
+#include <vnx/ModuleInterface_vnx_get_type_code.hxx>
+#include <vnx/ModuleInterface_vnx_get_type_code_return.hxx>
 #include <vnx/TopicPtr.hpp>
 
 #include <vnx/vnx.h>
@@ -75,8 +77,8 @@ void USBoardModuleBase::accept(vnx::Visitor& _visitor) const {
 }
 
 void USBoardModuleBase::write(std::ostream& _out) const {
-	_out << "{\"__type\": \"pilot.usboard.USBoardModule\"";
-	_out << ", \"input_can\": "; vnx::write(_out, input_can);
+	_out << "{";
+	_out << "\"input_can\": "; vnx::write(_out, input_can);
 	_out << ", \"input_serial\": "; vnx::write(_out, input_serial);
 	_out << ", \"topic_can_request\": "; vnx::write(_out, topic_can_request);
 	_out << ", \"topic_serial_request\": "; vnx::write(_out, topic_serial_request);
@@ -113,7 +115,6 @@ void USBoardModuleBase::read(std::istream& _in) {
 
 vnx::Object USBoardModuleBase::to_object() const {
 	vnx::Object _object;
-	_object["__type"] = "pilot.usboard.USBoardModule";
 	_object["input_can"] = input_can;
 	_object["input_serial"] = input_serial;
 	_object["topic_can_request"] = topic_can_request;
@@ -173,15 +174,16 @@ std::shared_ptr<vnx::TypeCode> USBoardModuleBase::static_create_type_code() {
 	type_code->type_hash = vnx::Hash64(0x43f03ccffe42b23full);
 	type_code->code_hash = vnx::Hash64(0x469148337d28909dull);
 	type_code->is_native = true;
-	type_code->methods.resize(8);
-	type_code->methods[0] = ::pilot::usboard::USBoardModule_is_connected::static_get_type_code();
-	type_code->methods[1] = ::pilot::usboard::USBoardModule_request_data::static_get_type_code();
-	type_code->methods[2] = ::pilot::usboard::USBoardModule_request_analog_data::static_get_type_code();
-	type_code->methods[3] = ::pilot::usboard::USBoardModule_request_config::static_get_type_code();
-	type_code->methods[4] = ::pilot::usboard::USBoardModule_get_config::static_get_type_code();
-	type_code->methods[5] = ::pilot::usboard::USBoardModule_set_channel_active::static_get_type_code();
-	type_code->methods[6] = ::pilot::usboard::USBoardModule_send_config::static_get_type_code();
-	type_code->methods[7] = ::pilot::usboard::USBoardModule_save_config::static_get_type_code();
+	type_code->methods.resize(9);
+	type_code->methods[0] = ::vnx::ModuleInterface_vnx_get_type_code::static_get_type_code();
+	type_code->methods[1] = ::pilot::usboard::USBoardModule_is_connected::static_get_type_code();
+	type_code->methods[2] = ::pilot::usboard::USBoardModule_request_data::static_get_type_code();
+	type_code->methods[3] = ::pilot::usboard::USBoardModule_request_analog_data::static_get_type_code();
+	type_code->methods[4] = ::pilot::usboard::USBoardModule_request_config::static_get_type_code();
+	type_code->methods[5] = ::pilot::usboard::USBoardModule_get_config::static_get_type_code();
+	type_code->methods[6] = ::pilot::usboard::USBoardModule_set_channel_active::static_get_type_code();
+	type_code->methods[7] = ::pilot::usboard::USBoardModule_send_config::static_get_type_code();
+	type_code->methods[8] = ::pilot::usboard::USBoardModule_save_config::static_get_type_code();
 	type_code->fields.resize(8);
 	{
 		vnx::TypeField& field = type_code->fields[0];
@@ -223,7 +225,7 @@ std::shared_ptr<vnx::TypeCode> USBoardModuleBase::static_create_type_code() {
 		vnx::TypeField& field = type_code->fields[6];
 		field.is_extended = true;
 		field.name = "config_file";
-		field.code = {12, 5};
+		field.code = {32};
 	}
 	{
 		vnx::TypeField& field = type_code->fields[7];
@@ -254,7 +256,15 @@ void USBoardModuleBase::vnx_handle_switch(std::shared_ptr<const vnx::Sample> _sa
 
 std::shared_ptr<vnx::Value> USBoardModuleBase::vnx_call_switch(std::shared_ptr<const vnx::Value> _method, const vnx::request_id_t& _request_id) {
 	const auto _type_hash = _method->get_type_hash();
-	if(_type_hash == vnx::Hash64(0x67dc4b6f55cdaf01ull)) {
+	if(_type_hash == vnx::Hash64(0x305ec4d628960e5dull)) {
+		auto _args = std::dynamic_pointer_cast<const ::vnx::ModuleInterface_vnx_get_type_code>(_method);
+		if(!_args) {
+			throw std::logic_error("vnx_call_switch(): !_args");
+		}
+		auto _return_value = ::vnx::ModuleInterface_vnx_get_type_code_return::create();
+		_return_value->_ret_0 = vnx_get_type_code();
+		return _return_value;
+	} else if(_type_hash == vnx::Hash64(0x67dc4b6f55cdaf01ull)) {
 		auto _args = std::dynamic_pointer_cast<const ::pilot::usboard::USBoardModule_is_connected>(_method);
 		if(!_args) {
 			throw std::logic_error("vnx_call_switch(): !_args");

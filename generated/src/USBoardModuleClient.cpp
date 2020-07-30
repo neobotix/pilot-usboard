@@ -23,6 +23,8 @@
 #include <pilot/usboard/USBoardModule_set_channel_active.hxx>
 #include <pilot/usboard/USBoardModule_set_channel_active_return.hxx>
 #include <vnx/Module.h>
+#include <vnx/ModuleInterface_vnx_get_type_code.hxx>
+#include <vnx/ModuleInterface_vnx_get_type_code_return.hxx>
 #include <vnx/TopicPtr.hpp>
 
 #include <vnx/vnx.h>
@@ -39,6 +41,16 @@ USBoardModuleClient::USBoardModuleClient(const std::string& service_name)
 USBoardModuleClient::USBoardModuleClient(vnx::Hash64 service_addr)
 	:	Client::Client(service_addr)
 {
+}
+
+::vnx::TypeCode USBoardModuleClient::vnx_get_type_code() {
+	auto _method = ::vnx::ModuleInterface_vnx_get_type_code::create();
+	auto _return_value = vnx_request(_method);
+	auto _result = std::dynamic_pointer_cast<const ::vnx::ModuleInterface_vnx_get_type_code_return>(_return_value);
+	if(!_result) {
+		throw std::logic_error("USBoardModuleClient: !_result");
+	}
+	return _result->_ret_0;
 }
 
 vnx::bool_t USBoardModuleClient::is_connected() {
