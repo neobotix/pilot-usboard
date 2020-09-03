@@ -29,6 +29,7 @@ vnx::Hash64 USBoardConfig::get_type_hash() const {
 const char* USBoardConfig::get_type_name() const {
 	return "pilot.usboard.USBoardConfig";
 }
+
 const vnx::TypeCode* USBoardConfig::get_type_code() const {
 	return pilot::usboard::vnx_native_type_code_USBoardConfig;
 }
@@ -161,6 +162,76 @@ void USBoardConfig::from_object(const vnx::Object& _object) {
 		} else if(_entry.first == "update_interval_ms") {
 			_entry.second.to(update_interval_ms);
 		}
+	}
+}
+
+vnx::Variant USBoardConfig::get_field(const std::string& _name) const {
+	if(_name == "hardware_version") {
+		return vnx::Variant(hardware_version);
+	}
+	if(_name == "serial_number") {
+		return vnx::Variant(serial_number);
+	}
+	if(_name == "can_id") {
+		return vnx::Variant(can_id);
+	}
+	if(_name == "can_baudrate") {
+		return vnx::Variant(can_baudrate);
+	}
+	if(_name == "update_interval_ms") {
+		return vnx::Variant(update_interval_ms);
+	}
+	if(_name == "transmit_mode") {
+		return vnx::Variant(transmit_mode);
+	}
+	if(_name == "sensor_config") {
+		return vnx::Variant(sensor_config);
+	}
+	if(_name == "group_config") {
+		return vnx::Variant(group_config);
+	}
+	if(_name == "low_pass_gain") {
+		return vnx::Variant(low_pass_gain);
+	}
+	if(_name == "enable_analog_input") {
+		return vnx::Variant(enable_analog_input);
+	}
+	if(_name == "enable_legacy_format") {
+		return vnx::Variant(enable_legacy_format);
+	}
+	if(_name == "enable_can_termination") {
+		return vnx::Variant(enable_can_termination);
+	}
+	return vnx::Variant();
+}
+
+void USBoardConfig::set_field(const std::string& _name, const vnx::Variant& _value) {
+	if(_name == "hardware_version") {
+		_value.to(hardware_version);
+	} else if(_name == "serial_number") {
+		_value.to(serial_number);
+	} else if(_name == "can_id") {
+		_value.to(can_id);
+	} else if(_name == "can_baudrate") {
+		_value.to(can_baudrate);
+	} else if(_name == "update_interval_ms") {
+		_value.to(update_interval_ms);
+	} else if(_name == "transmit_mode") {
+		_value.to(transmit_mode);
+	} else if(_name == "sensor_config") {
+		_value.to(sensor_config);
+	} else if(_name == "group_config") {
+		_value.to(group_config);
+	} else if(_name == "low_pass_gain") {
+		_value.to(low_pass_gain);
+	} else if(_name == "enable_analog_input") {
+		_value.to(enable_analog_input);
+	} else if(_name == "enable_legacy_format") {
+		_value.to(enable_legacy_format);
+	} else if(_name == "enable_can_termination") {
+		_value.to(enable_can_termination);
+	} else {
+		throw std::logic_error("no such field: '" + _name + "'");
 	}
 }
 
@@ -378,6 +449,10 @@ void read(TypeInput& in, ::pilot::usboard::USBoardConfig& value, const TypeCode*
 }
 
 void write(TypeOutput& out, const ::pilot::usboard::USBoardConfig& value, const TypeCode* type_code, const uint16_t* code) {
+	if(code && code[0] == CODE_OBJECT) {
+		vnx::write(out, value.to_object(), nullptr, code);
+		return;
+	}
 	if(!type_code || (code && code[0] == CODE_ANY)) {
 		type_code = pilot::usboard::vnx_native_type_code_USBoardConfig;
 		out.write_type_code(type_code);

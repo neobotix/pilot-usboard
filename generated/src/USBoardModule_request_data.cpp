@@ -23,6 +23,7 @@ vnx::Hash64 USBoardModule_request_data::get_type_hash() const {
 const char* USBoardModule_request_data::get_type_name() const {
 	return "pilot.usboard.USBoardModule.request_data";
 }
+
 const vnx::TypeCode* USBoardModule_request_data::get_type_code() const {
 	return pilot::usboard::vnx_native_type_code_USBoardModule_request_data;
 }
@@ -78,6 +79,21 @@ void USBoardModule_request_data::from_object(const vnx::Object& _object) {
 		if(_entry.first == "groups") {
 			_entry.second.to(groups);
 		}
+	}
+}
+
+vnx::Variant USBoardModule_request_data::get_field(const std::string& _name) const {
+	if(_name == "groups") {
+		return vnx::Variant(groups);
+	}
+	return vnx::Variant();
+}
+
+void USBoardModule_request_data::set_field(const std::string& _name, const vnx::Variant& _value) {
+	if(_name == "groups") {
+		_value.to(groups);
+	} else {
+		throw std::logic_error("no such field: '" + _name + "'");
 	}
 }
 
@@ -166,6 +182,10 @@ void read(TypeInput& in, ::pilot::usboard::USBoardModule_request_data& value, co
 }
 
 void write(TypeOutput& out, const ::pilot::usboard::USBoardModule_request_data& value, const TypeCode* type_code, const uint16_t* code) {
+	if(code && code[0] == CODE_OBJECT) {
+		vnx::write(out, value.to_object(), nullptr, code);
+		return;
+	}
 	if(!type_code || (code && code[0] == CODE_ANY)) {
 		type_code = pilot::usboard::vnx_native_type_code_USBoardModule_request_data;
 		out.write_type_code(type_code);

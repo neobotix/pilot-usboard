@@ -39,6 +39,9 @@ struct sensor_config_t {
 	vnx::Object to_object() const;
 	void from_object(const vnx::Object& object);
 	
+	vnx::Variant get_field(const std::string& name) const;
+	void set_field(const std::string& name, const vnx::Variant& value);
+	
 	friend std::ostream& operator<<(std::ostream& _out, const sensor_config_t& _value);
 	friend std::istream& operator>>(std::istream& _in, sensor_config_t& _value);
 	

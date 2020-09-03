@@ -58,6 +58,7 @@ vnx::Hash64 USBoardModuleBase::get_type_hash() const {
 const char* USBoardModuleBase::get_type_name() const {
 	return "pilot.usboard.USBoardModule";
 }
+
 const vnx::TypeCode* USBoardModuleBase::get_type_code() const {
 	return pilot::usboard::vnx_native_type_code_USBoardModuleBase;
 }
@@ -145,6 +146,56 @@ void USBoardModuleBase::from_object(const vnx::Object& _object) {
 		} else if(_entry.first == "topic_serial_request") {
 			_entry.second.to(topic_serial_request);
 		}
+	}
+}
+
+vnx::Variant USBoardModuleBase::get_field(const std::string& _name) const {
+	if(_name == "input_can") {
+		return vnx::Variant(input_can);
+	}
+	if(_name == "input_serial") {
+		return vnx::Variant(input_serial);
+	}
+	if(_name == "topic_can_request") {
+		return vnx::Variant(topic_can_request);
+	}
+	if(_name == "topic_serial_request") {
+		return vnx::Variant(topic_serial_request);
+	}
+	if(_name == "output_data") {
+		return vnx::Variant(output_data);
+	}
+	if(_name == "output_config") {
+		return vnx::Variant(output_config);
+	}
+	if(_name == "config_file") {
+		return vnx::Variant(config_file);
+	}
+	if(_name == "can_id") {
+		return vnx::Variant(can_id);
+	}
+	return vnx::Variant();
+}
+
+void USBoardModuleBase::set_field(const std::string& _name, const vnx::Variant& _value) {
+	if(_name == "input_can") {
+		_value.to(input_can);
+	} else if(_name == "input_serial") {
+		_value.to(input_serial);
+	} else if(_name == "topic_can_request") {
+		_value.to(topic_can_request);
+	} else if(_name == "topic_serial_request") {
+		_value.to(topic_serial_request);
+	} else if(_name == "output_data") {
+		_value.to(output_data);
+	} else if(_name == "output_config") {
+		_value.to(output_config);
+	} else if(_name == "config_file") {
+		_value.to(config_file);
+	} else if(_name == "can_id") {
+		_value.to(can_id);
+	} else {
+		throw std::logic_error("no such field: '" + _name + "'");
 	}
 }
 
@@ -400,6 +451,10 @@ void read(TypeInput& in, ::pilot::usboard::USBoardModuleBase& value, const TypeC
 }
 
 void write(TypeOutput& out, const ::pilot::usboard::USBoardModuleBase& value, const TypeCode* type_code, const uint16_t* code) {
+	if(code && code[0] == CODE_OBJECT) {
+		vnx::write(out, value.to_object(), nullptr, code);
+		return;
+	}
 	if(!type_code || (code && code[0] == CODE_ANY)) {
 		type_code = pilot::usboard::vnx_native_type_code_USBoardModuleBase;
 		out.write_type_code(type_code);

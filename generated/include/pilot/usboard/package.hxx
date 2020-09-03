@@ -193,7 +193,7 @@ struct type<::pilot::usboard::USBoardConfig> {
 		vnx::accept(visitor, value);
 	}
 	void create_dynamic_code(std::vector<uint16_t>& code) {
-		code.push_back(CODE_ANY);
+		code.push_back(CODE_OBJECT);
 	}
 };
 
@@ -216,7 +216,7 @@ struct type<::pilot::usboard::USBoardData> {
 		vnx::accept(visitor, value);
 	}
 	void create_dynamic_code(std::vector<uint16_t>& code) {
-		code.push_back(CODE_ANY);
+		code.push_back(CODE_OBJECT);
 	}
 };
 
@@ -239,7 +239,7 @@ struct type<::pilot::usboard::USBoardModuleBase> {
 		vnx::accept(visitor, value);
 	}
 	void create_dynamic_code(std::vector<uint16_t>& code) {
-		code.push_back(CODE_ANY);
+		code.push_back(CODE_OBJECT);
 	}
 };
 
@@ -262,7 +262,7 @@ struct type<::pilot::usboard::USBoardModule_get_config> {
 		vnx::accept(visitor, value);
 	}
 	void create_dynamic_code(std::vector<uint16_t>& code) {
-		code.push_back(CODE_ANY);
+		code.push_back(CODE_OBJECT);
 	}
 };
 
@@ -285,7 +285,7 @@ struct type<::pilot::usboard::USBoardModule_get_config_return> {
 		vnx::accept(visitor, value);
 	}
 	void create_dynamic_code(std::vector<uint16_t>& code) {
-		code.push_back(CODE_ANY);
+		code.push_back(CODE_OBJECT);
 	}
 };
 
@@ -308,7 +308,7 @@ struct type<::pilot::usboard::USBoardModule_is_connected> {
 		vnx::accept(visitor, value);
 	}
 	void create_dynamic_code(std::vector<uint16_t>& code) {
-		code.push_back(CODE_ANY);
+		code.push_back(CODE_OBJECT);
 	}
 };
 
@@ -331,7 +331,7 @@ struct type<::pilot::usboard::USBoardModule_is_connected_return> {
 		vnx::accept(visitor, value);
 	}
 	void create_dynamic_code(std::vector<uint16_t>& code) {
-		code.push_back(CODE_ANY);
+		code.push_back(CODE_OBJECT);
 	}
 };
 
@@ -354,7 +354,7 @@ struct type<::pilot::usboard::USBoardModule_request_analog_data> {
 		vnx::accept(visitor, value);
 	}
 	void create_dynamic_code(std::vector<uint16_t>& code) {
-		code.push_back(CODE_ANY);
+		code.push_back(CODE_OBJECT);
 	}
 };
 
@@ -377,7 +377,7 @@ struct type<::pilot::usboard::USBoardModule_request_analog_data_return> {
 		vnx::accept(visitor, value);
 	}
 	void create_dynamic_code(std::vector<uint16_t>& code) {
-		code.push_back(CODE_ANY);
+		code.push_back(CODE_OBJECT);
 	}
 };
 
@@ -400,7 +400,7 @@ struct type<::pilot::usboard::USBoardModule_request_config> {
 		vnx::accept(visitor, value);
 	}
 	void create_dynamic_code(std::vector<uint16_t>& code) {
-		code.push_back(CODE_ANY);
+		code.push_back(CODE_OBJECT);
 	}
 };
 
@@ -423,7 +423,7 @@ struct type<::pilot::usboard::USBoardModule_request_config_return> {
 		vnx::accept(visitor, value);
 	}
 	void create_dynamic_code(std::vector<uint16_t>& code) {
-		code.push_back(CODE_ANY);
+		code.push_back(CODE_OBJECT);
 	}
 };
 
@@ -446,7 +446,7 @@ struct type<::pilot::usboard::USBoardModule_request_data> {
 		vnx::accept(visitor, value);
 	}
 	void create_dynamic_code(std::vector<uint16_t>& code) {
-		code.push_back(CODE_ANY);
+		code.push_back(CODE_OBJECT);
 	}
 };
 
@@ -469,7 +469,7 @@ struct type<::pilot::usboard::USBoardModule_request_data_return> {
 		vnx::accept(visitor, value);
 	}
 	void create_dynamic_code(std::vector<uint16_t>& code) {
-		code.push_back(CODE_ANY);
+		code.push_back(CODE_OBJECT);
 	}
 };
 
@@ -492,7 +492,7 @@ struct type<::pilot::usboard::USBoardModule_save_config> {
 		vnx::accept(visitor, value);
 	}
 	void create_dynamic_code(std::vector<uint16_t>& code) {
-		code.push_back(CODE_ANY);
+		code.push_back(CODE_OBJECT);
 	}
 };
 
@@ -515,7 +515,7 @@ struct type<::pilot::usboard::USBoardModule_save_config_return> {
 		vnx::accept(visitor, value);
 	}
 	void create_dynamic_code(std::vector<uint16_t>& code) {
-		code.push_back(CODE_ANY);
+		code.push_back(CODE_OBJECT);
 	}
 };
 
@@ -538,7 +538,7 @@ struct type<::pilot::usboard::USBoardModule_send_config> {
 		vnx::accept(visitor, value);
 	}
 	void create_dynamic_code(std::vector<uint16_t>& code) {
-		code.push_back(CODE_ANY);
+		code.push_back(CODE_OBJECT);
 	}
 };
 
@@ -561,7 +561,7 @@ struct type<::pilot::usboard::USBoardModule_send_config_return> {
 		vnx::accept(visitor, value);
 	}
 	void create_dynamic_code(std::vector<uint16_t>& code) {
-		code.push_back(CODE_ANY);
+		code.push_back(CODE_OBJECT);
 	}
 };
 
@@ -584,7 +584,7 @@ struct type<::pilot::usboard::USBoardModule_set_channel_active> {
 		vnx::accept(visitor, value);
 	}
 	void create_dynamic_code(std::vector<uint16_t>& code) {
-		code.push_back(CODE_ANY);
+		code.push_back(CODE_OBJECT);
 	}
 };
 
@@ -607,7 +607,7 @@ struct type<::pilot::usboard::USBoardModule_set_channel_active_return> {
 		vnx::accept(visitor, value);
 	}
 	void create_dynamic_code(std::vector<uint16_t>& code) {
-		code.push_back(CODE_ANY);
+		code.push_back(CODE_OBJECT);
 	}
 };
 
@@ -630,7 +630,7 @@ struct type<::pilot::usboard::group_config_t> {
 		vnx::accept(visitor, value);
 	}
 	void create_dynamic_code(std::vector<uint16_t>& code) {
-		code.push_back(CODE_ANY);
+		code.push_back(CODE_OBJECT);
 	}
 };
 
@@ -653,7 +653,7 @@ struct type<::pilot::usboard::sensor_config_t> {
 		vnx::accept(visitor, value);
 	}
 	void create_dynamic_code(std::vector<uint16_t>& code) {
-		code.push_back(CODE_ANY);
+		code.push_back(CODE_OBJECT);
 	}
 };
 

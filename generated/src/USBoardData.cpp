@@ -23,6 +23,7 @@ vnx::Hash64 USBoardData::get_type_hash() const {
 const char* USBoardData::get_type_name() const {
 	return "pilot.usboard.USBoardData";
 }
+
 const vnx::TypeCode* USBoardData::get_type_code() const {
 	return pilot::usboard::vnx_native_type_code_USBoardData;
 }
@@ -106,6 +107,41 @@ void USBoardData::from_object(const vnx::Object& _object) {
 		} else if(_entry.first == "time") {
 			_entry.second.to(time);
 		}
+	}
+}
+
+vnx::Variant USBoardData::get_field(const std::string& _name) const {
+	if(_name == "time") {
+		return vnx::Variant(time);
+	}
+	if(_name == "sensor") {
+		return vnx::Variant(sensor);
+	}
+	if(_name == "signal_source") {
+		return vnx::Variant(signal_source);
+	}
+	if(_name == "analog_input") {
+		return vnx::Variant(analog_input);
+	}
+	if(_name == "analog_input_scale") {
+		return vnx::Variant(analog_input_scale);
+	}
+	return vnx::Variant();
+}
+
+void USBoardData::set_field(const std::string& _name, const vnx::Variant& _value) {
+	if(_name == "time") {
+		_value.to(time);
+	} else if(_name == "sensor") {
+		_value.to(sensor);
+	} else if(_name == "signal_source") {
+		_value.to(signal_source);
+	} else if(_name == "analog_input") {
+		_value.to(analog_input);
+	} else if(_name == "analog_input_scale") {
+		_value.to(analog_input_scale);
+	} else {
+		throw std::logic_error("no such field: '" + _name + "'");
 	}
 }
 
@@ -244,6 +280,10 @@ void read(TypeInput& in, ::pilot::usboard::USBoardData& value, const TypeCode* t
 }
 
 void write(TypeOutput& out, const ::pilot::usboard::USBoardData& value, const TypeCode* type_code, const uint16_t* code) {
+	if(code && code[0] == CODE_OBJECT) {
+		vnx::write(out, value.to_object(), nullptr, code);
+		return;
+	}
 	if(!type_code || (code && code[0] == CODE_ANY)) {
 		type_code = pilot::usboard::vnx_native_type_code_USBoardData;
 		out.write_type_code(type_code);

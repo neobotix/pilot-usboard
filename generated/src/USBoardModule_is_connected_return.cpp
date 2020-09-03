@@ -22,6 +22,7 @@ vnx::Hash64 USBoardModule_is_connected_return::get_type_hash() const {
 const char* USBoardModule_is_connected_return::get_type_name() const {
 	return "pilot.usboard.USBoardModule.is_connected.return";
 }
+
 const vnx::TypeCode* USBoardModule_is_connected_return::get_type_code() const {
 	return pilot::usboard::vnx_native_type_code_USBoardModule_is_connected_return;
 }
@@ -77,6 +78,21 @@ void USBoardModule_is_connected_return::from_object(const vnx::Object& _object) 
 		if(_entry.first == "_ret_0") {
 			_entry.second.to(_ret_0);
 		}
+	}
+}
+
+vnx::Variant USBoardModule_is_connected_return::get_field(const std::string& _name) const {
+	if(_name == "_ret_0") {
+		return vnx::Variant(_ret_0);
+	}
+	return vnx::Variant();
+}
+
+void USBoardModule_is_connected_return::set_field(const std::string& _name, const vnx::Variant& _value) {
+	if(_name == "_ret_0") {
+		_value.to(_ret_0);
+	} else {
+		throw std::logic_error("no such field: '" + _name + "'");
 	}
 }
 
@@ -169,6 +185,10 @@ void read(TypeInput& in, ::pilot::usboard::USBoardModule_is_connected_return& va
 }
 
 void write(TypeOutput& out, const ::pilot::usboard::USBoardModule_is_connected_return& value, const TypeCode* type_code, const uint16_t* code) {
+	if(code && code[0] == CODE_OBJECT) {
+		vnx::write(out, value.to_object(), nullptr, code);
+		return;
+	}
 	if(!type_code || (code && code[0] == CODE_ANY)) {
 		type_code = pilot::usboard::vnx_native_type_code_USBoardModule_is_connected_return;
 		out.write_type_code(type_code);

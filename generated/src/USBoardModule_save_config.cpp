@@ -24,6 +24,7 @@ vnx::Hash64 USBoardModule_save_config::get_type_hash() const {
 const char* USBoardModule_save_config::get_type_name() const {
 	return "pilot.usboard.USBoardModule.save_config";
 }
+
 const vnx::TypeCode* USBoardModule_save_config::get_type_code() const {
 	return pilot::usboard::vnx_native_type_code_USBoardModule_save_config;
 }
@@ -79,6 +80,21 @@ void USBoardModule_save_config::from_object(const vnx::Object& _object) {
 		if(_entry.first == "config") {
 			_entry.second.to(config);
 		}
+	}
+}
+
+vnx::Variant USBoardModule_save_config::get_field(const std::string& _name) const {
+	if(_name == "config") {
+		return vnx::Variant(config);
+	}
+	return vnx::Variant();
+}
+
+void USBoardModule_save_config::set_field(const std::string& _name, const vnx::Variant& _value) {
+	if(_name == "config") {
+		_value.to(config);
+	} else {
+		throw std::logic_error("no such field: '" + _name + "'");
 	}
 }
 
@@ -167,6 +183,10 @@ void read(TypeInput& in, ::pilot::usboard::USBoardModule_save_config& value, con
 }
 
 void write(TypeOutput& out, const ::pilot::usboard::USBoardModule_save_config& value, const TypeCode* type_code, const uint16_t* code) {
+	if(code && code[0] == CODE_OBJECT) {
+		vnx::write(out, value.to_object(), nullptr, code);
+		return;
+	}
 	if(!type_code || (code && code[0] == CODE_ANY)) {
 		type_code = pilot::usboard::vnx_native_type_code_USBoardModule_save_config;
 		out.write_type_code(type_code);

@@ -25,6 +25,7 @@ vnx::Hash64 group_config_t::get_type_hash() const {
 const char* group_config_t::get_type_name() const {
 	return "pilot.usboard.group_config_t";
 }
+
 const vnx::TypeCode* group_config_t::get_type_code() const {
 	return pilot::usboard::vnx_native_type_code_group_config_t;
 }
@@ -114,6 +115,46 @@ void group_config_t::from_object(const vnx::Object& _object) {
 		} else if(_entry.first == "sending_sensor") {
 			_entry.second.to(sending_sensor);
 		}
+	}
+}
+
+vnx::Variant group_config_t::get_field(const std::string& _name) const {
+	if(_name == "enable_transmission") {
+		return vnx::Variant(enable_transmission);
+	}
+	if(_name == "resolution") {
+		return vnx::Variant(resolution);
+	}
+	if(_name == "fire_interval_ms") {
+		return vnx::Variant(fire_interval_ms);
+	}
+	if(_name == "sending_sensor") {
+		return vnx::Variant(sending_sensor);
+	}
+	if(_name == "long_range") {
+		return vnx::Variant(long_range);
+	}
+	if(_name == "cross_echo_mode") {
+		return vnx::Variant(cross_echo_mode);
+	}
+	return vnx::Variant();
+}
+
+void group_config_t::set_field(const std::string& _name, const vnx::Variant& _value) {
+	if(_name == "enable_transmission") {
+		_value.to(enable_transmission);
+	} else if(_name == "resolution") {
+		_value.to(resolution);
+	} else if(_name == "fire_interval_ms") {
+		_value.to(fire_interval_ms);
+	} else if(_name == "sending_sensor") {
+		_value.to(sending_sensor);
+	} else if(_name == "long_range") {
+		_value.to(long_range);
+	} else if(_name == "cross_echo_mode") {
+		_value.to(cross_echo_mode);
+	} else {
+		throw std::logic_error("no such field: '" + _name + "'");
 	}
 }
 
@@ -265,6 +306,10 @@ void read(TypeInput& in, ::pilot::usboard::group_config_t& value, const TypeCode
 }
 
 void write(TypeOutput& out, const ::pilot::usboard::group_config_t& value, const TypeCode* type_code, const uint16_t* code) {
+	if(code && code[0] == CODE_OBJECT) {
+		vnx::write(out, value.to_object(), nullptr, code);
+		return;
+	}
 	if(!type_code || (code && code[0] == CODE_ANY)) {
 		type_code = pilot::usboard::vnx_native_type_code_group_config_t;
 		out.write_type_code(type_code);

@@ -21,6 +21,7 @@ vnx::Hash64 sensor_config_t::get_type_hash() const {
 const char* sensor_config_t::get_type_name() const {
 	return "pilot.usboard.sensor_config_t";
 }
+
 const vnx::TypeCode* sensor_config_t::get_type_code() const {
 	return pilot::usboard::vnx_native_type_code_sensor_config_t;
 }
@@ -89,6 +90,31 @@ void sensor_config_t::from_object(const vnx::Object& _object) {
 		} else if(_entry.first == "warn_distance") {
 			_entry.second.to(warn_distance);
 		}
+	}
+}
+
+vnx::Variant sensor_config_t::get_field(const std::string& _name) const {
+	if(_name == "active") {
+		return vnx::Variant(active);
+	}
+	if(_name == "warn_distance") {
+		return vnx::Variant(warn_distance);
+	}
+	if(_name == "alarm_distance") {
+		return vnx::Variant(alarm_distance);
+	}
+	return vnx::Variant();
+}
+
+void sensor_config_t::set_field(const std::string& _name, const vnx::Variant& _value) {
+	if(_name == "active") {
+		_value.to(active);
+	} else if(_name == "warn_distance") {
+		_value.to(warn_distance);
+	} else if(_name == "alarm_distance") {
+		_value.to(alarm_distance);
+	} else {
+		throw std::logic_error("no such field: '" + _name + "'");
 	}
 }
 
@@ -203,6 +229,10 @@ void read(TypeInput& in, ::pilot::usboard::sensor_config_t& value, const TypeCod
 }
 
 void write(TypeOutput& out, const ::pilot::usboard::sensor_config_t& value, const TypeCode* type_code, const uint16_t* code) {
+	if(code && code[0] == CODE_OBJECT) {
+		vnx::write(out, value.to_object(), nullptr, code);
+		return;
+	}
 	if(!type_code || (code && code[0] == CODE_ANY)) {
 		type_code = pilot::usboard::vnx_native_type_code_sensor_config_t;
 		out.write_type_code(type_code);
