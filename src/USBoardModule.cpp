@@ -277,7 +277,11 @@ void USBoardModule::handle(std::shared_ptr<const ::pilot::base::DataPacket> data
 		m_serialBuffer[m_serialBufferIndex++] = nextByte;
 
 		if(m_serialBufferIndex >= m_serialSize){
-			handle_serialpacket(m_serialBuffer, data->time);
+			try {
+				handle_serialpacket(m_serialBuffer, data->time);
+			} catch(const std::exception& ex) {
+				log(WARN) << ex.what();
+			}
 			m_serialBufferIndex = 0;
 		}
 	}
@@ -334,7 +338,7 @@ void USBoardModule::handle_serialpacket(const std::vector<uint8_t> &data, int64_
 		break;
 	}
 	default:
-		throw std::runtime_error("received packet with invalid command byte " + std::to_string(data[1]));
+		throw std::runtime_error("Received packet with invalid command byte " + std::to_string(data[1]));
 	}
 	frame->id = m_config->can_id + baseplus;
 	for(size_t i=0; i<datasize; i++){
