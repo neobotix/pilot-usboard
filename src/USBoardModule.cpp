@@ -45,7 +45,7 @@ void USBoardModule::main()
 
 std::shared_ptr<const USBoardConfig> USBoardModule::get_config() const
 {
-	if(!m_configIsReal) log(WARN) << "returning dummy parameter set";
+	if(!m_configIsReal) log(WARN) << "Returning default parameter set";
 	return m_config;
 }
 
@@ -228,7 +228,7 @@ void USBoardModule::handle_canframe(std::shared_ptr<const ::pilot::base::CAN_Fra
 				m_gotData.setTargetSize(m_config->count_transmitting_groups());
 			}else{
 				auto ex = vnx::Exception::create();
-				ex->what = "wrong config checksum " + std::to_string(bytesum) + " when " + std::to_string(m_sentConfigSum) + " was expected";
+				ex->what = "Wrong config checksum " + std::to_string(bytesum) + " when " + std::to_string(m_sentConfigSum) + " was expected";
 				vnx_async_return(m_sentConfigRequest, ex);
 			}
 		}else{
