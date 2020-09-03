@@ -73,7 +73,7 @@ void USBoardData::from_can_frames_data(const std::vector<base::CAN_Frame> &frame
 			}
 		}
 		for(size_t k=0; k<4; k++){
-			uint16_t sensork = fr.get_uint(16+k*8, 8, 0) + (fr.get_uint(48+k*4, 4, 0) << 4);
+			uint16_t sensork = fr.get_uint(16+k*8, 8, 0) + (fr.get_uint(48+k*4, 4, 0) << 8);
 			if(sensork == 0) {
 				sensor[groupid*4 + k] = -1;
 			} else if(sensork == 1) {
