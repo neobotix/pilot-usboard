@@ -74,7 +74,7 @@ std::vector<base::CAN_Frame> USBoardConfig::to_can_frames() const
 		break;
 	default:
 		interval_id = 15;
-		custom_interval = (update_interval_ms / 50) - 1;
+		custom_interval = std::max(update_interval_ms / 50, uint32_t(1)) - 1;
 	}
 	result[1].set_uint(24, 4, interval_id, 0);
 	result[1].set_uint(28, 4, custom_interval, 0);
