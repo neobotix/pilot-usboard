@@ -4,7 +4,7 @@ import pilot.base.CAN_Frame;
 
 class USBoardData extends pilot.base.Sample {
 	
-	float sensor[16];				// distance, zero = no measurement [m]
+	float sensor[16];				// distance, negative = infinite, zero = too close [m]
 	
 	char signal_source[4];			// for each group of 4 sensors, index of the sensor which sent the pulse (-1 = normal mode) 
 	
