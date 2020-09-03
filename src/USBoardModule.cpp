@@ -384,6 +384,7 @@ void USBoardModule::sendconfig_timeout(const vnx::request_id_t& request_id)
 
 
 void USBoardModule::getdata_send(){
+	m_data.time = vnx::get_time_micros();
 	m_data.from_can_frames_data(m_gotData.clear());
 	m_gotData.setTargetSize(m_config->count_transmitting_groups());
 	publish(m_data, output_data);
