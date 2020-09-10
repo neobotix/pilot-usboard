@@ -16,7 +16,7 @@ namespace usboard {
 USBoardModule::USBoardModule(const std::string& _vnx_name)
 	:	USBoardModuleBase(_vnx_name),
 		m_serialBuffer(m_serialSize),
-		m_gotConfig(9),
+		m_gotConfig(s_configParts),
 		m_gotData1To8(2),
 		m_gotData9To16(2),
 		m_gotData(0)
@@ -109,29 +109,36 @@ void USBoardModule::save_config_async(	const std::shared_ptr<const USBoardConfig
 }
 
 void USBoardModule::send_config(const std::shared_ptr<const USBoardConfig>& config, const vnx::request_id_t& request_id, Command command){
-	if(m_sentConfigAck > 0){
+	if(m_sentConfigIndex > 0){
 		// there is still a request pending
 		throw std::runtime_error("Attempt to send another parameter set while the last one is still pending");
 	}
 
-	std::vector<base::CAN_Frame> frames = config->to_can_frames();
+	m_tosendConfig = config->to_can_frames();
 	uint16_t bytesum = 0;
-	for(base::CAN_Frame &frame : frames){
-		frame.time = vnx::get_time_micros();
+	for(base::CAN_Frame &frame : m_tosendConfig){
 		frame.id = m_config->can_id;
 		frame.set_uint(0, 8, command, 0);
 		for(size_t i=2; i<8; i++){
 			bytesum += frame.get_uint(i*8, 8, 0);
 		}
-		publish(frame, topic_can_request, BLOCKING);
-		::usleep(10000);
 	}
 
 	m_sentConfigRequest = request_id;
 	m_sentConfig = config;
-	m_sentConfigAck = 9;
 	m_sentConfigSum = bytesum;
+	m_sentConfigIndex = 0;
+
+	send_config_frame();
 	m_sentConfigTimer = set_timeout_millis(5000, std::bind(&USBoardModule::sendconfig_timeout, this, request_id));
+}
+
+
+void USBoardModule::send_config_frame(){
+	base::CAN_Frame &frame = m_tosendConfig[m_sentConfigIndex];
+	frame.time = vnx::get_time_micros();
+	publish(frame, topic_can_request, BLOCKING);
+	m_sentConfigIndex++;
 }
 
 
@@ -211,14 +218,22 @@ void USBoardModule::handle_canframe(std::shared_ptr<const ::pilot::base::CAN_Fra
 		// CMD_WRITE_PARASET  and  CMD_WRITE_PARASET_TO_EEPROM
 		uint8_t d1 = frame->get_uint(8, 8, 0);
 		uint8_t d2 = frame->get_uint(16, 8, 0);
-		if(m_sentConfigAck == 0){
-			log(WARN) << "Unexpected config ACK";
-		}else if(m_sentConfigAck == 1 || d1 != 0 || d2 != 0){
-			// 9-th (final) frame arrived
-			if(m_sentConfigAck > 1) log(WARN) << "missing " << (m_sentConfigAck - 1) << " config ACKs";
-			m_sentConfigAck = 0;
+		if(m_sentConfigIndex > 0 && m_sentConfigIndex < s_configParts){
+			if(d1 == 0 && d2 == 0){
+				// ACK arrived, send next frame, reset timeout
+				send_config_frame();
+				std::shared_ptr<vnx::Timer> t = m_sentConfigTimer.lock();
+				if(t) t->reset();
+			}else{
+				auto ex = vnx::Exception::create();
+				ex->what = "ACK should be empty but contains checksum";
+				vnx_async_return(m_sentConfigRequest, ex);
+			}
+		}else if(m_sentConfigIndex == s_configParts){
+			// final frame arrived
 			std::shared_ptr<vnx::Timer> t = m_sentConfigTimer.lock();
 			if(t) t->stop();
+			m_sentConfigIndex = 0;
 
 			uint16_t bytesum = d1 + (d2 << 8);
 			if(bytesum == m_sentConfigSum){
@@ -232,7 +247,7 @@ void USBoardModule::handle_canframe(std::shared_ptr<const ::pilot::base::CAN_Fra
 				vnx_async_return(m_sentConfigRequest, ex);
 			}
 		}else{
-			m_sentConfigAck--;
+			log(WARN) << "Unexpected config ACK";
 		}
 	}else if(baseplus >= 13 && baseplus <= 16){
 		// CMD_GET_DATA
@@ -254,7 +269,7 @@ void USBoardModule::handle_canframe(std::shared_ptr<const ::pilot::base::CAN_Fra
 
 
 void USBoardModule::handle(std::shared_ptr<const ::pilot::base::CAN_Frame> frame){
-	bool newConfigSent = (m_sentConfigAck > 0);
+	bool newConfigSent = (m_sentConfigIndex > 0);
 	bool oldMatch = (m_config->can_id <= frame->id && frame->id <= m_config->can_id+20);
 	bool newMatch = newConfigSent && (m_sentConfig->can_id <= frame->id && frame->id <= m_sentConfig->can_id+20);
 
@@ -376,7 +391,7 @@ bool USBoardModule::check_checksum(const std::vector<uint8_t> &message, size_t o
 
 void USBoardModule::sendconfig_timeout(const vnx::request_id_t& request_id)
 {
-	m_sentConfigAck = 0;
+	m_sentConfigIndex = 0;
 	auto ex = vnx::Exception::create();
 	ex->what = "Timeout while waiting for parameter set answer";
 	vnx_async_return(request_id, ex);
