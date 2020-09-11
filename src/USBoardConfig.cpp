@@ -74,7 +74,7 @@ std::vector<base::CAN_Frame> USBoardConfig::to_can_frames() const
 		break;
 	default:
 		interval_id = 15;
-		custom_interval = (update_interval_ms / 50) - 1;
+		custom_interval = std::max(update_interval_ms / 50, uint32_t(1)) - 1;
 	}
 	result[1].set_uint(24, 4, interval_id, 0);
 	result[1].set_uint(28, 4, custom_interval, 0);
@@ -99,7 +99,7 @@ std::vector<base::CAN_Frame> USBoardConfig::to_can_frames() const
 		result[7].set_bool(24+i, group_config[i].cross_echo_mode);
 		result[7].set_bool(28+i, group_config[i].long_range);
 		result[7].set_uint(32+i*2, 2, group_config[i].sending_sensor, 0);
-		result[7].set_uint(40+i*4, 4, group_config[i].fire_interval_ms / 16, 0);
+		result[7].set_uint(40+i*4, 4, std::max(group_config[i].fire_interval_ms / 16, uint32_t(1)) - 1, 0);
 	}
 	result[7].set_uint(7*8, 8, low_pass_gain * 100, 0);
 
@@ -186,7 +186,7 @@ void USBoardConfig::from_can_frames(const std::vector<base::CAN_Frame>& frames)
 		group_config[i].cross_echo_mode = frames[7].get_bool(24+i);
 		group_config[i].long_range = frames[7].get_bool(28+i);
 		group_config[i].sending_sensor = frames[7].get_uint(32+i*2, 2, 0);
-		group_config[i].fire_interval_ms = frames[7].get_uint(40+i*4, 4, 0) * 16;
+		group_config[i].fire_interval_ms = (frames[7].get_uint(40+i*4, 4, 0) + 1) * 16;
 	}
 	low_pass_gain = frames[7].get_uint(7*8, 8, 0) * 0.01;
 
