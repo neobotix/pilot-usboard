@@ -2,7 +2,9 @@ package pilot.usboard;
 
 import pilot.base.CAN_Frame;
 
-class USBoardData extends pilot.base.Sample {
+class USBoardData {
+	
+	long time;						// POSIX timestamp [usec]
 	
 	float sensor[16];				// distance, negative = infinite, zero = too close [m]
 	

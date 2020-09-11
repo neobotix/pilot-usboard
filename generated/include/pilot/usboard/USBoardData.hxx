@@ -6,21 +6,22 @@
 
 #include <pilot/usboard/package.hxx>
 #include <pilot/base/CAN_Frame.hxx>
-#include <pilot/base/Sample.hxx>
+#include <vnx/Value.h>
 
 
 namespace pilot {
 namespace usboard {
 
-class USBoardData : public ::pilot::base::Sample {
+class USBoardData : public ::vnx::Value {
 public:
 	
+	int64_t time = 0;
 	std::array<vnx::float32_t, 16> sensor = {};
 	std::array<int8_t, 4> signal_source = {};
 	std::array<int16_t, 4> analog_input = {};
 	vnx::float32_t analog_input_scale = 0.001221;
 	
-	typedef ::pilot::base::Sample Super;
+	typedef ::vnx::Value Super;
 	
 	static const vnx::Hash64 VNX_TYPE_HASH;
 	static const vnx::Hash64 VNX_CODE_HASH;

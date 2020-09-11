@@ -155,91 +155,109 @@ void USBoardModuleAsyncClient::vnx_purge_request(uint64_t _request_id, const std
 	{
 		const auto _iter = vnx_queue_vnx_get_type_code.find(_request_id);
 		if(_iter != vnx_queue_vnx_get_type_code.end()) {
-			if(_iter->second.second) {
-				_iter->second.second(_ex);
-			}
+			const auto _callback = std::move(_iter->second.second);
 			vnx_queue_vnx_get_type_code.erase(_iter);
 			vnx_num_pending--;
+			if(_callback) {
+				_callback(_ex);
+			}
+			return;
 		}
 	}
 	{
 		const auto _iter = vnx_queue_is_connected.find(_request_id);
 		if(_iter != vnx_queue_is_connected.end()) {
-			if(_iter->second.second) {
-				_iter->second.second(_ex);
-			}
+			const auto _callback = std::move(_iter->second.second);
 			vnx_queue_is_connected.erase(_iter);
 			vnx_num_pending--;
+			if(_callback) {
+				_callback(_ex);
+			}
+			return;
 		}
 	}
 	{
 		const auto _iter = vnx_queue_request_data.find(_request_id);
 		if(_iter != vnx_queue_request_data.end()) {
-			if(_iter->second.second) {
-				_iter->second.second(_ex);
-			}
+			const auto _callback = std::move(_iter->second.second);
 			vnx_queue_request_data.erase(_iter);
 			vnx_num_pending--;
+			if(_callback) {
+				_callback(_ex);
+			}
+			return;
 		}
 	}
 	{
 		const auto _iter = vnx_queue_request_analog_data.find(_request_id);
 		if(_iter != vnx_queue_request_analog_data.end()) {
-			if(_iter->second.second) {
-				_iter->second.second(_ex);
-			}
+			const auto _callback = std::move(_iter->second.second);
 			vnx_queue_request_analog_data.erase(_iter);
 			vnx_num_pending--;
+			if(_callback) {
+				_callback(_ex);
+			}
+			return;
 		}
 	}
 	{
 		const auto _iter = vnx_queue_request_config.find(_request_id);
 		if(_iter != vnx_queue_request_config.end()) {
-			if(_iter->second.second) {
-				_iter->second.second(_ex);
-			}
+			const auto _callback = std::move(_iter->second.second);
 			vnx_queue_request_config.erase(_iter);
 			vnx_num_pending--;
+			if(_callback) {
+				_callback(_ex);
+			}
+			return;
 		}
 	}
 	{
 		const auto _iter = vnx_queue_get_config.find(_request_id);
 		if(_iter != vnx_queue_get_config.end()) {
-			if(_iter->second.second) {
-				_iter->second.second(_ex);
-			}
+			const auto _callback = std::move(_iter->second.second);
 			vnx_queue_get_config.erase(_iter);
 			vnx_num_pending--;
+			if(_callback) {
+				_callback(_ex);
+			}
+			return;
 		}
 	}
 	{
 		const auto _iter = vnx_queue_set_channel_active.find(_request_id);
 		if(_iter != vnx_queue_set_channel_active.end()) {
-			if(_iter->second.second) {
-				_iter->second.second(_ex);
-			}
+			const auto _callback = std::move(_iter->second.second);
 			vnx_queue_set_channel_active.erase(_iter);
 			vnx_num_pending--;
+			if(_callback) {
+				_callback(_ex);
+			}
+			return;
 		}
 	}
 	{
 		const auto _iter = vnx_queue_send_config.find(_request_id);
 		if(_iter != vnx_queue_send_config.end()) {
-			if(_iter->second.second) {
-				_iter->second.second(_ex);
-			}
+			const auto _callback = std::move(_iter->second.second);
 			vnx_queue_send_config.erase(_iter);
 			vnx_num_pending--;
+			if(_callback) {
+				_callback(_ex);
+			}
+			return;
 		}
 	}
 	{
 		const auto _iter = vnx_queue_save_config.find(_request_id);
 		if(_iter != vnx_queue_save_config.end()) {
-			if(_iter->second.second) {
-				_iter->second.second(_ex);
-			}
+			const auto _callback = std::move(_iter->second.second);
 			vnx_queue_save_config.erase(_iter);
 			vnx_num_pending--;
+			if(_callback) {
+				_callback(_ex);
+			}
+			return;
 		}
 	}
 }
