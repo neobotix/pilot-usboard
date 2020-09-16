@@ -7,15 +7,13 @@ struct group_config_t {
 	static const uint RESOLUTION_05_CM = 1;		// 0.5 cm per increment
 	static const uint RESOLUTION_1_CM = 0;		// 1 cm per increment
 	
-	bool enable_transmission = true;		// if this group transmits in continous mode
+	bool enable_transmission = true;	// if this group transmits in continuous mode
 	
 	uint resolution = 1;				// sensor resolution config (see RESOLUTION_* above)
 	
-	uint fire_interval_ms = 16;			// time between pulses [ms]
+	uint fire_interval_ms = 20;			// time between pulses [ms]
 	
-	int sending_sensor = -1;			// index of the sensor which will send the pulse (cross echo mode only)
-	
-	bool long_range = false;			// if to listen for long range returns
+	int sending_sensor = 0;				// index of the sensor which will send the pulse (cross echo mode only)
 	
 	bool cross_echo_mode = false;		// if to enable cross echo mode
 	

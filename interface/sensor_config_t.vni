@@ -2,7 +2,7 @@ package pilot.usboard;
 
 struct sensor_config_t {
 	
-	bool active;							// if sensor is active
+	bool active = true;						// if sensor is active
 	
 	float warn_distance = 1;				// [m]
 	

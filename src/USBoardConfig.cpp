@@ -85,23 +85,22 @@ std::vector<base::CAN_Frame> USBoardConfig::to_can_frames() const
 	for(size_t i=0; i<16; i++){
 		size_t frameindex = ((i + 4) / 6) + 1;
 		size_t byteindex  = ((i + 4) % 6) + 2;
-		result[frameindex].set_uint(byteindex*8, 8, sensor_config[i].warn_distance*100, 0);
+		result[frameindex].set_uint(byteindex*8, 8, sensor_config[i].warn_distance * 100, 0);
 	}
 
 	for(size_t i=0; i<16; i++){
 		size_t frameindex = ((i + 2) / 6) + 4;
 		size_t byteindex  = ((i + 2) % 6) + 2;
-		result[frameindex].set_uint(byteindex*8, 8, sensor_config[i].alarm_distance*100, 0);
+		result[frameindex].set_uint(byteindex*8, 8, sensor_config[i].alarm_distance * 100, 0);
 	}
 
 	for(size_t i=0; i<4; i++){
 		result[7].set_uint(16+i*2, 2, group_config[i].resolution, 0);
 		result[7].set_bool(24+i, group_config[i].cross_echo_mode);
-		result[7].set_bool(28+i, group_config[i].long_range);
-		result[7].set_uint(32+i*2, 2, group_config[i].sending_sensor, 0);
-		result[7].set_uint(40+i*4, 4, std::max(group_config[i].fire_interval_ms / 16, uint32_t(1)) - 1, 0);
+		result[7].set_uint(32+i*2, 2, std::max(group_config[i].sending_sensor, 0), 0);
+		result[7].set_uint(40+i*4, 4, std::max(group_config[i].fire_interval_ms / 10, uint32_t(1)) - 1, 0);
 	}
-	result[7].set_uint(7*8, 8, low_pass_gain * 100, 0);
+	result[7].set_uint(7*8, 8, low_pass_gain * 128, 0);
 
 	result[8].set_uint(3*8, 8, hardware_version, 0);
 	if(hardware_version == 20){
@@ -184,11 +183,10 @@ void USBoardConfig::from_can_frames(const std::vector<base::CAN_Frame>& frames)
 	for(size_t i=0; i<4; i++){
 		group_config[i].resolution = frames[7].get_uint(16+i*2, 2, 0);
 		group_config[i].cross_echo_mode = frames[7].get_bool(24+i);
-		group_config[i].long_range = frames[7].get_bool(28+i);
 		group_config[i].sending_sensor = frames[7].get_uint(32+i*2, 2, 0);
-		group_config[i].fire_interval_ms = (frames[7].get_uint(40+i*4, 4, 0) + 1) * 16;
+		group_config[i].fire_interval_ms = (frames[7].get_uint(40+i*4, 4, 0) + 1) * 10;
 	}
-	low_pass_gain = frames[7].get_uint(7*8, 8, 0) * 0.01;
+	low_pass_gain = frames[7].get_uint(7*8, 8, 0) / 128.0;
 
 	hardware_version = frames[8].get_uint(3*8, 8, 0);
 	if(hardware_version == 0){
