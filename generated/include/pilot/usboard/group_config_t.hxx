@@ -20,9 +20,8 @@ struct group_config_t {
 	
 	vnx::bool_t enable_transmission = true;
 	uint32_t resolution = 1;
-	uint32_t fire_interval_ms = 16;
-	int32_t sending_sensor = -1;
-	vnx::bool_t long_range = false;
+	uint32_t fire_interval_ms = 20;
+	int32_t sending_sensor = 0;
 	vnx::bool_t cross_echo_mode = false;
 	
 	static const vnx::Hash64 VNX_TYPE_HASH;

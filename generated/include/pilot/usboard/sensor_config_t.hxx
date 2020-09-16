@@ -14,7 +14,7 @@ namespace usboard {
 struct sensor_config_t {
 	
 	
-	vnx::bool_t active = 0;
+	vnx::bool_t active = true;
 	vnx::float32_t warn_distance = 1;
 	vnx::float32_t alarm_distance = 0.3;
 	

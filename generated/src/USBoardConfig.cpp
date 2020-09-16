@@ -20,7 +20,7 @@ const uint32_t USBoardConfig::TRANSMIT_MODE_SERIAL;
 const uint32_t USBoardConfig::TRANSMIT_MODE_CAN_SERIAL;
 
 const vnx::Hash64 USBoardConfig::VNX_TYPE_HASH(0x9c0fb140354b6e4cull);
-const vnx::Hash64 USBoardConfig::VNX_CODE_HASH(0x8a3507e0409d8753ull);
+const vnx::Hash64 USBoardConfig::VNX_CODE_HASH(0xa00a5673056d95e4ull);
 
 vnx::Hash64 USBoardConfig::get_type_hash() const {
 	return VNX_TYPE_HASH;
@@ -259,7 +259,7 @@ std::shared_ptr<vnx::TypeCode> USBoardConfig::static_create_type_code() {
 	std::shared_ptr<vnx::TypeCode> type_code = std::make_shared<vnx::TypeCode>();
 	type_code->name = "pilot.usboard.USBoardConfig";
 	type_code->type_hash = vnx::Hash64(0x9c0fb140354b6e4cull);
-	type_code->code_hash = vnx::Hash64(0x8a3507e0409d8753ull);
+	type_code->code_hash = vnx::Hash64(0xa00a5673056d95e4ull);
 	type_code->is_native = true;
 	type_code->is_class = true;
 	type_code->create_value = []() -> std::shared_ptr<vnx::Value> { return std::make_shared<USBoardConfig>(); };
