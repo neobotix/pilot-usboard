@@ -14,6 +14,7 @@ module USBoardModule {
 	string config_file;							// pilot.usboard.USBoardConfig
 	uint can_id = 1024;							// base CAN id to use before we have the real parameter set
 	int connect_interval_ms = 1000;				// interval for sending CONNECT message [ms]
+	int write_timeout_ms = 10000;				// timeout for write to board/eeprom [ms]
 	
 	
 	bool is_connected() const;					// returns true if board is connected

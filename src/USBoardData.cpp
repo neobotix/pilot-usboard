@@ -78,6 +78,8 @@ void USBoardData::from_can_frames_data(const std::vector<base::CAN_Frame> &frame
 				sensor[groupid*4 + k] = -1;
 			} else if(sensork == 1) {
 				sensor[groupid*4 + k] = 0;
+			} else if(sensork == 2) {
+				sensor[groupid*4 + k] = INFINITY;
 			} else {
 				sensor[groupid*4 + k] = sensork*resolution;
 			}

@@ -36,7 +36,7 @@ namespace usboard {
 
 
 const vnx::Hash64 USBoardModuleBase::VNX_TYPE_HASH(0x43f03ccffe42b23full);
-const vnx::Hash64 USBoardModuleBase::VNX_CODE_HASH(0x1391c8332a2bf9b4ull);
+const vnx::Hash64 USBoardModuleBase::VNX_CODE_HASH(0xc6f2a8b94f01f5d6ull);
 
 USBoardModuleBase::USBoardModuleBase(const std::string& _vnx_name)
 	:	Module::Module(_vnx_name)
@@ -50,6 +50,7 @@ USBoardModuleBase::USBoardModuleBase(const std::string& _vnx_name)
 	vnx::read_config(vnx_name + ".output_data", output_data);
 	vnx::read_config(vnx_name + ".topic_can_request", topic_can_request);
 	vnx::read_config(vnx_name + ".topic_serial_request", topic_serial_request);
+	vnx::read_config(vnx_name + ".write_timeout_ms", write_timeout_ms);
 }
 
 vnx::Hash64 USBoardModuleBase::get_type_hash() const {
@@ -76,6 +77,7 @@ void USBoardModuleBase::accept(vnx::Visitor& _visitor) const {
 	_visitor.type_field(_type_code->fields[6], 6); vnx::accept(_visitor, config_file);
 	_visitor.type_field(_type_code->fields[7], 7); vnx::accept(_visitor, can_id);
 	_visitor.type_field(_type_code->fields[8], 8); vnx::accept(_visitor, connect_interval_ms);
+	_visitor.type_field(_type_code->fields[9], 9); vnx::accept(_visitor, write_timeout_ms);
 	_visitor.type_end(*_type_code);
 }
 
@@ -90,6 +92,7 @@ void USBoardModuleBase::write(std::ostream& _out) const {
 	_out << ", \"config_file\": "; vnx::write(_out, config_file);
 	_out << ", \"can_id\": "; vnx::write(_out, can_id);
 	_out << ", \"connect_interval_ms\": "; vnx::write(_out, connect_interval_ms);
+	_out << ", \"write_timeout_ms\": "; vnx::write(_out, write_timeout_ms);
 	_out << "}";
 }
 
@@ -115,6 +118,8 @@ void USBoardModuleBase::read(std::istream& _in) {
 			vnx::from_string(_entry.second, topic_can_request);
 		} else if(_entry.first == "topic_serial_request") {
 			vnx::from_string(_entry.second, topic_serial_request);
+		} else if(_entry.first == "write_timeout_ms") {
+			vnx::from_string(_entry.second, write_timeout_ms);
 		}
 	}
 }
@@ -130,6 +135,7 @@ vnx::Object USBoardModuleBase::to_object() const {
 	_object["config_file"] = config_file;
 	_object["can_id"] = can_id;
 	_object["connect_interval_ms"] = connect_interval_ms;
+	_object["write_timeout_ms"] = write_timeout_ms;
 	return _object;
 }
 
@@ -153,6 +159,8 @@ void USBoardModuleBase::from_object(const vnx::Object& _object) {
 			_entry.second.to(topic_can_request);
 		} else if(_entry.first == "topic_serial_request") {
 			_entry.second.to(topic_serial_request);
+		} else if(_entry.first == "write_timeout_ms") {
+			_entry.second.to(write_timeout_ms);
 		}
 	}
 }
@@ -185,6 +193,9 @@ vnx::Variant USBoardModuleBase::get_field(const std::string& _name) const {
 	if(_name == "connect_interval_ms") {
 		return vnx::Variant(connect_interval_ms);
 	}
+	if(_name == "write_timeout_ms") {
+		return vnx::Variant(write_timeout_ms);
+	}
 	return vnx::Variant();
 }
 
@@ -207,6 +218,8 @@ void USBoardModuleBase::set_field(const std::string& _name, const vnx::Variant& 
 		_value.to(can_id);
 	} else if(_name == "connect_interval_ms") {
 		_value.to(connect_interval_ms);
+	} else if(_name == "write_timeout_ms") {
+		_value.to(write_timeout_ms);
 	} else {
 		throw std::logic_error("no such field: '" + _name + "'");
 	}
@@ -236,7 +249,7 @@ std::shared_ptr<vnx::TypeCode> USBoardModuleBase::static_create_type_code() {
 	std::shared_ptr<vnx::TypeCode> type_code = std::make_shared<vnx::TypeCode>();
 	type_code->name = "pilot.usboard.USBoardModule";
 	type_code->type_hash = vnx::Hash64(0x43f03ccffe42b23full);
-	type_code->code_hash = vnx::Hash64(0x1391c8332a2bf9b4ull);
+	type_code->code_hash = vnx::Hash64(0xc6f2a8b94f01f5d6ull);
 	type_code->is_native = true;
 	type_code->methods.resize(9);
 	type_code->methods[0] = ::vnx::ModuleInterface_vnx_get_type_code::static_get_type_code();
@@ -248,7 +261,7 @@ std::shared_ptr<vnx::TypeCode> USBoardModuleBase::static_create_type_code() {
 	type_code->methods[6] = ::pilot::usboard::USBoardModule_set_channel_active::static_get_type_code();
 	type_code->methods[7] = ::pilot::usboard::USBoardModule_send_config::static_get_type_code();
 	type_code->methods[8] = ::pilot::usboard::USBoardModule_save_config::static_get_type_code();
-	type_code->fields.resize(9);
+	type_code->fields.resize(10);
 	{
 		vnx::TypeField& field = type_code->fields[0];
 		field.is_extended = true;
@@ -301,6 +314,12 @@ std::shared_ptr<vnx::TypeCode> USBoardModuleBase::static_create_type_code() {
 		vnx::TypeField& field = type_code->fields[8];
 		field.name = "connect_interval_ms";
 		field.value = vnx::to_string(1000);
+		field.code = {7};
+	}
+	{
+		vnx::TypeField& field = type_code->fields[9];
+		field.name = "write_timeout_ms";
+		field.value = vnx::to_string(10000);
 		field.code = {7};
 	}
 	type_code->build();
@@ -460,6 +479,12 @@ void read(TypeInput& in, ::pilot::usboard::USBoardModuleBase& value, const TypeC
 				vnx::read_value(_buf + _field->offset, value.connect_interval_ms, _field->code.data());
 			}
 		}
+		{
+			const vnx::TypeField* const _field = type_code->field_map[9];
+			if(_field) {
+				vnx::read_value(_buf + _field->offset, value.write_timeout_ms, _field->code.data());
+			}
+		}
 	}
 	for(const vnx::TypeField* _field : type_code->ext_fields) {
 		switch(_field->native_index) {
@@ -488,9 +513,10 @@ void write(TypeOutput& out, const ::pilot::usboard::USBoardModuleBase& value, co
 	if(code && code[0] == CODE_STRUCT) {
 		type_code = type_code->depends[code[1]];
 	}
-	char* const _buf = out.write(8);
+	char* const _buf = out.write(12);
 	vnx::write_value(_buf + 0, value.can_id);
 	vnx::write_value(_buf + 4, value.connect_interval_ms);
+	vnx::write_value(_buf + 8, value.write_timeout_ms);
 	vnx::write(out, value.input_can, type_code, type_code->fields[0].code.data());
 	vnx::write(out, value.input_serial, type_code, type_code->fields[1].code.data());
 	vnx::write(out, value.topic_can_request, type_code, type_code->fields[2].code.data());

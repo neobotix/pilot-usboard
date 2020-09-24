@@ -130,7 +130,7 @@ void USBoardModule::send_config(const std::shared_ptr<const USBoardConfig>& conf
 	m_sentConfigIndex = 0;
 
 	send_config_frame();
-	m_sentConfigTimer = set_timeout_millis(5000, std::bind(&USBoardModule::sendconfig_timeout, this, request_id));
+	m_sentConfigTimer = set_timeout_millis(write_timeout_ms, std::bind(&USBoardModule::sendconfig_timeout, this, request_id));
 }
 
 
@@ -249,6 +249,7 @@ void USBoardModule::handle_canframe(std::shared_ptr<const ::pilot::base::CAN_Fra
 		}else{
 			log(WARN) << "Unexpected config ACK";
 		}
+		m_lastConnect_ms = vnx::get_time_millis();		// fake it here
 	}else if(baseplus >= 13 && baseplus <= 16){
 		// CMD_GET_DATA
 		std::shared_ptr<vnx::Timer> t = m_gotDataTimer.lock();

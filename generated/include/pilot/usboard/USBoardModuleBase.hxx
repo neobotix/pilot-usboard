@@ -27,6 +27,7 @@ public:
 	std::string config_file;
 	uint32_t can_id = 1024;
 	int32_t connect_interval_ms = 1000;
+	int32_t write_timeout_ms = 10000;
 	
 	typedef ::vnx::Module Super;
 	
