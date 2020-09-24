@@ -26,6 +26,7 @@ public:
 	::vnx::TopicPtr output_config;
 	std::string config_file;
 	uint32_t can_id = 1024;
+	int32_t connect_interval_ms = 1000;
 	
 	typedef ::vnx::Module Super;
 	

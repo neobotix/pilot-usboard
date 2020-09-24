@@ -37,7 +37,7 @@ void USBoardModule::main()
 	std::shared_ptr<USBoardConfig> fakeConfig = std::make_shared<USBoardConfig>();
 	fakeConfig->can_id = can_id;
 	m_config = fakeConfig;
-	m_reconnectTimer = set_timer_millis(m_reconnectPeriod_ms, std::bind(&USBoardModule::connect, this));
+	m_reconnectTimer = set_timer_millis(connect_interval_ms, std::bind(&USBoardModule::connect, this));
 	connect();
 
 	Super::main();
@@ -52,7 +52,7 @@ std::shared_ptr<const USBoardConfig> USBoardModule::get_config() const
 vnx::bool_t USBoardModule::is_connected() const
 {
 	int64_t timeNow = vnx::get_time_millis();
-	return (timeNow - m_lastConnect_ms) < 3*m_reconnectPeriod_ms;
+	return (timeNow - m_lastConnect_ms) < 3 * connect_interval_ms;
 }
 
 void USBoardModule::request_config()
@@ -407,6 +407,9 @@ void USBoardModule::getdata_send(){
 
 
 void USBoardModule::connect(){
+	if(m_sentConfigIndex) {
+		return;		// don't send connect message while writing to board
+	}
 	std::shared_ptr<base::CAN_Frame> frame = base::CAN_Frame::create();
 	frame->time = vnx::get_time_micros();
 	frame->id = m_config->can_id;

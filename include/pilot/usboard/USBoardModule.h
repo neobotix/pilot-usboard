@@ -65,7 +65,6 @@ private:
 	// m_data collects all the most recent data. At certain events, the whole collection is published.
 	USBoardData m_data;
 
-	const unsigned int m_reconnectPeriod_ms = 1000;
 	std::shared_ptr<vnx::Timer> m_reconnectTimer;
 	int64_t m_lastConnect_ms = 0;
 
