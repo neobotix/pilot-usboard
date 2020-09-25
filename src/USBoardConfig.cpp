@@ -52,6 +52,8 @@ std::vector<base::CAN_Frame> USBoardConfig::to_can_frames() const
 	result[0].set_bool(57, enable_can_termination);
 	result[0].set_bool(58, enable_analog_input);
 	result[0].set_bool(59, enable_legacy_format);
+	result[0].set_bool(60, relay_warn_blocked_invert);
+	result[0].set_bool(61, relay_alarm_blocked_invert);
 
 	result[1].set_uint(16, 4, transmit_mode, 0);
 	for(size_t i=0; i<4; i++){
@@ -142,6 +144,8 @@ void USBoardConfig::from_can_frames(const std::vector<base::CAN_Frame>& frames)
 	enable_can_termination = frames[0].get_bool(57);
 	enable_analog_input = frames[0].get_bool(58);
 	enable_legacy_format = frames[0].get_bool(59);
+	relay_warn_blocked_invert = frames[0].get_bool(60);
+	relay_alarm_blocked_invert = frames[0].get_bool(61);
 
 	transmit_mode = frames[1].get_uint(16, 4, 0);
 	for(size_t i=0; i<4; i++){
