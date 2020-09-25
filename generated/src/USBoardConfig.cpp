@@ -20,7 +20,7 @@ const uint32_t USBoardConfig::TRANSMIT_MODE_SERIAL;
 const uint32_t USBoardConfig::TRANSMIT_MODE_CAN_SERIAL;
 
 const vnx::Hash64 USBoardConfig::VNX_TYPE_HASH(0x9c0fb140354b6e4cull);
-const vnx::Hash64 USBoardConfig::VNX_CODE_HASH(0xa00a5673056d95e4ull);
+const vnx::Hash64 USBoardConfig::VNX_CODE_HASH(0xd0ef66d0922eb3bbull);
 
 vnx::Hash64 USBoardConfig::get_type_hash() const {
 	return VNX_TYPE_HASH;
@@ -65,6 +65,8 @@ void USBoardConfig::accept(vnx::Visitor& _visitor) const {
 	_visitor.type_field(_type_code->fields[9], 9); vnx::accept(_visitor, enable_analog_input);
 	_visitor.type_field(_type_code->fields[10], 10); vnx::accept(_visitor, enable_legacy_format);
 	_visitor.type_field(_type_code->fields[11], 11); vnx::accept(_visitor, enable_can_termination);
+	_visitor.type_field(_type_code->fields[12], 12); vnx::accept(_visitor, relay_warn_blocked_invert);
+	_visitor.type_field(_type_code->fields[13], 13); vnx::accept(_visitor, relay_alarm_blocked_invert);
 	_visitor.type_end(*_type_code);
 }
 
@@ -82,6 +84,8 @@ void USBoardConfig::write(std::ostream& _out) const {
 	_out << ", \"enable_analog_input\": "; vnx::write(_out, enable_analog_input);
 	_out << ", \"enable_legacy_format\": "; vnx::write(_out, enable_legacy_format);
 	_out << ", \"enable_can_termination\": "; vnx::write(_out, enable_can_termination);
+	_out << ", \"relay_warn_blocked_invert\": "; vnx::write(_out, relay_warn_blocked_invert);
+	_out << ", \"relay_alarm_blocked_invert\": "; vnx::write(_out, relay_alarm_blocked_invert);
 	_out << "}";
 }
 
@@ -105,6 +109,10 @@ void USBoardConfig::read(std::istream& _in) {
 			vnx::from_string(_entry.second, hardware_version);
 		} else if(_entry.first == "low_pass_gain") {
 			vnx::from_string(_entry.second, low_pass_gain);
+		} else if(_entry.first == "relay_alarm_blocked_invert") {
+			vnx::from_string(_entry.second, relay_alarm_blocked_invert);
+		} else if(_entry.first == "relay_warn_blocked_invert") {
+			vnx::from_string(_entry.second, relay_warn_blocked_invert);
 		} else if(_entry.first == "sensor_config") {
 			vnx::from_string(_entry.second, sensor_config);
 		} else if(_entry.first == "serial_number") {
@@ -132,6 +140,8 @@ vnx::Object USBoardConfig::to_object() const {
 	_object["enable_analog_input"] = enable_analog_input;
 	_object["enable_legacy_format"] = enable_legacy_format;
 	_object["enable_can_termination"] = enable_can_termination;
+	_object["relay_warn_blocked_invert"] = relay_warn_blocked_invert;
+	_object["relay_alarm_blocked_invert"] = relay_alarm_blocked_invert;
 	return _object;
 }
 
@@ -153,6 +163,10 @@ void USBoardConfig::from_object(const vnx::Object& _object) {
 			_entry.second.to(hardware_version);
 		} else if(_entry.first == "low_pass_gain") {
 			_entry.second.to(low_pass_gain);
+		} else if(_entry.first == "relay_alarm_blocked_invert") {
+			_entry.second.to(relay_alarm_blocked_invert);
+		} else if(_entry.first == "relay_warn_blocked_invert") {
+			_entry.second.to(relay_warn_blocked_invert);
 		} else if(_entry.first == "sensor_config") {
 			_entry.second.to(sensor_config);
 		} else if(_entry.first == "serial_number") {
@@ -202,6 +216,12 @@ vnx::Variant USBoardConfig::get_field(const std::string& _name) const {
 	if(_name == "enable_can_termination") {
 		return vnx::Variant(enable_can_termination);
 	}
+	if(_name == "relay_warn_blocked_invert") {
+		return vnx::Variant(relay_warn_blocked_invert);
+	}
+	if(_name == "relay_alarm_blocked_invert") {
+		return vnx::Variant(relay_alarm_blocked_invert);
+	}
 	return vnx::Variant();
 }
 
@@ -230,6 +250,10 @@ void USBoardConfig::set_field(const std::string& _name, const vnx::Variant& _val
 		_value.to(enable_legacy_format);
 	} else if(_name == "enable_can_termination") {
 		_value.to(enable_can_termination);
+	} else if(_name == "relay_warn_blocked_invert") {
+		_value.to(relay_warn_blocked_invert);
+	} else if(_name == "relay_alarm_blocked_invert") {
+		_value.to(relay_alarm_blocked_invert);
 	} else {
 		throw std::logic_error("no such field: '" + _name + "'");
 	}
@@ -259,14 +283,14 @@ std::shared_ptr<vnx::TypeCode> USBoardConfig::static_create_type_code() {
 	std::shared_ptr<vnx::TypeCode> type_code = std::make_shared<vnx::TypeCode>();
 	type_code->name = "pilot.usboard.USBoardConfig";
 	type_code->type_hash = vnx::Hash64(0x9c0fb140354b6e4cull);
-	type_code->code_hash = vnx::Hash64(0xa00a5673056d95e4ull);
+	type_code->code_hash = vnx::Hash64(0xd0ef66d0922eb3bbull);
 	type_code->is_native = true;
 	type_code->is_class = true;
 	type_code->create_value = []() -> std::shared_ptr<vnx::Value> { return std::make_shared<USBoardConfig>(); };
 	type_code->depends.resize(2);
 	type_code->depends[0] = ::pilot::usboard::sensor_config_t::static_get_type_code();
 	type_code->depends[1] = ::pilot::usboard::group_config_t::static_get_type_code();
-	type_code->fields.resize(12);
+	type_code->fields.resize(14);
 	{
 		vnx::TypeField& field = type_code->fields[0];
 		field.name = "hardware_version";
@@ -336,6 +360,18 @@ std::shared_ptr<vnx::TypeCode> USBoardConfig::static_create_type_code() {
 	{
 		vnx::TypeField& field = type_code->fields[11];
 		field.name = "enable_can_termination";
+		field.value = vnx::to_string(false);
+		field.code = {31};
+	}
+	{
+		vnx::TypeField& field = type_code->fields[12];
+		field.name = "relay_warn_blocked_invert";
+		field.value = vnx::to_string(false);
+		field.code = {31};
+	}
+	{
+		vnx::TypeField& field = type_code->fields[13];
+		field.name = "relay_alarm_blocked_invert";
 		field.value = vnx::to_string(false);
 		field.code = {31};
 	}
@@ -438,6 +474,18 @@ void read(TypeInput& in, ::pilot::usboard::USBoardConfig& value, const TypeCode*
 				vnx::read_value(_buf + _field->offset, value.enable_can_termination, _field->code.data());
 			}
 		}
+		{
+			const vnx::TypeField* const _field = type_code->field_map[12];
+			if(_field) {
+				vnx::read_value(_buf + _field->offset, value.relay_warn_blocked_invert, _field->code.data());
+			}
+		}
+		{
+			const vnx::TypeField* const _field = type_code->field_map[13];
+			if(_field) {
+				vnx::read_value(_buf + _field->offset, value.relay_alarm_blocked_invert, _field->code.data());
+			}
+		}
 	}
 	for(const vnx::TypeField* _field : type_code->ext_fields) {
 		switch(_field->native_index) {
@@ -461,7 +509,7 @@ void write(TypeOutput& out, const ::pilot::usboard::USBoardConfig& value, const 
 	if(code && code[0] == CODE_STRUCT) {
 		type_code = type_code->depends[code[1]];
 	}
-	char* const _buf = out.write(31);
+	char* const _buf = out.write(33);
 	vnx::write_value(_buf + 0, value.hardware_version);
 	vnx::write_value(_buf + 4, value.serial_number);
 	vnx::write_value(_buf + 8, value.can_id);
@@ -472,6 +520,8 @@ void write(TypeOutput& out, const ::pilot::usboard::USBoardConfig& value, const 
 	vnx::write_value(_buf + 28, value.enable_analog_input);
 	vnx::write_value(_buf + 29, value.enable_legacy_format);
 	vnx::write_value(_buf + 30, value.enable_can_termination);
+	vnx::write_value(_buf + 31, value.relay_warn_blocked_invert);
+	vnx::write_value(_buf + 32, value.relay_alarm_blocked_invert);
 	vnx::write(out, value.sensor_config, type_code, type_code->fields[6].code.data());
 	vnx::write(out, value.group_config, type_code, type_code->fields[7].code.data());
 }

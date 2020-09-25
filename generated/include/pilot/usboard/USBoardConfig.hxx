@@ -33,6 +33,8 @@ public:
 	vnx::bool_t enable_analog_input = false;
 	vnx::bool_t enable_legacy_format = false;
 	vnx::bool_t enable_can_termination = false;
+	vnx::bool_t relay_warn_blocked_invert = false;
+	vnx::bool_t relay_alarm_blocked_invert = false;
 	
 	typedef ::vnx::Value Super;
 	

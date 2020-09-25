@@ -33,6 +33,10 @@ class USBoardConfig {
 	
 	bool enable_can_termination = false;	// if to connect CAN bus termination resistance on the board
 	
+	bool relay_warn_blocked_invert = false;		// if to invert warn relay output when a sensor is blocked
+	
+	bool relay_alarm_blocked_invert = false;	// if to invert alarm relay output when a sensor is blocked
+	
 	
 	vector<CAN_Frame> to_can_frames() const;
 	
