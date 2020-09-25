@@ -96,19 +96,19 @@ void USBoardModule::request_analog_data()
 	publish(frame, topic_can_request);
 }
 
-void USBoardModule::send_config_async(	const std::shared_ptr<const USBoardConfig>& config,
+void USBoardModule::send_config_async(	std::shared_ptr<const USBoardConfig> config,
 										const vnx::request_id_t& request_id)
 {
 	send_config(config, request_id, CMD_WRITE_PARASET);
 }
 
-void USBoardModule::save_config_async(	const std::shared_ptr<const USBoardConfig>& config,
+void USBoardModule::save_config_async(	std::shared_ptr<const USBoardConfig> config,
 										const vnx::request_id_t& request_id)
 {
 	send_config(config, request_id, CMD_WRITE_PARASET_TO_EEPROM);
 }
 
-void USBoardModule::send_config(const std::shared_ptr<const USBoardConfig>& config, const vnx::request_id_t& request_id, Command command){
+void USBoardModule::send_config(std::shared_ptr<const USBoardConfig> config, const vnx::request_id_t& request_id, Command command){
 	if(m_sentConfigAck > 0){
 		// there is still a request pending
 		throw std::runtime_error("Attempt to send another parameter set while the last one is still pending");
