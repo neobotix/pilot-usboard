@@ -7,6 +7,8 @@
 
 #include <pilot/usboard/USBoardData.hxx>
 
+#include <cmath>
+
 
 namespace pilot {
 namespace usboard {
