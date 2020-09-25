@@ -35,10 +35,10 @@ protected:
 
 	void request_analog_data() override;
 
-	void send_config_async(	const std::shared_ptr<const USBoardConfig>& config,
+	void send_config_async(	std::shared_ptr<const USBoardConfig> config,
 							const vnx::request_id_t& request_id) override;
 
-	void save_config_async(	const std::shared_ptr<const USBoardConfig>& config,
+	void save_config_async(	std::shared_ptr<const USBoardConfig> config,
 							const vnx::request_id_t& request_id) override;
 
 	void set_channel_active(const std::vector<vnx::bool_t>& sensors) override;
@@ -89,7 +89,7 @@ private:
 	void getdata_send();
 	void connect();
 	bool check_checksum(const std::vector<uint8_t> &message, size_t offset=0);
-	void send_config(const std::shared_ptr<const USBoardConfig>& config, const vnx::request_id_t& request_id, Command command);
+	void send_config(std::shared_ptr<const USBoardConfig> config, const vnx::request_id_t& request_id, Command command);
 	void send_config_frame();
 	void handle_canframe(std::shared_ptr<const ::pilot::base::CAN_Frame> frame, unsigned int basecanid);
 	void handle_serialpacket(const std::vector<uint8_t> &data, int64_t time);
