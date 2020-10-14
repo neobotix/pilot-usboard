@@ -55,7 +55,7 @@ USBoardModuleAsyncClient::USBoardModuleAsyncClient(vnx::Hash64 service_addr)
 {
 }
 
-uint64_t USBoardModuleAsyncClient::vnx_get_config_object(const std::function<void(const ::vnx::Object&)>& _callback, const std::function<void(const std::exception&)>& _error_callback) {
+uint64_t USBoardModuleAsyncClient::vnx_get_config_object(const std::function<void(const ::vnx::Object&)>& _callback, const std::function<void(const vnx::exception&)>& _error_callback) {
 	auto _method = ::vnx::ModuleInterface_vnx_get_config_object::create();
 	const auto _request_id = ++vnx_next_id;
 	{
@@ -67,7 +67,7 @@ uint64_t USBoardModuleAsyncClient::vnx_get_config_object(const std::function<voi
 	return _request_id;
 }
 
-uint64_t USBoardModuleAsyncClient::vnx_get_config(const std::string& name, const std::function<void(const ::vnx::Variant&)>& _callback, const std::function<void(const std::exception&)>& _error_callback) {
+uint64_t USBoardModuleAsyncClient::vnx_get_config(const std::string& name, const std::function<void(const ::vnx::Variant&)>& _callback, const std::function<void(const vnx::exception&)>& _error_callback) {
 	auto _method = ::vnx::ModuleInterface_vnx_get_config::create();
 	_method->name = name;
 	const auto _request_id = ++vnx_next_id;
@@ -80,7 +80,7 @@ uint64_t USBoardModuleAsyncClient::vnx_get_config(const std::string& name, const
 	return _request_id;
 }
 
-uint64_t USBoardModuleAsyncClient::vnx_set_config_object(const ::vnx::Object& config, const std::function<void()>& _callback, const std::function<void(const std::exception&)>& _error_callback) {
+uint64_t USBoardModuleAsyncClient::vnx_set_config_object(const ::vnx::Object& config, const std::function<void()>& _callback, const std::function<void(const vnx::exception&)>& _error_callback) {
 	auto _method = ::vnx::ModuleInterface_vnx_set_config_object::create();
 	_method->config = config;
 	const auto _request_id = ++vnx_next_id;
@@ -93,7 +93,7 @@ uint64_t USBoardModuleAsyncClient::vnx_set_config_object(const ::vnx::Object& co
 	return _request_id;
 }
 
-uint64_t USBoardModuleAsyncClient::vnx_set_config(const std::string& name, const ::vnx::Variant& value, const std::function<void()>& _callback, const std::function<void(const std::exception&)>& _error_callback) {
+uint64_t USBoardModuleAsyncClient::vnx_set_config(const std::string& name, const ::vnx::Variant& value, const std::function<void()>& _callback, const std::function<void(const vnx::exception&)>& _error_callback) {
 	auto _method = ::vnx::ModuleInterface_vnx_set_config::create();
 	_method->name = name;
 	_method->value = value;
@@ -107,7 +107,7 @@ uint64_t USBoardModuleAsyncClient::vnx_set_config(const std::string& name, const
 	return _request_id;
 }
 
-uint64_t USBoardModuleAsyncClient::vnx_get_type_code(const std::function<void(const ::vnx::TypeCode&)>& _callback, const std::function<void(const std::exception&)>& _error_callback) {
+uint64_t USBoardModuleAsyncClient::vnx_get_type_code(const std::function<void(const ::vnx::TypeCode&)>& _callback, const std::function<void(const vnx::exception&)>& _error_callback) {
 	auto _method = ::vnx::ModuleInterface_vnx_get_type_code::create();
 	const auto _request_id = ++vnx_next_id;
 	{
@@ -119,7 +119,7 @@ uint64_t USBoardModuleAsyncClient::vnx_get_type_code(const std::function<void(co
 	return _request_id;
 }
 
-uint64_t USBoardModuleAsyncClient::vnx_restart(const std::function<void()>& _callback, const std::function<void(const std::exception&)>& _error_callback) {
+uint64_t USBoardModuleAsyncClient::vnx_restart(const std::function<void()>& _callback, const std::function<void(const vnx::exception&)>& _error_callback) {
 	auto _method = ::vnx::ModuleInterface_vnx_restart::create();
 	const auto _request_id = ++vnx_next_id;
 	{
@@ -131,7 +131,7 @@ uint64_t USBoardModuleAsyncClient::vnx_restart(const std::function<void()>& _cal
 	return _request_id;
 }
 
-uint64_t USBoardModuleAsyncClient::vnx_close(const std::function<void()>& _callback, const std::function<void(const std::exception&)>& _error_callback) {
+uint64_t USBoardModuleAsyncClient::vnx_close(const std::function<void()>& _callback, const std::function<void(const vnx::exception&)>& _error_callback) {
 	auto _method = ::vnx::ModuleInterface_vnx_close::create();
 	const auto _request_id = ++vnx_next_id;
 	{
@@ -143,7 +143,7 @@ uint64_t USBoardModuleAsyncClient::vnx_close(const std::function<void()>& _callb
 	return _request_id;
 }
 
-uint64_t USBoardModuleAsyncClient::is_connected(const std::function<void(const vnx::bool_t&)>& _callback, const std::function<void(const std::exception&)>& _error_callback) {
+uint64_t USBoardModuleAsyncClient::is_connected(const std::function<void(const vnx::bool_t&)>& _callback, const std::function<void(const vnx::exception&)>& _error_callback) {
 	auto _method = ::pilot::usboard::USBoardModule_is_connected::create();
 	const auto _request_id = ++vnx_next_id;
 	{
@@ -155,7 +155,7 @@ uint64_t USBoardModuleAsyncClient::is_connected(const std::function<void(const v
 	return _request_id;
 }
 
-uint64_t USBoardModuleAsyncClient::request_data(const std::vector<vnx::bool_t>& groups, const std::function<void()>& _callback, const std::function<void(const std::exception&)>& _error_callback) {
+uint64_t USBoardModuleAsyncClient::request_data(const std::vector<vnx::bool_t>& groups, const std::function<void()>& _callback, const std::function<void(const vnx::exception&)>& _error_callback) {
 	auto _method = ::pilot::usboard::USBoardModule_request_data::create();
 	_method->groups = groups;
 	const auto _request_id = ++vnx_next_id;
@@ -168,7 +168,7 @@ uint64_t USBoardModuleAsyncClient::request_data(const std::vector<vnx::bool_t>& 
 	return _request_id;
 }
 
-uint64_t USBoardModuleAsyncClient::request_analog_data(const std::function<void()>& _callback, const std::function<void(const std::exception&)>& _error_callback) {
+uint64_t USBoardModuleAsyncClient::request_analog_data(const std::function<void()>& _callback, const std::function<void(const vnx::exception&)>& _error_callback) {
 	auto _method = ::pilot::usboard::USBoardModule_request_analog_data::create();
 	const auto _request_id = ++vnx_next_id;
 	{
@@ -180,7 +180,7 @@ uint64_t USBoardModuleAsyncClient::request_analog_data(const std::function<void(
 	return _request_id;
 }
 
-uint64_t USBoardModuleAsyncClient::request_config(const std::function<void()>& _callback, const std::function<void(const std::exception&)>& _error_callback) {
+uint64_t USBoardModuleAsyncClient::request_config(const std::function<void()>& _callback, const std::function<void(const vnx::exception&)>& _error_callback) {
 	auto _method = ::pilot::usboard::USBoardModule_request_config::create();
 	const auto _request_id = ++vnx_next_id;
 	{
@@ -192,7 +192,7 @@ uint64_t USBoardModuleAsyncClient::request_config(const std::function<void()>& _
 	return _request_id;
 }
 
-uint64_t USBoardModuleAsyncClient::get_config(const std::function<void(std::shared_ptr<const ::pilot::usboard::USBoardConfig>)>& _callback, const std::function<void(const std::exception&)>& _error_callback) {
+uint64_t USBoardModuleAsyncClient::get_config(const std::function<void(std::shared_ptr<const ::pilot::usboard::USBoardConfig>)>& _callback, const std::function<void(const vnx::exception&)>& _error_callback) {
 	auto _method = ::pilot::usboard::USBoardModule_get_config::create();
 	const auto _request_id = ++vnx_next_id;
 	{
@@ -204,7 +204,7 @@ uint64_t USBoardModuleAsyncClient::get_config(const std::function<void(std::shar
 	return _request_id;
 }
 
-uint64_t USBoardModuleAsyncClient::set_channel_active(const std::vector<vnx::bool_t>& sensors, const std::function<void()>& _callback, const std::function<void(const std::exception&)>& _error_callback) {
+uint64_t USBoardModuleAsyncClient::set_channel_active(const std::vector<vnx::bool_t>& sensors, const std::function<void()>& _callback, const std::function<void(const vnx::exception&)>& _error_callback) {
 	auto _method = ::pilot::usboard::USBoardModule_set_channel_active::create();
 	_method->sensors = sensors;
 	const auto _request_id = ++vnx_next_id;
@@ -217,7 +217,7 @@ uint64_t USBoardModuleAsyncClient::set_channel_active(const std::vector<vnx::boo
 	return _request_id;
 }
 
-uint64_t USBoardModuleAsyncClient::send_config(std::shared_ptr<const ::pilot::usboard::USBoardConfig> config, const std::function<void()>& _callback, const std::function<void(const std::exception&)>& _error_callback) {
+uint64_t USBoardModuleAsyncClient::send_config(std::shared_ptr<const ::pilot::usboard::USBoardConfig> config, const std::function<void()>& _callback, const std::function<void(const vnx::exception&)>& _error_callback) {
 	auto _method = ::pilot::usboard::USBoardModule_send_config::create();
 	_method->config = config;
 	const auto _request_id = ++vnx_next_id;
@@ -230,7 +230,7 @@ uint64_t USBoardModuleAsyncClient::send_config(std::shared_ptr<const ::pilot::us
 	return _request_id;
 }
 
-uint64_t USBoardModuleAsyncClient::save_config(std::shared_ptr<const ::pilot::usboard::USBoardConfig> config, const std::function<void()>& _callback, const std::function<void(const std::exception&)>& _error_callback) {
+uint64_t USBoardModuleAsyncClient::save_config(std::shared_ptr<const ::pilot::usboard::USBoardConfig> config, const std::function<void()>& _callback, const std::function<void(const vnx::exception&)>& _error_callback) {
 	auto _method = ::pilot::usboard::USBoardModule_save_config::create();
 	_method->config = config;
 	const auto _request_id = ++vnx_next_id;
@@ -294,7 +294,7 @@ std::vector<uint64_t> USBoardModuleAsyncClient::vnx_get_pending_ids() const {
 	return _list;
 }
 
-void USBoardModuleAsyncClient::vnx_purge_request(uint64_t _request_id, const std::exception& _ex) {
+void USBoardModuleAsyncClient::vnx_purge_request(uint64_t _request_id, const vnx::exception& _ex) {
 	std::unique_lock<std::mutex> _lock(vnx_mutex);
 	{
 		const auto _iter = vnx_queue_vnx_get_config_object.find(_request_id);

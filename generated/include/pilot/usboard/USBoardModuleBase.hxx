@@ -36,20 +36,20 @@ public:
 	
 	USBoardModuleBase(const std::string& _vnx_name);
 	
-	vnx::Hash64 get_type_hash() const;
-	const char* get_type_name() const;
-	const vnx::TypeCode* get_type_code() const;
+	vnx::Hash64 get_type_hash() const override;
+	const char* get_type_name() const override;
+	const vnx::TypeCode* get_type_code() const override;
 	
-	void read(std::istream& _in);
-	void write(std::ostream& _out) const;
+	void read(std::istream& _in) override;
+	void write(std::ostream& _out) const override;
 	
-	void accept(vnx::Visitor& _visitor) const;
+	void accept(vnx::Visitor& _visitor) const override;
 	
-	vnx::Object to_object() const;
-	void from_object(const vnx::Object& object);
+	vnx::Object to_object() const override;
+	void from_object(const vnx::Object& object) override;
 	
-	vnx::Variant get_field(const std::string& name) const;
-	void set_field(const std::string& name, const vnx::Variant& value);
+	vnx::Variant get_field(const std::string& name) const override;
+	void set_field(const std::string& name, const vnx::Variant& value) override;
 	
 	friend std::ostream& operator<<(std::ostream& _out, const USBoardModuleBase& _value);
 	friend std::istream& operator>>(std::istream& _in, USBoardModuleBase& _value);
@@ -68,9 +68,7 @@ protected:
 	void send_config_async_return(const vnx::request_id_t& _request_id) const;
 	virtual void save_config_async(std::shared_ptr<const ::pilot::usboard::USBoardConfig> config, const vnx::request_id_t& _request_id) = 0;
 	void save_config_async_return(const vnx::request_id_t& _request_id) const;
-	virtual void handle(std::shared_ptr<const ::pilot::base::CAN_Frame> _value, std::shared_ptr<const vnx::Sample> _sample) { handle(_value); }
 	virtual void handle(std::shared_ptr<const ::pilot::base::CAN_Frame> _value) {}
-	virtual void handle(std::shared_ptr<const ::pilot::base::DataPacket> _value, std::shared_ptr<const vnx::Sample> _sample) { handle(_value); }
 	virtual void handle(std::shared_ptr<const ::pilot::base::DataPacket> _value) {}
 	
 	void vnx_handle_switch(std::shared_ptr<const vnx::Sample> _sample) override;

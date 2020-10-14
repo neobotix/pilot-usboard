@@ -348,14 +348,14 @@ void USBoardModuleBase::vnx_handle_switch(std::shared_ptr<const vnx::Sample> _sa
 	{
 		auto _value = std::dynamic_pointer_cast<const ::pilot::base::DataPacket>(_sample->value);
 		if(_value) {
-			handle(_value, _sample);
+			handle(_value);
 			return;
 		}
 	}
 	{
 		auto _value = std::dynamic_pointer_cast<const ::pilot::base::CAN_Frame>(_sample->value);
 		if(_value) {
-			handle(_value, _sample);
+			handle(_value);
 			return;
 		}
 	}

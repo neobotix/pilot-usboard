@@ -23,87 +23,87 @@ public:
 	
 	uint64_t vnx_get_config_object(
 			const std::function<void(const ::vnx::Object&)>& _callback = std::function<void(const ::vnx::Object&)>(),
-			const std::function<void(const std::exception&)>& _error_callback = std::function<void(const std::exception&)>());
+			const std::function<void(const vnx::exception&)>& _error_callback = std::function<void(const vnx::exception&)>());
 	
 	uint64_t vnx_get_config(const std::string& name, 
 			const std::function<void(const ::vnx::Variant&)>& _callback = std::function<void(const ::vnx::Variant&)>(),
-			const std::function<void(const std::exception&)>& _error_callback = std::function<void(const std::exception&)>());
+			const std::function<void(const vnx::exception&)>& _error_callback = std::function<void(const vnx::exception&)>());
 	
 	uint64_t vnx_set_config_object(const ::vnx::Object& config, 
 			const std::function<void()>& _callback = std::function<void()>(),
-			const std::function<void(const std::exception&)>& _error_callback = std::function<void(const std::exception&)>());
+			const std::function<void(const vnx::exception&)>& _error_callback = std::function<void(const vnx::exception&)>());
 	
 	uint64_t vnx_set_config(const std::string& name, const ::vnx::Variant& value, 
 			const std::function<void()>& _callback = std::function<void()>(),
-			const std::function<void(const std::exception&)>& _error_callback = std::function<void(const std::exception&)>());
+			const std::function<void(const vnx::exception&)>& _error_callback = std::function<void(const vnx::exception&)>());
 	
 	uint64_t vnx_get_type_code(
 			const std::function<void(const ::vnx::TypeCode&)>& _callback = std::function<void(const ::vnx::TypeCode&)>(),
-			const std::function<void(const std::exception&)>& _error_callback = std::function<void(const std::exception&)>());
+			const std::function<void(const vnx::exception&)>& _error_callback = std::function<void(const vnx::exception&)>());
 	
 	uint64_t vnx_restart(
 			const std::function<void()>& _callback = std::function<void()>(),
-			const std::function<void(const std::exception&)>& _error_callback = std::function<void(const std::exception&)>());
+			const std::function<void(const vnx::exception&)>& _error_callback = std::function<void(const vnx::exception&)>());
 	
 	uint64_t vnx_close(
 			const std::function<void()>& _callback = std::function<void()>(),
-			const std::function<void(const std::exception&)>& _error_callback = std::function<void(const std::exception&)>());
+			const std::function<void(const vnx::exception&)>& _error_callback = std::function<void(const vnx::exception&)>());
 	
 	uint64_t is_connected(
 			const std::function<void(const vnx::bool_t&)>& _callback = std::function<void(const vnx::bool_t&)>(),
-			const std::function<void(const std::exception&)>& _error_callback = std::function<void(const std::exception&)>());
+			const std::function<void(const vnx::exception&)>& _error_callback = std::function<void(const vnx::exception&)>());
 	
 	uint64_t request_data(const std::vector<vnx::bool_t>& groups, 
 			const std::function<void()>& _callback = std::function<void()>(),
-			const std::function<void(const std::exception&)>& _error_callback = std::function<void(const std::exception&)>());
+			const std::function<void(const vnx::exception&)>& _error_callback = std::function<void(const vnx::exception&)>());
 	
 	uint64_t request_analog_data(
 			const std::function<void()>& _callback = std::function<void()>(),
-			const std::function<void(const std::exception&)>& _error_callback = std::function<void(const std::exception&)>());
+			const std::function<void(const vnx::exception&)>& _error_callback = std::function<void(const vnx::exception&)>());
 	
 	uint64_t request_config(
 			const std::function<void()>& _callback = std::function<void()>(),
-			const std::function<void(const std::exception&)>& _error_callback = std::function<void(const std::exception&)>());
+			const std::function<void(const vnx::exception&)>& _error_callback = std::function<void(const vnx::exception&)>());
 	
 	uint64_t get_config(
 			const std::function<void(std::shared_ptr<const ::pilot::usboard::USBoardConfig>)>& _callback = std::function<void(std::shared_ptr<const ::pilot::usboard::USBoardConfig>)>(),
-			const std::function<void(const std::exception&)>& _error_callback = std::function<void(const std::exception&)>());
+			const std::function<void(const vnx::exception&)>& _error_callback = std::function<void(const vnx::exception&)>());
 	
 	uint64_t set_channel_active(const std::vector<vnx::bool_t>& sensors, 
 			const std::function<void()>& _callback = std::function<void()>(),
-			const std::function<void(const std::exception&)>& _error_callback = std::function<void(const std::exception&)>());
+			const std::function<void(const vnx::exception&)>& _error_callback = std::function<void(const vnx::exception&)>());
 	
 	uint64_t send_config(std::shared_ptr<const ::pilot::usboard::USBoardConfig> config, 
 			const std::function<void()>& _callback = std::function<void()>(),
-			const std::function<void(const std::exception&)>& _error_callback = std::function<void(const std::exception&)>());
+			const std::function<void(const vnx::exception&)>& _error_callback = std::function<void(const vnx::exception&)>());
 	
 	uint64_t save_config(std::shared_ptr<const ::pilot::usboard::USBoardConfig> config, 
 			const std::function<void()>& _callback = std::function<void()>(),
-			const std::function<void(const std::exception&)>& _error_callback = std::function<void(const std::exception&)>());
+			const std::function<void(const vnx::exception&)>& _error_callback = std::function<void(const vnx::exception&)>());
 	
 	std::vector<uint64_t> vnx_get_pending_ids() const override;
 	
 protected:
-	void vnx_purge_request(uint64_t _request_id, const std::exception& _ex) override;
+	void vnx_purge_request(uint64_t _request_id, const vnx::exception& _ex) override;
 	
 	void vnx_callback_switch(uint64_t _request_id, std::shared_ptr<const vnx::Value> _value) override;
 	
 private:
-	std::map<uint64_t, std::pair<std::function<void(const ::vnx::Object&)>, std::function<void(const std::exception&)>>> vnx_queue_vnx_get_config_object;
-	std::map<uint64_t, std::pair<std::function<void(const ::vnx::Variant&)>, std::function<void(const std::exception&)>>> vnx_queue_vnx_get_config;
-	std::map<uint64_t, std::pair<std::function<void()>, std::function<void(const std::exception&)>>> vnx_queue_vnx_set_config_object;
-	std::map<uint64_t, std::pair<std::function<void()>, std::function<void(const std::exception&)>>> vnx_queue_vnx_set_config;
-	std::map<uint64_t, std::pair<std::function<void(const ::vnx::TypeCode&)>, std::function<void(const std::exception&)>>> vnx_queue_vnx_get_type_code;
-	std::map<uint64_t, std::pair<std::function<void()>, std::function<void(const std::exception&)>>> vnx_queue_vnx_restart;
-	std::map<uint64_t, std::pair<std::function<void()>, std::function<void(const std::exception&)>>> vnx_queue_vnx_close;
-	std::map<uint64_t, std::pair<std::function<void(const vnx::bool_t&)>, std::function<void(const std::exception&)>>> vnx_queue_is_connected;
-	std::map<uint64_t, std::pair<std::function<void()>, std::function<void(const std::exception&)>>> vnx_queue_request_data;
-	std::map<uint64_t, std::pair<std::function<void()>, std::function<void(const std::exception&)>>> vnx_queue_request_analog_data;
-	std::map<uint64_t, std::pair<std::function<void()>, std::function<void(const std::exception&)>>> vnx_queue_request_config;
-	std::map<uint64_t, std::pair<std::function<void(std::shared_ptr<const ::pilot::usboard::USBoardConfig>)>, std::function<void(const std::exception&)>>> vnx_queue_get_config;
-	std::map<uint64_t, std::pair<std::function<void()>, std::function<void(const std::exception&)>>> vnx_queue_set_channel_active;
-	std::map<uint64_t, std::pair<std::function<void()>, std::function<void(const std::exception&)>>> vnx_queue_send_config;
-	std::map<uint64_t, std::pair<std::function<void()>, std::function<void(const std::exception&)>>> vnx_queue_save_config;
+	std::map<uint64_t, std::pair<std::function<void(const ::vnx::Object&)>, std::function<void(const vnx::exception&)>>> vnx_queue_vnx_get_config_object;
+	std::map<uint64_t, std::pair<std::function<void(const ::vnx::Variant&)>, std::function<void(const vnx::exception&)>>> vnx_queue_vnx_get_config;
+	std::map<uint64_t, std::pair<std::function<void()>, std::function<void(const vnx::exception&)>>> vnx_queue_vnx_set_config_object;
+	std::map<uint64_t, std::pair<std::function<void()>, std::function<void(const vnx::exception&)>>> vnx_queue_vnx_set_config;
+	std::map<uint64_t, std::pair<std::function<void(const ::vnx::TypeCode&)>, std::function<void(const vnx::exception&)>>> vnx_queue_vnx_get_type_code;
+	std::map<uint64_t, std::pair<std::function<void()>, std::function<void(const vnx::exception&)>>> vnx_queue_vnx_restart;
+	std::map<uint64_t, std::pair<std::function<void()>, std::function<void(const vnx::exception&)>>> vnx_queue_vnx_close;
+	std::map<uint64_t, std::pair<std::function<void(const vnx::bool_t&)>, std::function<void(const vnx::exception&)>>> vnx_queue_is_connected;
+	std::map<uint64_t, std::pair<std::function<void()>, std::function<void(const vnx::exception&)>>> vnx_queue_request_data;
+	std::map<uint64_t, std::pair<std::function<void()>, std::function<void(const vnx::exception&)>>> vnx_queue_request_analog_data;
+	std::map<uint64_t, std::pair<std::function<void()>, std::function<void(const vnx::exception&)>>> vnx_queue_request_config;
+	std::map<uint64_t, std::pair<std::function<void(std::shared_ptr<const ::pilot::usboard::USBoardConfig>)>, std::function<void(const vnx::exception&)>>> vnx_queue_get_config;
+	std::map<uint64_t, std::pair<std::function<void()>, std::function<void(const vnx::exception&)>>> vnx_queue_set_channel_active;
+	std::map<uint64_t, std::pair<std::function<void()>, std::function<void(const vnx::exception&)>>> vnx_queue_send_config;
+	std::map<uint64_t, std::pair<std::function<void()>, std::function<void(const vnx::exception&)>>> vnx_queue_save_config;
 	
 };
 
