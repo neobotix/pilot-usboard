@@ -196,7 +196,7 @@ void USBoardConfig::from_can_frames(const std::vector<base::CAN_Frame>& frames)
 	if(hardware_version == 0){
 		// USBoard V1
 		serial_number = frames[8].get_uint(5*8, 24, 0);
-	}else if(hardware_version == 20){
+	}else if(hardware_version >= 20){
 		// USBoard V2 (USS5)
 		serial_number = frames[8].get_uint(4*8, 32, 0);
 	}
