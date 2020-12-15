@@ -57,6 +57,9 @@ vnx::bool_t USBoardModule::is_connected() const
 
 void USBoardModule::request_config()
 {
+	if(!is_connected()) {
+		throw std::logic_error("not connected");
+	}
 	std::shared_ptr<base::CAN_Frame> frame = base::CAN_Frame::create();
 	frame->time = vnx::get_time_micros();
 	frame->id = m_config->can_id;
@@ -109,6 +112,9 @@ void USBoardModule::save_config_async(	std::shared_ptr<const USBoardConfig> conf
 }
 
 void USBoardModule::send_config(std::shared_ptr<const USBoardConfig> config, const vnx::request_id_t& request_id, Command command){
+	if(!is_connected()) {
+		throw std::logic_error("not connected");
+	}
 	if(m_sentConfigIndex > 0){
 		// there is still a request pending
 		throw std::runtime_error("Attempt to send another parameter set while the last one is still pending");
