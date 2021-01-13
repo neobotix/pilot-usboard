@@ -85,6 +85,7 @@ private:
 	IndexCollector<base::CAN_Frame> m_gotData;
 	std::weak_ptr<vnx::Timer> m_gotDataTimer;
 
+	void request_config_internal();
 	void sendconfig_timeout(const vnx::request_id_t& request_id);
 	void getdata_send();
 	void connect();

@@ -60,6 +60,11 @@ void USBoardModule::request_config()
 	if(!is_connected()) {
 		throw std::logic_error("not connected");
 	}
+	request_config_internal();
+}
+
+void USBoardModule::request_config_internal()
+{
 	std::shared_ptr<base::CAN_Frame> frame = base::CAN_Frame::create();
 	frame->time = vnx::get_time_micros();
 	frame->id = m_config->can_id;
@@ -179,7 +184,7 @@ void USBoardModule::handle_canframe(std::shared_ptr<const ::pilot::base::CAN_Fra
 		// CMD_CONNECT
 		// check for content? Nah.
 		if(!m_configIsReal || !is_connected()){
-			request_config();
+			request_config_internal();
 		}
 		m_lastConnect_ms = vnx::get_time_millis();
 	}else if(baseplus == 2 || baseplus == 3){
