@@ -21,8 +21,10 @@ struct sensor_config_t {
 	static const vnx::Hash64 VNX_TYPE_HASH;
 	static const vnx::Hash64 VNX_CODE_HASH;
 	
+	static constexpr uint64_t VNX_TYPE_ID = 0x4992d944965d7b92ull;
+	
 	vnx::Hash64 get_type_hash() const;
-	const char* get_type_name() const;
+	std::string get_type_name() const;
 	const vnx::TypeCode* get_type_code() const;
 	
 	static std::shared_ptr<sensor_config_t> create();
@@ -53,5 +55,15 @@ struct sensor_config_t {
 
 } // namespace pilot
 } // namespace usboard
+
+
+namespace vnx {
+
+template<>
+struct is_equivalent<::pilot::usboard::sensor_config_t> {
+	bool operator()(const uint16_t* code, const TypeCode* type_code);
+};
+
+} // vnx
 
 #endif // INCLUDE_pilot_usboard_sensor_config_t_HXX_

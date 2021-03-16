@@ -41,8 +41,10 @@ public:
 	static const vnx::Hash64 VNX_TYPE_HASH;
 	static const vnx::Hash64 VNX_CODE_HASH;
 	
+	static constexpr uint64_t VNX_TYPE_ID = 0x9c0fb140354b6e4cull;
+	
 	vnx::Hash64 get_type_hash() const override;
-	const char* get_type_name() const override;
+	std::string get_type_name() const override;
 	const vnx::TypeCode* get_type_code() const override;
 	
 	virtual std::vector<::pilot::base::CAN_Frame> to_can_frames() const;
@@ -77,5 +79,10 @@ public:
 
 } // namespace pilot
 } // namespace usboard
+
+
+namespace vnx {
+
+} // vnx
 
 #endif // INCLUDE_pilot_usboard_USBoardConfig_HXX_

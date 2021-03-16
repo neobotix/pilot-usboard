@@ -22,7 +22,7 @@ vnx::Hash64 group_config_t::get_type_hash() const {
 	return VNX_TYPE_HASH;
 }
 
-const char* group_config_t::get_type_name() const {
+std::string group_config_t::get_type_name() const {
 	return "pilot.usboard.group_config_t";
 }
 
@@ -68,25 +68,14 @@ void group_config_t::write(std::ostream& _out) const {
 }
 
 void group_config_t::read(std::istream& _in) {
-	std::map<std::string, std::string> _object;
-	vnx::read_object(_in, _object);
-	for(const auto& _entry : _object) {
-		if(_entry.first == "cross_echo_mode") {
-			vnx::from_string(_entry.second, cross_echo_mode);
-		} else if(_entry.first == "enable_transmission") {
-			vnx::from_string(_entry.second, enable_transmission);
-		} else if(_entry.first == "fire_interval_ms") {
-			vnx::from_string(_entry.second, fire_interval_ms);
-		} else if(_entry.first == "resolution") {
-			vnx::from_string(_entry.second, resolution);
-		} else if(_entry.first == "sending_sensor") {
-			vnx::from_string(_entry.second, sending_sensor);
-		}
+	if(auto _json = vnx::read_json(_in)) {
+		from_object(_json->to_object());
 	}
 }
 
 vnx::Object group_config_t::to_object() const {
 	vnx::Object _object;
+	_object["__type"] = "pilot.usboard.group_config_t";
 	_object["enable_transmission"] = enable_transmission;
 	_object["resolution"] = resolution;
 	_object["fire_interval_ms"] = fire_interval_ms;
@@ -167,39 +156,45 @@ const vnx::TypeCode* group_config_t::static_get_type_code() {
 }
 
 std::shared_ptr<vnx::TypeCode> group_config_t::static_create_type_code() {
-	std::shared_ptr<vnx::TypeCode> type_code = std::make_shared<vnx::TypeCode>();
+	auto type_code = std::make_shared<vnx::TypeCode>();
 	type_code->name = "pilot.usboard.group_config_t";
 	type_code->type_hash = vnx::Hash64(0x54c195694cac61efull);
 	type_code->code_hash = vnx::Hash64(0x589c02cb513963a9ull);
 	type_code->is_native = true;
+	type_code->native_size = sizeof(::pilot::usboard::group_config_t);
 	type_code->create_value = []() -> std::shared_ptr<vnx::Value> { return std::make_shared<vnx::Struct<group_config_t>>(); };
 	type_code->fields.resize(5);
 	{
-		vnx::TypeField& field = type_code->fields[0];
+		auto& field = type_code->fields[0];
+		field.data_size = 1;
 		field.name = "enable_transmission";
 		field.value = vnx::to_string(true);
 		field.code = {31};
 	}
 	{
-		vnx::TypeField& field = type_code->fields[1];
+		auto& field = type_code->fields[1];
+		field.data_size = 4;
 		field.name = "resolution";
 		field.value = vnx::to_string(1);
 		field.code = {3};
 	}
 	{
-		vnx::TypeField& field = type_code->fields[2];
+		auto& field = type_code->fields[2];
+		field.data_size = 4;
 		field.name = "fire_interval_ms";
 		field.value = vnx::to_string(20);
 		field.code = {3};
 	}
 	{
-		vnx::TypeField& field = type_code->fields[3];
+		auto& field = type_code->fields[3];
+		field.data_size = 4;
 		field.name = "sending_sensor";
 		field.value = vnx::to_string(0);
 		field.code = {7};
 	}
 	{
-		vnx::TypeField& field = type_code->fields[4];
+		auto& field = type_code->fields[4];
+		field.data_size = 1;
 		field.name = "cross_echo_mode";
 		field.value = vnx::to_string(false);
 		field.code = {31};
@@ -232,49 +227,38 @@ void read(TypeInput& in, ::pilot::usboard::group_config_t& value, const TypeCode
 		}
 	}
 	if(!type_code) {
-		throw std::logic_error("read(): type_code == 0");
+		vnx::skip(in, type_code, code);
+		return;
 	}
 	if(code) {
 		switch(code[0]) {
 			case CODE_STRUCT: type_code = type_code->depends[code[1]]; break;
 			case CODE_ALT_STRUCT: type_code = type_code->depends[vnx::flip_bytes(code[1])]; break;
-			default: vnx::skip(in, type_code, code); return;
+			default: {
+				vnx::skip(in, type_code, code);
+				return;
+			}
 		}
 	}
 	const char* const _buf = in.read(type_code->total_field_size);
 	if(type_code->is_matched) {
-		{
-			const vnx::TypeField* const _field = type_code->field_map[0];
-			if(_field) {
-				vnx::read_value(_buf + _field->offset, value.enable_transmission, _field->code.data());
-			}
+		if(const auto* const _field = type_code->field_map[0]) {
+			vnx::read_value(_buf + _field->offset, value.enable_transmission, _field->code.data());
 		}
-		{
-			const vnx::TypeField* const _field = type_code->field_map[1];
-			if(_field) {
-				vnx::read_value(_buf + _field->offset, value.resolution, _field->code.data());
-			}
+		if(const auto* const _field = type_code->field_map[1]) {
+			vnx::read_value(_buf + _field->offset, value.resolution, _field->code.data());
 		}
-		{
-			const vnx::TypeField* const _field = type_code->field_map[2];
-			if(_field) {
-				vnx::read_value(_buf + _field->offset, value.fire_interval_ms, _field->code.data());
-			}
+		if(const auto* const _field = type_code->field_map[2]) {
+			vnx::read_value(_buf + _field->offset, value.fire_interval_ms, _field->code.data());
 		}
-		{
-			const vnx::TypeField* const _field = type_code->field_map[3];
-			if(_field) {
-				vnx::read_value(_buf + _field->offset, value.sending_sensor, _field->code.data());
-			}
+		if(const auto* const _field = type_code->field_map[3]) {
+			vnx::read_value(_buf + _field->offset, value.sending_sensor, _field->code.data());
 		}
-		{
-			const vnx::TypeField* const _field = type_code->field_map[4];
-			if(_field) {
-				vnx::read_value(_buf + _field->offset, value.cross_echo_mode, _field->code.data());
-			}
+		if(const auto* const _field = type_code->field_map[4]) {
+			vnx::read_value(_buf + _field->offset, value.cross_echo_mode, _field->code.data());
 		}
 	}
-	for(const vnx::TypeField* _field : type_code->ext_fields) {
+	for(const auto* _field : type_code->ext_fields) {
 		switch(_field->native_index) {
 			default: vnx::skip(in, type_code, _field->code.data());
 		}
@@ -291,7 +275,7 @@ void write(TypeOutput& out, const ::pilot::usboard::group_config_t& value, const
 		out.write_type_code(type_code);
 		vnx::write_class_header<::pilot::usboard::group_config_t>(out);
 	}
-	if(code && code[0] == CODE_STRUCT) {
+	else if(code && code[0] == CODE_STRUCT) {
 		type_code = type_code->depends[code[1]];
 	}
 	char* const _buf = out.write(14);
@@ -312,6 +296,14 @@ void write(std::ostream& out, const ::pilot::usboard::group_config_t& value) {
 
 void accept(Visitor& visitor, const ::pilot::usboard::group_config_t& value) {
 	value.accept(visitor);
+}
+
+bool is_equivalent<::pilot::usboard::group_config_t>::operator()(const uint16_t* code, const TypeCode* type_code) {
+	if(code[0] != CODE_STRUCT || !type_code) {
+		return false;
+	}
+	type_code = type_code->depends[code[1]];
+	return type_code->type_hash == ::pilot::usboard::group_config_t::VNX_TYPE_HASH && type_code->is_equivalent;
 }
 
 } // vnx

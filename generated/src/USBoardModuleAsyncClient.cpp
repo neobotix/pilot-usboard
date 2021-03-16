@@ -23,22 +23,27 @@
 #include <pilot/usboard/USBoardModule_set_channel_active.hxx>
 #include <pilot/usboard/USBoardModule_set_channel_active_return.hxx>
 #include <vnx/Module.h>
-#include <vnx/ModuleInterface_vnx_close.hxx>
-#include <vnx/ModuleInterface_vnx_close_return.hxx>
 #include <vnx/ModuleInterface_vnx_get_config.hxx>
+#include <vnx/ModuleInterface_vnx_get_config_return.hxx>
 #include <vnx/ModuleInterface_vnx_get_config_object.hxx>
 #include <vnx/ModuleInterface_vnx_get_config_object_return.hxx>
-#include <vnx/ModuleInterface_vnx_get_config_return.hxx>
+#include <vnx/ModuleInterface_vnx_get_module_info.hxx>
+#include <vnx/ModuleInterface_vnx_get_module_info_return.hxx>
 #include <vnx/ModuleInterface_vnx_get_type_code.hxx>
 #include <vnx/ModuleInterface_vnx_get_type_code_return.hxx>
 #include <vnx/ModuleInterface_vnx_restart.hxx>
 #include <vnx/ModuleInterface_vnx_restart_return.hxx>
+#include <vnx/ModuleInterface_vnx_self_test.hxx>
+#include <vnx/ModuleInterface_vnx_self_test_return.hxx>
 #include <vnx/ModuleInterface_vnx_set_config.hxx>
+#include <vnx/ModuleInterface_vnx_set_config_return.hxx>
 #include <vnx/ModuleInterface_vnx_set_config_object.hxx>
 #include <vnx/ModuleInterface_vnx_set_config_object_return.hxx>
-#include <vnx/ModuleInterface_vnx_set_config_return.hxx>
+#include <vnx/ModuleInterface_vnx_stop.hxx>
+#include <vnx/ModuleInterface_vnx_stop_return.hxx>
 #include <vnx/TopicPtr.hpp>
 
+#include <vnx/Generic.hxx>
 #include <vnx/vnx.h>
 
 
@@ -60,8 +65,8 @@ uint64_t USBoardModuleAsyncClient::vnx_get_config_object(const std::function<voi
 	const auto _request_id = ++vnx_next_id;
 	{
 		std::lock_guard<std::mutex> _lock(vnx_mutex);
+		vnx_pending[_request_id] = 0;
 		vnx_queue_vnx_get_config_object[_request_id] = std::make_pair(_callback, _error_callback);
-		vnx_num_pending++;
 	}
 	vnx_request(_method, _request_id);
 	return _request_id;
@@ -73,8 +78,8 @@ uint64_t USBoardModuleAsyncClient::vnx_get_config(const std::string& name, const
 	const auto _request_id = ++vnx_next_id;
 	{
 		std::lock_guard<std::mutex> _lock(vnx_mutex);
+		vnx_pending[_request_id] = 1;
 		vnx_queue_vnx_get_config[_request_id] = std::make_pair(_callback, _error_callback);
-		vnx_num_pending++;
 	}
 	vnx_request(_method, _request_id);
 	return _request_id;
@@ -86,8 +91,8 @@ uint64_t USBoardModuleAsyncClient::vnx_set_config_object(const ::vnx::Object& co
 	const auto _request_id = ++vnx_next_id;
 	{
 		std::lock_guard<std::mutex> _lock(vnx_mutex);
+		vnx_pending[_request_id] = 2;
 		vnx_queue_vnx_set_config_object[_request_id] = std::make_pair(_callback, _error_callback);
-		vnx_num_pending++;
 	}
 	vnx_request(_method, _request_id);
 	return _request_id;
@@ -100,8 +105,8 @@ uint64_t USBoardModuleAsyncClient::vnx_set_config(const std::string& name, const
 	const auto _request_id = ++vnx_next_id;
 	{
 		std::lock_guard<std::mutex> _lock(vnx_mutex);
+		vnx_pending[_request_id] = 3;
 		vnx_queue_vnx_set_config[_request_id] = std::make_pair(_callback, _error_callback);
-		vnx_num_pending++;
 	}
 	vnx_request(_method, _request_id);
 	return _request_id;
@@ -112,8 +117,20 @@ uint64_t USBoardModuleAsyncClient::vnx_get_type_code(const std::function<void(co
 	const auto _request_id = ++vnx_next_id;
 	{
 		std::lock_guard<std::mutex> _lock(vnx_mutex);
+		vnx_pending[_request_id] = 4;
 		vnx_queue_vnx_get_type_code[_request_id] = std::make_pair(_callback, _error_callback);
-		vnx_num_pending++;
+	}
+	vnx_request(_method, _request_id);
+	return _request_id;
+}
+
+uint64_t USBoardModuleAsyncClient::vnx_get_module_info(const std::function<void(std::shared_ptr<const ::vnx::ModuleInfo>)>& _callback, const std::function<void(const vnx::exception&)>& _error_callback) {
+	auto _method = ::vnx::ModuleInterface_vnx_get_module_info::create();
+	const auto _request_id = ++vnx_next_id;
+	{
+		std::lock_guard<std::mutex> _lock(vnx_mutex);
+		vnx_pending[_request_id] = 5;
+		vnx_queue_vnx_get_module_info[_request_id] = std::make_pair(_callback, _error_callback);
 	}
 	vnx_request(_method, _request_id);
 	return _request_id;
@@ -124,20 +141,32 @@ uint64_t USBoardModuleAsyncClient::vnx_restart(const std::function<void()>& _cal
 	const auto _request_id = ++vnx_next_id;
 	{
 		std::lock_guard<std::mutex> _lock(vnx_mutex);
+		vnx_pending[_request_id] = 6;
 		vnx_queue_vnx_restart[_request_id] = std::make_pair(_callback, _error_callback);
-		vnx_num_pending++;
 	}
 	vnx_request(_method, _request_id);
 	return _request_id;
 }
 
-uint64_t USBoardModuleAsyncClient::vnx_close(const std::function<void()>& _callback, const std::function<void(const vnx::exception&)>& _error_callback) {
-	auto _method = ::vnx::ModuleInterface_vnx_close::create();
+uint64_t USBoardModuleAsyncClient::vnx_stop(const std::function<void()>& _callback, const std::function<void(const vnx::exception&)>& _error_callback) {
+	auto _method = ::vnx::ModuleInterface_vnx_stop::create();
 	const auto _request_id = ++vnx_next_id;
 	{
 		std::lock_guard<std::mutex> _lock(vnx_mutex);
-		vnx_queue_vnx_close[_request_id] = std::make_pair(_callback, _error_callback);
-		vnx_num_pending++;
+		vnx_pending[_request_id] = 7;
+		vnx_queue_vnx_stop[_request_id] = std::make_pair(_callback, _error_callback);
+	}
+	vnx_request(_method, _request_id);
+	return _request_id;
+}
+
+uint64_t USBoardModuleAsyncClient::vnx_self_test(const std::function<void(const vnx::bool_t&)>& _callback, const std::function<void(const vnx::exception&)>& _error_callback) {
+	auto _method = ::vnx::ModuleInterface_vnx_self_test::create();
+	const auto _request_id = ++vnx_next_id;
+	{
+		std::lock_guard<std::mutex> _lock(vnx_mutex);
+		vnx_pending[_request_id] = 8;
+		vnx_queue_vnx_self_test[_request_id] = std::make_pair(_callback, _error_callback);
 	}
 	vnx_request(_method, _request_id);
 	return _request_id;
@@ -148,8 +177,8 @@ uint64_t USBoardModuleAsyncClient::is_connected(const std::function<void(const v
 	const auto _request_id = ++vnx_next_id;
 	{
 		std::lock_guard<std::mutex> _lock(vnx_mutex);
+		vnx_pending[_request_id] = 9;
 		vnx_queue_is_connected[_request_id] = std::make_pair(_callback, _error_callback);
-		vnx_num_pending++;
 	}
 	vnx_request(_method, _request_id);
 	return _request_id;
@@ -161,8 +190,8 @@ uint64_t USBoardModuleAsyncClient::request_data(const std::vector<vnx::bool_t>& 
 	const auto _request_id = ++vnx_next_id;
 	{
 		std::lock_guard<std::mutex> _lock(vnx_mutex);
+		vnx_pending[_request_id] = 10;
 		vnx_queue_request_data[_request_id] = std::make_pair(_callback, _error_callback);
-		vnx_num_pending++;
 	}
 	vnx_request(_method, _request_id);
 	return _request_id;
@@ -173,8 +202,8 @@ uint64_t USBoardModuleAsyncClient::request_analog_data(const std::function<void(
 	const auto _request_id = ++vnx_next_id;
 	{
 		std::lock_guard<std::mutex> _lock(vnx_mutex);
+		vnx_pending[_request_id] = 11;
 		vnx_queue_request_analog_data[_request_id] = std::make_pair(_callback, _error_callback);
-		vnx_num_pending++;
 	}
 	vnx_request(_method, _request_id);
 	return _request_id;
@@ -185,8 +214,8 @@ uint64_t USBoardModuleAsyncClient::request_config(const std::function<void()>& _
 	const auto _request_id = ++vnx_next_id;
 	{
 		std::lock_guard<std::mutex> _lock(vnx_mutex);
+		vnx_pending[_request_id] = 12;
 		vnx_queue_request_config[_request_id] = std::make_pair(_callback, _error_callback);
-		vnx_num_pending++;
 	}
 	vnx_request(_method, _request_id);
 	return _request_id;
@@ -197,8 +226,8 @@ uint64_t USBoardModuleAsyncClient::get_config(const std::function<void(std::shar
 	const auto _request_id = ++vnx_next_id;
 	{
 		std::lock_guard<std::mutex> _lock(vnx_mutex);
+		vnx_pending[_request_id] = 13;
 		vnx_queue_get_config[_request_id] = std::make_pair(_callback, _error_callback);
-		vnx_num_pending++;
 	}
 	vnx_request(_method, _request_id);
 	return _request_id;
@@ -210,8 +239,8 @@ uint64_t USBoardModuleAsyncClient::set_channel_active(const std::vector<vnx::boo
 	const auto _request_id = ++vnx_next_id;
 	{
 		std::lock_guard<std::mutex> _lock(vnx_mutex);
+		vnx_pending[_request_id] = 14;
 		vnx_queue_set_channel_active[_request_id] = std::make_pair(_callback, _error_callback);
-		vnx_num_pending++;
 	}
 	vnx_request(_method, _request_id);
 	return _request_id;
@@ -223,8 +252,8 @@ uint64_t USBoardModuleAsyncClient::send_config(std::shared_ptr<const ::pilot::us
 	const auto _request_id = ++vnx_next_id;
 	{
 		std::lock_guard<std::mutex> _lock(vnx_mutex);
+		vnx_pending[_request_id] = 15;
 		vnx_queue_send_config[_request_id] = std::make_pair(_callback, _error_callback);
-		vnx_num_pending++;
 	}
 	vnx_request(_method, _request_id);
 	return _request_id;
@@ -236,499 +265,508 @@ uint64_t USBoardModuleAsyncClient::save_config(std::shared_ptr<const ::pilot::us
 	const auto _request_id = ++vnx_next_id;
 	{
 		std::lock_guard<std::mutex> _lock(vnx_mutex);
+		vnx_pending[_request_id] = 16;
 		vnx_queue_save_config[_request_id] = std::make_pair(_callback, _error_callback);
-		vnx_num_pending++;
 	}
 	vnx_request(_method, _request_id);
 	return _request_id;
 }
 
-std::vector<uint64_t> USBoardModuleAsyncClient::vnx_get_pending_ids() const {
-	std::lock_guard<std::mutex> _lock(vnx_mutex);
-	std::vector<uint64_t> _list;
-	for(const auto& entry : vnx_queue_vnx_get_config_object) {
-		_list.push_back(entry.first);
+int32_t USBoardModuleAsyncClient::vnx_purge_request(uint64_t _request_id, const vnx::exception& _ex) {
+	std::unique_lock<std::mutex> _lock(vnx_mutex);
+	const auto _iter = vnx_pending.find(_request_id);
+	if(_iter == vnx_pending.end()) {
+		return -1;
 	}
-	for(const auto& entry : vnx_queue_vnx_get_config) {
-		_list.push_back(entry.first);
+	const auto _index = _iter->second;
+	vnx_pending.erase(_iter);
+	switch(_index) {
+		case 0: {
+			const auto _iter = vnx_queue_vnx_get_config_object.find(_request_id);
+			if(_iter != vnx_queue_vnx_get_config_object.end()) {
+				const auto _callback = std::move(_iter->second.second);
+				vnx_queue_vnx_get_config_object.erase(_iter);
+				_lock.unlock();
+				if(_callback) {
+					_callback(_ex);
+				}
+			}
+			break;
+		}
+		case 1: {
+			const auto _iter = vnx_queue_vnx_get_config.find(_request_id);
+			if(_iter != vnx_queue_vnx_get_config.end()) {
+				const auto _callback = std::move(_iter->second.second);
+				vnx_queue_vnx_get_config.erase(_iter);
+				_lock.unlock();
+				if(_callback) {
+					_callback(_ex);
+				}
+			}
+			break;
+		}
+		case 2: {
+			const auto _iter = vnx_queue_vnx_set_config_object.find(_request_id);
+			if(_iter != vnx_queue_vnx_set_config_object.end()) {
+				const auto _callback = std::move(_iter->second.second);
+				vnx_queue_vnx_set_config_object.erase(_iter);
+				_lock.unlock();
+				if(_callback) {
+					_callback(_ex);
+				}
+			}
+			break;
+		}
+		case 3: {
+			const auto _iter = vnx_queue_vnx_set_config.find(_request_id);
+			if(_iter != vnx_queue_vnx_set_config.end()) {
+				const auto _callback = std::move(_iter->second.second);
+				vnx_queue_vnx_set_config.erase(_iter);
+				_lock.unlock();
+				if(_callback) {
+					_callback(_ex);
+				}
+			}
+			break;
+		}
+		case 4: {
+			const auto _iter = vnx_queue_vnx_get_type_code.find(_request_id);
+			if(_iter != vnx_queue_vnx_get_type_code.end()) {
+				const auto _callback = std::move(_iter->second.second);
+				vnx_queue_vnx_get_type_code.erase(_iter);
+				_lock.unlock();
+				if(_callback) {
+					_callback(_ex);
+				}
+			}
+			break;
+		}
+		case 5: {
+			const auto _iter = vnx_queue_vnx_get_module_info.find(_request_id);
+			if(_iter != vnx_queue_vnx_get_module_info.end()) {
+				const auto _callback = std::move(_iter->second.second);
+				vnx_queue_vnx_get_module_info.erase(_iter);
+				_lock.unlock();
+				if(_callback) {
+					_callback(_ex);
+				}
+			}
+			break;
+		}
+		case 6: {
+			const auto _iter = vnx_queue_vnx_restart.find(_request_id);
+			if(_iter != vnx_queue_vnx_restart.end()) {
+				const auto _callback = std::move(_iter->second.second);
+				vnx_queue_vnx_restart.erase(_iter);
+				_lock.unlock();
+				if(_callback) {
+					_callback(_ex);
+				}
+			}
+			break;
+		}
+		case 7: {
+			const auto _iter = vnx_queue_vnx_stop.find(_request_id);
+			if(_iter != vnx_queue_vnx_stop.end()) {
+				const auto _callback = std::move(_iter->second.second);
+				vnx_queue_vnx_stop.erase(_iter);
+				_lock.unlock();
+				if(_callback) {
+					_callback(_ex);
+				}
+			}
+			break;
+		}
+		case 8: {
+			const auto _iter = vnx_queue_vnx_self_test.find(_request_id);
+			if(_iter != vnx_queue_vnx_self_test.end()) {
+				const auto _callback = std::move(_iter->second.second);
+				vnx_queue_vnx_self_test.erase(_iter);
+				_lock.unlock();
+				if(_callback) {
+					_callback(_ex);
+				}
+			}
+			break;
+		}
+		case 9: {
+			const auto _iter = vnx_queue_is_connected.find(_request_id);
+			if(_iter != vnx_queue_is_connected.end()) {
+				const auto _callback = std::move(_iter->second.second);
+				vnx_queue_is_connected.erase(_iter);
+				_lock.unlock();
+				if(_callback) {
+					_callback(_ex);
+				}
+			}
+			break;
+		}
+		case 10: {
+			const auto _iter = vnx_queue_request_data.find(_request_id);
+			if(_iter != vnx_queue_request_data.end()) {
+				const auto _callback = std::move(_iter->second.second);
+				vnx_queue_request_data.erase(_iter);
+				_lock.unlock();
+				if(_callback) {
+					_callback(_ex);
+				}
+			}
+			break;
+		}
+		case 11: {
+			const auto _iter = vnx_queue_request_analog_data.find(_request_id);
+			if(_iter != vnx_queue_request_analog_data.end()) {
+				const auto _callback = std::move(_iter->second.second);
+				vnx_queue_request_analog_data.erase(_iter);
+				_lock.unlock();
+				if(_callback) {
+					_callback(_ex);
+				}
+			}
+			break;
+		}
+		case 12: {
+			const auto _iter = vnx_queue_request_config.find(_request_id);
+			if(_iter != vnx_queue_request_config.end()) {
+				const auto _callback = std::move(_iter->second.second);
+				vnx_queue_request_config.erase(_iter);
+				_lock.unlock();
+				if(_callback) {
+					_callback(_ex);
+				}
+			}
+			break;
+		}
+		case 13: {
+			const auto _iter = vnx_queue_get_config.find(_request_id);
+			if(_iter != vnx_queue_get_config.end()) {
+				const auto _callback = std::move(_iter->second.second);
+				vnx_queue_get_config.erase(_iter);
+				_lock.unlock();
+				if(_callback) {
+					_callback(_ex);
+				}
+			}
+			break;
+		}
+		case 14: {
+			const auto _iter = vnx_queue_set_channel_active.find(_request_id);
+			if(_iter != vnx_queue_set_channel_active.end()) {
+				const auto _callback = std::move(_iter->second.second);
+				vnx_queue_set_channel_active.erase(_iter);
+				_lock.unlock();
+				if(_callback) {
+					_callback(_ex);
+				}
+			}
+			break;
+		}
+		case 15: {
+			const auto _iter = vnx_queue_send_config.find(_request_id);
+			if(_iter != vnx_queue_send_config.end()) {
+				const auto _callback = std::move(_iter->second.second);
+				vnx_queue_send_config.erase(_iter);
+				_lock.unlock();
+				if(_callback) {
+					_callback(_ex);
+				}
+			}
+			break;
+		}
+		case 16: {
+			const auto _iter = vnx_queue_save_config.find(_request_id);
+			if(_iter != vnx_queue_save_config.end()) {
+				const auto _callback = std::move(_iter->second.second);
+				vnx_queue_save_config.erase(_iter);
+				_lock.unlock();
+				if(_callback) {
+					_callback(_ex);
+				}
+			}
+			break;
+		}
 	}
-	for(const auto& entry : vnx_queue_vnx_set_config_object) {
-		_list.push_back(entry.first);
-	}
-	for(const auto& entry : vnx_queue_vnx_set_config) {
-		_list.push_back(entry.first);
-	}
-	for(const auto& entry : vnx_queue_vnx_get_type_code) {
-		_list.push_back(entry.first);
-	}
-	for(const auto& entry : vnx_queue_vnx_restart) {
-		_list.push_back(entry.first);
-	}
-	for(const auto& entry : vnx_queue_vnx_close) {
-		_list.push_back(entry.first);
-	}
-	for(const auto& entry : vnx_queue_is_connected) {
-		_list.push_back(entry.first);
-	}
-	for(const auto& entry : vnx_queue_request_data) {
-		_list.push_back(entry.first);
-	}
-	for(const auto& entry : vnx_queue_request_analog_data) {
-		_list.push_back(entry.first);
-	}
-	for(const auto& entry : vnx_queue_request_config) {
-		_list.push_back(entry.first);
-	}
-	for(const auto& entry : vnx_queue_get_config) {
-		_list.push_back(entry.first);
-	}
-	for(const auto& entry : vnx_queue_set_channel_active) {
-		_list.push_back(entry.first);
-	}
-	for(const auto& entry : vnx_queue_send_config) {
-		_list.push_back(entry.first);
-	}
-	for(const auto& entry : vnx_queue_save_config) {
-		_list.push_back(entry.first);
-	}
-	return _list;
+	return _index;
 }
 
-void USBoardModuleAsyncClient::vnx_purge_request(uint64_t _request_id, const vnx::exception& _ex) {
+int32_t USBoardModuleAsyncClient::vnx_callback_switch(uint64_t _request_id, std::shared_ptr<const vnx::Value> _value) {
 	std::unique_lock<std::mutex> _lock(vnx_mutex);
-	{
-		const auto _iter = vnx_queue_vnx_get_config_object.find(_request_id);
-		if(_iter != vnx_queue_vnx_get_config_object.end()) {
-			const auto _callback = std::move(_iter->second.second);
-			vnx_queue_vnx_get_config_object.erase(_iter);
-			vnx_num_pending--;
-			_lock.unlock();
-			if(_callback) {
-				_callback(_ex);
-			}
-			return;
-		}
+	const auto _iter = vnx_pending.find(_request_id);
+	if(_iter == vnx_pending.end()) {
+		throw std::runtime_error("USBoardModuleAsyncClient: received unknown return");
 	}
-	{
-		const auto _iter = vnx_queue_vnx_get_config.find(_request_id);
-		if(_iter != vnx_queue_vnx_get_config.end()) {
-			const auto _callback = std::move(_iter->second.second);
-			vnx_queue_vnx_get_config.erase(_iter);
-			vnx_num_pending--;
-			_lock.unlock();
-			if(_callback) {
-				_callback(_ex);
+	const auto _index = _iter->second;
+	vnx_pending.erase(_iter);
+	switch(_index) {
+		case 0: {
+			const auto _iter = vnx_queue_vnx_get_config_object.find(_request_id);
+			if(_iter == vnx_queue_vnx_get_config_object.end()) {
+				throw std::runtime_error("USBoardModuleAsyncClient: callback not found");
 			}
-			return;
-		}
-	}
-	{
-		const auto _iter = vnx_queue_vnx_set_config_object.find(_request_id);
-		if(_iter != vnx_queue_vnx_set_config_object.end()) {
-			const auto _callback = std::move(_iter->second.second);
-			vnx_queue_vnx_set_config_object.erase(_iter);
-			vnx_num_pending--;
-			_lock.unlock();
-			if(_callback) {
-				_callback(_ex);
-			}
-			return;
-		}
-	}
-	{
-		const auto _iter = vnx_queue_vnx_set_config.find(_request_id);
-		if(_iter != vnx_queue_vnx_set_config.end()) {
-			const auto _callback = std::move(_iter->second.second);
-			vnx_queue_vnx_set_config.erase(_iter);
-			vnx_num_pending--;
-			_lock.unlock();
-			if(_callback) {
-				_callback(_ex);
-			}
-			return;
-		}
-	}
-	{
-		const auto _iter = vnx_queue_vnx_get_type_code.find(_request_id);
-		if(_iter != vnx_queue_vnx_get_type_code.end()) {
-			const auto _callback = std::move(_iter->second.second);
-			vnx_queue_vnx_get_type_code.erase(_iter);
-			vnx_num_pending--;
-			_lock.unlock();
-			if(_callback) {
-				_callback(_ex);
-			}
-			return;
-		}
-	}
-	{
-		const auto _iter = vnx_queue_vnx_restart.find(_request_id);
-		if(_iter != vnx_queue_vnx_restart.end()) {
-			const auto _callback = std::move(_iter->second.second);
-			vnx_queue_vnx_restart.erase(_iter);
-			vnx_num_pending--;
-			_lock.unlock();
-			if(_callback) {
-				_callback(_ex);
-			}
-			return;
-		}
-	}
-	{
-		const auto _iter = vnx_queue_vnx_close.find(_request_id);
-		if(_iter != vnx_queue_vnx_close.end()) {
-			const auto _callback = std::move(_iter->second.second);
-			vnx_queue_vnx_close.erase(_iter);
-			vnx_num_pending--;
-			_lock.unlock();
-			if(_callback) {
-				_callback(_ex);
-			}
-			return;
-		}
-	}
-	{
-		const auto _iter = vnx_queue_is_connected.find(_request_id);
-		if(_iter != vnx_queue_is_connected.end()) {
-			const auto _callback = std::move(_iter->second.second);
-			vnx_queue_is_connected.erase(_iter);
-			vnx_num_pending--;
-			_lock.unlock();
-			if(_callback) {
-				_callback(_ex);
-			}
-			return;
-		}
-	}
-	{
-		const auto _iter = vnx_queue_request_data.find(_request_id);
-		if(_iter != vnx_queue_request_data.end()) {
-			const auto _callback = std::move(_iter->second.second);
-			vnx_queue_request_data.erase(_iter);
-			vnx_num_pending--;
-			_lock.unlock();
-			if(_callback) {
-				_callback(_ex);
-			}
-			return;
-		}
-	}
-	{
-		const auto _iter = vnx_queue_request_analog_data.find(_request_id);
-		if(_iter != vnx_queue_request_analog_data.end()) {
-			const auto _callback = std::move(_iter->second.second);
-			vnx_queue_request_analog_data.erase(_iter);
-			vnx_num_pending--;
-			_lock.unlock();
-			if(_callback) {
-				_callback(_ex);
-			}
-			return;
-		}
-	}
-	{
-		const auto _iter = vnx_queue_request_config.find(_request_id);
-		if(_iter != vnx_queue_request_config.end()) {
-			const auto _callback = std::move(_iter->second.second);
-			vnx_queue_request_config.erase(_iter);
-			vnx_num_pending--;
-			_lock.unlock();
-			if(_callback) {
-				_callback(_ex);
-			}
-			return;
-		}
-	}
-	{
-		const auto _iter = vnx_queue_get_config.find(_request_id);
-		if(_iter != vnx_queue_get_config.end()) {
-			const auto _callback = std::move(_iter->second.second);
-			vnx_queue_get_config.erase(_iter);
-			vnx_num_pending--;
-			_lock.unlock();
-			if(_callback) {
-				_callback(_ex);
-			}
-			return;
-		}
-	}
-	{
-		const auto _iter = vnx_queue_set_channel_active.find(_request_id);
-		if(_iter != vnx_queue_set_channel_active.end()) {
-			const auto _callback = std::move(_iter->second.second);
-			vnx_queue_set_channel_active.erase(_iter);
-			vnx_num_pending--;
-			_lock.unlock();
-			if(_callback) {
-				_callback(_ex);
-			}
-			return;
-		}
-	}
-	{
-		const auto _iter = vnx_queue_send_config.find(_request_id);
-		if(_iter != vnx_queue_send_config.end()) {
-			const auto _callback = std::move(_iter->second.second);
-			vnx_queue_send_config.erase(_iter);
-			vnx_num_pending--;
-			_lock.unlock();
-			if(_callback) {
-				_callback(_ex);
-			}
-			return;
-		}
-	}
-	{
-		const auto _iter = vnx_queue_save_config.find(_request_id);
-		if(_iter != vnx_queue_save_config.end()) {
-			const auto _callback = std::move(_iter->second.second);
-			vnx_queue_save_config.erase(_iter);
-			vnx_num_pending--;
-			_lock.unlock();
-			if(_callback) {
-				_callback(_ex);
-			}
-			return;
-		}
-	}
-}
-
-void USBoardModuleAsyncClient::vnx_callback_switch(uint64_t _request_id, std::shared_ptr<const vnx::Value> _value) {
-	std::unique_lock<std::mutex> _lock(vnx_mutex);
-	const auto _type_hash = _value->get_type_hash();
-	if(_type_hash == vnx::Hash64(0xa913f47dc68e4876ull)) {
-		auto _result = std::dynamic_pointer_cast<const ::vnx::ModuleInterface_vnx_get_config_object_return>(_value);
-		if(!_result) {
-			throw std::logic_error("USBoardModuleAsyncClient: !_result");
-		}
-		const auto _iter = vnx_queue_vnx_get_config_object.find(_request_id);
-		if(_iter != vnx_queue_vnx_get_config_object.end()) {
 			const auto _callback = std::move(_iter->second.first);
 			vnx_queue_vnx_get_config_object.erase(_iter);
-			vnx_num_pending--;
 			_lock.unlock();
 			if(_callback) {
-				_callback(_result->_ret_0);
+				if(auto _result = std::dynamic_pointer_cast<const ::vnx::ModuleInterface_vnx_get_config_object_return>(_value)) {
+					_callback(_result->_ret_0);
+				} else if(_value && !_value->is_void()) {
+					_callback(_value->get_field_by_index(0).to<::vnx::Object>());
+				} else {
+					throw std::logic_error("USBoardModuleAsyncClient: invalid return value");
+				}
 			}
-		} else {
-			throw std::runtime_error("USBoardModuleAsyncClient: received unknown return request_id");
+			break;
 		}
-	}
-	else if(_type_hash == vnx::Hash64(0xe5b6c635f30b18a1ull)) {
-		auto _result = std::dynamic_pointer_cast<const ::vnx::ModuleInterface_vnx_get_config_return>(_value);
-		if(!_result) {
-			throw std::logic_error("USBoardModuleAsyncClient: !_result");
-		}
-		const auto _iter = vnx_queue_vnx_get_config.find(_request_id);
-		if(_iter != vnx_queue_vnx_get_config.end()) {
+		case 1: {
+			const auto _iter = vnx_queue_vnx_get_config.find(_request_id);
+			if(_iter == vnx_queue_vnx_get_config.end()) {
+				throw std::runtime_error("USBoardModuleAsyncClient: callback not found");
+			}
 			const auto _callback = std::move(_iter->second.first);
 			vnx_queue_vnx_get_config.erase(_iter);
-			vnx_num_pending--;
 			_lock.unlock();
 			if(_callback) {
-				_callback(_result->_ret_0);
+				if(auto _result = std::dynamic_pointer_cast<const ::vnx::ModuleInterface_vnx_get_config_return>(_value)) {
+					_callback(_result->_ret_0);
+				} else if(_value && !_value->is_void()) {
+					_callback(_value->get_field_by_index(0).to<::vnx::Variant>());
+				} else {
+					throw std::logic_error("USBoardModuleAsyncClient: invalid return value");
+				}
 			}
-		} else {
-			throw std::runtime_error("USBoardModuleAsyncClient: received unknown return request_id");
+			break;
 		}
-	}
-	else if(_type_hash == vnx::Hash64(0xdd5ede96590e3d28ull)) {
-		const auto _iter = vnx_queue_vnx_set_config_object.find(_request_id);
-		if(_iter != vnx_queue_vnx_set_config_object.end()) {
+		case 2: {
+			const auto _iter = vnx_queue_vnx_set_config_object.find(_request_id);
+			if(_iter == vnx_queue_vnx_set_config_object.end()) {
+				throw std::runtime_error("USBoardModuleAsyncClient: callback not found");
+			}
 			const auto _callback = std::move(_iter->second.first);
 			vnx_queue_vnx_set_config_object.erase(_iter);
-			vnx_num_pending--;
 			_lock.unlock();
 			if(_callback) {
 				_callback();
 			}
-		} else {
-			throw std::runtime_error("USBoardModuleAsyncClient: received unknown return request_id");
+			break;
 		}
-	}
-	else if(_type_hash == vnx::Hash64(0x3873b149bdf7814eull)) {
-		const auto _iter = vnx_queue_vnx_set_config.find(_request_id);
-		if(_iter != vnx_queue_vnx_set_config.end()) {
+		case 3: {
+			const auto _iter = vnx_queue_vnx_set_config.find(_request_id);
+			if(_iter == vnx_queue_vnx_set_config.end()) {
+				throw std::runtime_error("USBoardModuleAsyncClient: callback not found");
+			}
 			const auto _callback = std::move(_iter->second.first);
 			vnx_queue_vnx_set_config.erase(_iter);
-			vnx_num_pending--;
 			_lock.unlock();
 			if(_callback) {
 				_callback();
 			}
-		} else {
-			throw std::runtime_error("USBoardModuleAsyncClient: received unknown return request_id");
+			break;
 		}
-	}
-	else if(_type_hash == vnx::Hash64(0x9f4322ca83b0d1ull)) {
-		auto _result = std::dynamic_pointer_cast<const ::vnx::ModuleInterface_vnx_get_type_code_return>(_value);
-		if(!_result) {
-			throw std::logic_error("USBoardModuleAsyncClient: !_result");
-		}
-		const auto _iter = vnx_queue_vnx_get_type_code.find(_request_id);
-		if(_iter != vnx_queue_vnx_get_type_code.end()) {
+		case 4: {
+			const auto _iter = vnx_queue_vnx_get_type_code.find(_request_id);
+			if(_iter == vnx_queue_vnx_get_type_code.end()) {
+				throw std::runtime_error("USBoardModuleAsyncClient: callback not found");
+			}
 			const auto _callback = std::move(_iter->second.first);
 			vnx_queue_vnx_get_type_code.erase(_iter);
-			vnx_num_pending--;
 			_lock.unlock();
 			if(_callback) {
-				_callback(_result->_ret_0);
+				if(auto _result = std::dynamic_pointer_cast<const ::vnx::ModuleInterface_vnx_get_type_code_return>(_value)) {
+					_callback(_result->_ret_0);
+				} else if(_value && !_value->is_void()) {
+					_callback(_value->get_field_by_index(0).to<::vnx::TypeCode>());
+				} else {
+					throw std::logic_error("USBoardModuleAsyncClient: invalid return value");
+				}
 			}
-		} else {
-			throw std::runtime_error("USBoardModuleAsyncClient: received unknown return request_id");
+			break;
 		}
-	}
-	else if(_type_hash == vnx::Hash64(0x2133a6eee0102018ull)) {
-		const auto _iter = vnx_queue_vnx_restart.find(_request_id);
-		if(_iter != vnx_queue_vnx_restart.end()) {
+		case 5: {
+			const auto _iter = vnx_queue_vnx_get_module_info.find(_request_id);
+			if(_iter == vnx_queue_vnx_get_module_info.end()) {
+				throw std::runtime_error("USBoardModuleAsyncClient: callback not found");
+			}
+			const auto _callback = std::move(_iter->second.first);
+			vnx_queue_vnx_get_module_info.erase(_iter);
+			_lock.unlock();
+			if(_callback) {
+				if(auto _result = std::dynamic_pointer_cast<const ::vnx::ModuleInterface_vnx_get_module_info_return>(_value)) {
+					_callback(_result->_ret_0);
+				} else if(_value && !_value->is_void()) {
+					_callback(_value->get_field_by_index(0).to<std::shared_ptr<const ::vnx::ModuleInfo>>());
+				} else {
+					throw std::logic_error("USBoardModuleAsyncClient: invalid return value");
+				}
+			}
+			break;
+		}
+		case 6: {
+			const auto _iter = vnx_queue_vnx_restart.find(_request_id);
+			if(_iter == vnx_queue_vnx_restart.end()) {
+				throw std::runtime_error("USBoardModuleAsyncClient: callback not found");
+			}
 			const auto _callback = std::move(_iter->second.first);
 			vnx_queue_vnx_restart.erase(_iter);
-			vnx_num_pending--;
 			_lock.unlock();
 			if(_callback) {
 				_callback();
 			}
-		} else {
-			throw std::runtime_error("USBoardModuleAsyncClient: received unknown return request_id");
+			break;
 		}
-	}
-	else if(_type_hash == vnx::Hash64(0x88dc702251f03a54ull)) {
-		const auto _iter = vnx_queue_vnx_close.find(_request_id);
-		if(_iter != vnx_queue_vnx_close.end()) {
+		case 7: {
+			const auto _iter = vnx_queue_vnx_stop.find(_request_id);
+			if(_iter == vnx_queue_vnx_stop.end()) {
+				throw std::runtime_error("USBoardModuleAsyncClient: callback not found");
+			}
 			const auto _callback = std::move(_iter->second.first);
-			vnx_queue_vnx_close.erase(_iter);
-			vnx_num_pending--;
+			vnx_queue_vnx_stop.erase(_iter);
 			_lock.unlock();
 			if(_callback) {
 				_callback();
 			}
-		} else {
-			throw std::runtime_error("USBoardModuleAsyncClient: received unknown return request_id");
+			break;
 		}
-	}
-	else if(_type_hash == vnx::Hash64(0x9f92f79790f0b41cull)) {
-		auto _result = std::dynamic_pointer_cast<const ::pilot::usboard::USBoardModule_is_connected_return>(_value);
-		if(!_result) {
-			throw std::logic_error("USBoardModuleAsyncClient: !_result");
+		case 8: {
+			const auto _iter = vnx_queue_vnx_self_test.find(_request_id);
+			if(_iter == vnx_queue_vnx_self_test.end()) {
+				throw std::runtime_error("USBoardModuleAsyncClient: callback not found");
+			}
+			const auto _callback = std::move(_iter->second.first);
+			vnx_queue_vnx_self_test.erase(_iter);
+			_lock.unlock();
+			if(_callback) {
+				if(auto _result = std::dynamic_pointer_cast<const ::vnx::ModuleInterface_vnx_self_test_return>(_value)) {
+					_callback(_result->_ret_0);
+				} else if(_value && !_value->is_void()) {
+					_callback(_value->get_field_by_index(0).to<vnx::bool_t>());
+				} else {
+					throw std::logic_error("USBoardModuleAsyncClient: invalid return value");
+				}
+			}
+			break;
 		}
-		const auto _iter = vnx_queue_is_connected.find(_request_id);
-		if(_iter != vnx_queue_is_connected.end()) {
+		case 9: {
+			const auto _iter = vnx_queue_is_connected.find(_request_id);
+			if(_iter == vnx_queue_is_connected.end()) {
+				throw std::runtime_error("USBoardModuleAsyncClient: callback not found");
+			}
 			const auto _callback = std::move(_iter->second.first);
 			vnx_queue_is_connected.erase(_iter);
-			vnx_num_pending--;
 			_lock.unlock();
 			if(_callback) {
-				_callback(_result->_ret_0);
+				if(auto _result = std::dynamic_pointer_cast<const ::pilot::usboard::USBoardModule_is_connected_return>(_value)) {
+					_callback(_result->_ret_0);
+				} else if(_value && !_value->is_void()) {
+					_callback(_value->get_field_by_index(0).to<vnx::bool_t>());
+				} else {
+					throw std::logic_error("USBoardModuleAsyncClient: invalid return value");
+				}
 			}
-		} else {
-			throw std::runtime_error("USBoardModuleAsyncClient: received unknown return request_id");
+			break;
 		}
-	}
-	else if(_type_hash == vnx::Hash64(0xb6a4183451605df3ull)) {
-		const auto _iter = vnx_queue_request_data.find(_request_id);
-		if(_iter != vnx_queue_request_data.end()) {
+		case 10: {
+			const auto _iter = vnx_queue_request_data.find(_request_id);
+			if(_iter == vnx_queue_request_data.end()) {
+				throw std::runtime_error("USBoardModuleAsyncClient: callback not found");
+			}
 			const auto _callback = std::move(_iter->second.first);
 			vnx_queue_request_data.erase(_iter);
-			vnx_num_pending--;
 			_lock.unlock();
 			if(_callback) {
 				_callback();
 			}
-		} else {
-			throw std::runtime_error("USBoardModuleAsyncClient: received unknown return request_id");
+			break;
 		}
-	}
-	else if(_type_hash == vnx::Hash64(0xb138d24fde224a5cull)) {
-		const auto _iter = vnx_queue_request_analog_data.find(_request_id);
-		if(_iter != vnx_queue_request_analog_data.end()) {
+		case 11: {
+			const auto _iter = vnx_queue_request_analog_data.find(_request_id);
+			if(_iter == vnx_queue_request_analog_data.end()) {
+				throw std::runtime_error("USBoardModuleAsyncClient: callback not found");
+			}
 			const auto _callback = std::move(_iter->second.first);
 			vnx_queue_request_analog_data.erase(_iter);
-			vnx_num_pending--;
 			_lock.unlock();
 			if(_callback) {
 				_callback();
 			}
-		} else {
-			throw std::runtime_error("USBoardModuleAsyncClient: received unknown return request_id");
+			break;
 		}
-	}
-	else if(_type_hash == vnx::Hash64(0x33da5f4894481a92ull)) {
-		const auto _iter = vnx_queue_request_config.find(_request_id);
-		if(_iter != vnx_queue_request_config.end()) {
+		case 12: {
+			const auto _iter = vnx_queue_request_config.find(_request_id);
+			if(_iter == vnx_queue_request_config.end()) {
+				throw std::runtime_error("USBoardModuleAsyncClient: callback not found");
+			}
 			const auto _callback = std::move(_iter->second.first);
 			vnx_queue_request_config.erase(_iter);
-			vnx_num_pending--;
 			_lock.unlock();
 			if(_callback) {
 				_callback();
 			}
-		} else {
-			throw std::runtime_error("USBoardModuleAsyncClient: received unknown return request_id");
+			break;
 		}
-	}
-	else if(_type_hash == vnx::Hash64(0x358de7d95fe51641ull)) {
-		auto _result = std::dynamic_pointer_cast<const ::pilot::usboard::USBoardModule_get_config_return>(_value);
-		if(!_result) {
-			throw std::logic_error("USBoardModuleAsyncClient: !_result");
-		}
-		const auto _iter = vnx_queue_get_config.find(_request_id);
-		if(_iter != vnx_queue_get_config.end()) {
+		case 13: {
+			const auto _iter = vnx_queue_get_config.find(_request_id);
+			if(_iter == vnx_queue_get_config.end()) {
+				throw std::runtime_error("USBoardModuleAsyncClient: callback not found");
+			}
 			const auto _callback = std::move(_iter->second.first);
 			vnx_queue_get_config.erase(_iter);
-			vnx_num_pending--;
 			_lock.unlock();
 			if(_callback) {
-				_callback(_result->_ret_0);
+				if(auto _result = std::dynamic_pointer_cast<const ::pilot::usboard::USBoardModule_get_config_return>(_value)) {
+					_callback(_result->_ret_0);
+				} else if(_value && !_value->is_void()) {
+					_callback(_value->get_field_by_index(0).to<std::shared_ptr<const ::pilot::usboard::USBoardConfig>>());
+				} else {
+					throw std::logic_error("USBoardModuleAsyncClient: invalid return value");
+				}
 			}
-		} else {
-			throw std::runtime_error("USBoardModuleAsyncClient: received unknown return request_id");
+			break;
 		}
-	}
-	else if(_type_hash == vnx::Hash64(0x7cba331721c32a6ull)) {
-		const auto _iter = vnx_queue_set_channel_active.find(_request_id);
-		if(_iter != vnx_queue_set_channel_active.end()) {
+		case 14: {
+			const auto _iter = vnx_queue_set_channel_active.find(_request_id);
+			if(_iter == vnx_queue_set_channel_active.end()) {
+				throw std::runtime_error("USBoardModuleAsyncClient: callback not found");
+			}
 			const auto _callback = std::move(_iter->second.first);
 			vnx_queue_set_channel_active.erase(_iter);
-			vnx_num_pending--;
 			_lock.unlock();
 			if(_callback) {
 				_callback();
 			}
-		} else {
-			throw std::runtime_error("USBoardModuleAsyncClient: received unknown return request_id");
+			break;
 		}
-	}
-	else if(_type_hash == vnx::Hash64(0xf264043ea1b4721dull)) {
-		const auto _iter = vnx_queue_send_config.find(_request_id);
-		if(_iter != vnx_queue_send_config.end()) {
+		case 15: {
+			const auto _iter = vnx_queue_send_config.find(_request_id);
+			if(_iter == vnx_queue_send_config.end()) {
+				throw std::runtime_error("USBoardModuleAsyncClient: callback not found");
+			}
 			const auto _callback = std::move(_iter->second.first);
 			vnx_queue_send_config.erase(_iter);
-			vnx_num_pending--;
 			_lock.unlock();
 			if(_callback) {
 				_callback();
 			}
-		} else {
-			throw std::runtime_error("USBoardModuleAsyncClient: received unknown return request_id");
+			break;
 		}
-	}
-	else if(_type_hash == vnx::Hash64(0x4a4217094e238854ull)) {
-		const auto _iter = vnx_queue_save_config.find(_request_id);
-		if(_iter != vnx_queue_save_config.end()) {
+		case 16: {
+			const auto _iter = vnx_queue_save_config.find(_request_id);
+			if(_iter == vnx_queue_save_config.end()) {
+				throw std::runtime_error("USBoardModuleAsyncClient: callback not found");
+			}
 			const auto _callback = std::move(_iter->second.first);
 			vnx_queue_save_config.erase(_iter);
-			vnx_num_pending--;
 			_lock.unlock();
 			if(_callback) {
 				_callback();
 			}
-		} else {
-			throw std::runtime_error("USBoardModuleAsyncClient: received unknown return request_id");
+			break;
 		}
+		default:
+			if(_index >= 0) {
+				throw std::logic_error("USBoardModuleAsyncClient: invalid callback index");
+			}
 	}
-	else {
-		throw std::runtime_error("USBoardModuleAsyncClient: received unknown return type");
-	}
+	return _index;
 }
 
 

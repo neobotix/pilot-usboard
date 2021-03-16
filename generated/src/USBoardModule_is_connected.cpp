@@ -20,7 +20,7 @@ vnx::Hash64 USBoardModule_is_connected::get_type_hash() const {
 	return VNX_TYPE_HASH;
 }
 
-const char* USBoardModule_is_connected::get_type_name() const {
+std::string USBoardModule_is_connected::get_type_name() const {
 	return "pilot.usboard.USBoardModule.is_connected";
 }
 
@@ -56,8 +56,9 @@ void USBoardModule_is_connected::write(std::ostream& _out) const {
 }
 
 void USBoardModule_is_connected::read(std::istream& _in) {
-	std::map<std::string, std::string> _object;
-	vnx::read_object(_in, _object);
+	if(auto _json = vnx::read_json(_in)) {
+		from_object(_json->to_object());
+	}
 }
 
 vnx::Object USBoardModule_is_connected::to_object() const {
@@ -98,14 +99,16 @@ const vnx::TypeCode* USBoardModule_is_connected::static_get_type_code() {
 }
 
 std::shared_ptr<vnx::TypeCode> USBoardModule_is_connected::static_create_type_code() {
-	std::shared_ptr<vnx::TypeCode> type_code = std::make_shared<vnx::TypeCode>();
+	auto type_code = std::make_shared<vnx::TypeCode>();
 	type_code->name = "pilot.usboard.USBoardModule.is_connected";
 	type_code->type_hash = vnx::Hash64(0x67dc4b6f55cdaf01ull);
 	type_code->code_hash = vnx::Hash64(0xf8787e8e40541a14ull);
 	type_code->is_native = true;
 	type_code->is_class = true;
 	type_code->is_method = true;
+	type_code->native_size = sizeof(::pilot::usboard::USBoardModule_is_connected);
 	type_code->create_value = []() -> std::shared_ptr<vnx::Value> { return std::make_shared<USBoardModule_is_connected>(); };
+	type_code->is_const = true;
 	type_code->return_type = ::pilot::usboard::USBoardModule_is_connected_return::static_get_type_code();
 	type_code->build();
 	return type_code;
@@ -135,18 +138,22 @@ void read(TypeInput& in, ::pilot::usboard::USBoardModule_is_connected& value, co
 		}
 	}
 	if(!type_code) {
-		throw std::logic_error("read(): type_code == 0");
+		vnx::skip(in, type_code, code);
+		return;
 	}
 	if(code) {
 		switch(code[0]) {
 			case CODE_STRUCT: type_code = type_code->depends[code[1]]; break;
 			case CODE_ALT_STRUCT: type_code = type_code->depends[vnx::flip_bytes(code[1])]; break;
-			default: vnx::skip(in, type_code, code); return;
+			default: {
+				vnx::skip(in, type_code, code);
+				return;
+			}
 		}
 	}
 	if(type_code->is_matched) {
 	}
-	for(const vnx::TypeField* _field : type_code->ext_fields) {
+	for(const auto* _field : type_code->ext_fields) {
 		switch(_field->native_index) {
 			default: vnx::skip(in, type_code, _field->code.data());
 		}
@@ -163,7 +170,7 @@ void write(TypeOutput& out, const ::pilot::usboard::USBoardModule_is_connected& 
 		out.write_type_code(type_code);
 		vnx::write_class_header<::pilot::usboard::USBoardModule_is_connected>(out);
 	}
-	if(code && code[0] == CODE_STRUCT) {
+	else if(code && code[0] == CODE_STRUCT) {
 		type_code = type_code->depends[code[1]];
 	}
 }

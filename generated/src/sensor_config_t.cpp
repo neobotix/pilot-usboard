@@ -18,7 +18,7 @@ vnx::Hash64 sensor_config_t::get_type_hash() const {
 	return VNX_TYPE_HASH;
 }
 
-const char* sensor_config_t::get_type_name() const {
+std::string sensor_config_t::get_type_name() const {
 	return "pilot.usboard.sensor_config_t";
 }
 
@@ -60,21 +60,14 @@ void sensor_config_t::write(std::ostream& _out) const {
 }
 
 void sensor_config_t::read(std::istream& _in) {
-	std::map<std::string, std::string> _object;
-	vnx::read_object(_in, _object);
-	for(const auto& _entry : _object) {
-		if(_entry.first == "active") {
-			vnx::from_string(_entry.second, active);
-		} else if(_entry.first == "alarm_distance") {
-			vnx::from_string(_entry.second, alarm_distance);
-		} else if(_entry.first == "warn_distance") {
-			vnx::from_string(_entry.second, warn_distance);
-		}
+	if(auto _json = vnx::read_json(_in)) {
+		from_object(_json->to_object());
 	}
 }
 
 vnx::Object sensor_config_t::to_object() const {
 	vnx::Object _object;
+	_object["__type"] = "pilot.usboard.sensor_config_t";
 	_object["active"] = active;
 	_object["warn_distance"] = warn_distance;
 	_object["alarm_distance"] = alarm_distance;
@@ -139,27 +132,31 @@ const vnx::TypeCode* sensor_config_t::static_get_type_code() {
 }
 
 std::shared_ptr<vnx::TypeCode> sensor_config_t::static_create_type_code() {
-	std::shared_ptr<vnx::TypeCode> type_code = std::make_shared<vnx::TypeCode>();
+	auto type_code = std::make_shared<vnx::TypeCode>();
 	type_code->name = "pilot.usboard.sensor_config_t";
 	type_code->type_hash = vnx::Hash64(0x4992d944965d7b92ull);
 	type_code->code_hash = vnx::Hash64(0xa65e13208749da9bull);
 	type_code->is_native = true;
+	type_code->native_size = sizeof(::pilot::usboard::sensor_config_t);
 	type_code->create_value = []() -> std::shared_ptr<vnx::Value> { return std::make_shared<vnx::Struct<sensor_config_t>>(); };
 	type_code->fields.resize(3);
 	{
-		vnx::TypeField& field = type_code->fields[0];
+		auto& field = type_code->fields[0];
+		field.data_size = 1;
 		field.name = "active";
 		field.value = vnx::to_string(true);
 		field.code = {31};
 	}
 	{
-		vnx::TypeField& field = type_code->fields[1];
+		auto& field = type_code->fields[1];
+		field.data_size = 4;
 		field.name = "warn_distance";
 		field.value = vnx::to_string(1);
 		field.code = {9};
 	}
 	{
-		vnx::TypeField& field = type_code->fields[2];
+		auto& field = type_code->fields[2];
+		field.data_size = 4;
 		field.name = "alarm_distance";
 		field.value = vnx::to_string(0.3);
 		field.code = {9};
@@ -192,37 +189,32 @@ void read(TypeInput& in, ::pilot::usboard::sensor_config_t& value, const TypeCod
 		}
 	}
 	if(!type_code) {
-		throw std::logic_error("read(): type_code == 0");
+		vnx::skip(in, type_code, code);
+		return;
 	}
 	if(code) {
 		switch(code[0]) {
 			case CODE_STRUCT: type_code = type_code->depends[code[1]]; break;
 			case CODE_ALT_STRUCT: type_code = type_code->depends[vnx::flip_bytes(code[1])]; break;
-			default: vnx::skip(in, type_code, code); return;
+			default: {
+				vnx::skip(in, type_code, code);
+				return;
+			}
 		}
 	}
 	const char* const _buf = in.read(type_code->total_field_size);
 	if(type_code->is_matched) {
-		{
-			const vnx::TypeField* const _field = type_code->field_map[0];
-			if(_field) {
-				vnx::read_value(_buf + _field->offset, value.active, _field->code.data());
-			}
+		if(const auto* const _field = type_code->field_map[0]) {
+			vnx::read_value(_buf + _field->offset, value.active, _field->code.data());
 		}
-		{
-			const vnx::TypeField* const _field = type_code->field_map[1];
-			if(_field) {
-				vnx::read_value(_buf + _field->offset, value.warn_distance, _field->code.data());
-			}
+		if(const auto* const _field = type_code->field_map[1]) {
+			vnx::read_value(_buf + _field->offset, value.warn_distance, _field->code.data());
 		}
-		{
-			const vnx::TypeField* const _field = type_code->field_map[2];
-			if(_field) {
-				vnx::read_value(_buf + _field->offset, value.alarm_distance, _field->code.data());
-			}
+		if(const auto* const _field = type_code->field_map[2]) {
+			vnx::read_value(_buf + _field->offset, value.alarm_distance, _field->code.data());
 		}
 	}
-	for(const vnx::TypeField* _field : type_code->ext_fields) {
+	for(const auto* _field : type_code->ext_fields) {
 		switch(_field->native_index) {
 			default: vnx::skip(in, type_code, _field->code.data());
 		}
@@ -239,7 +231,7 @@ void write(TypeOutput& out, const ::pilot::usboard::sensor_config_t& value, cons
 		out.write_type_code(type_code);
 		vnx::write_class_header<::pilot::usboard::sensor_config_t>(out);
 	}
-	if(code && code[0] == CODE_STRUCT) {
+	else if(code && code[0] == CODE_STRUCT) {
 		type_code = type_code->depends[code[1]];
 	}
 	char* const _buf = out.write(9);
@@ -258,6 +250,14 @@ void write(std::ostream& out, const ::pilot::usboard::sensor_config_t& value) {
 
 void accept(Visitor& visitor, const ::pilot::usboard::sensor_config_t& value) {
 	value.accept(visitor);
+}
+
+bool is_equivalent<::pilot::usboard::sensor_config_t>::operator()(const uint16_t* code, const TypeCode* type_code) {
+	if(code[0] != CODE_STRUCT || !type_code) {
+		return false;
+	}
+	type_code = type_code->depends[code[1]];
+	return type_code->type_hash == ::pilot::usboard::sensor_config_t::VNX_TYPE_HASH && type_code->is_equivalent;
 }
 
 } // vnx

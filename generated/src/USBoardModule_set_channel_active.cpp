@@ -20,7 +20,7 @@ vnx::Hash64 USBoardModule_set_channel_active::get_type_hash() const {
 	return VNX_TYPE_HASH;
 }
 
-const char* USBoardModule_set_channel_active::get_type_name() const {
+std::string USBoardModule_set_channel_active::get_type_name() const {
 	return "pilot.usboard.USBoardModule.set_channel_active";
 }
 
@@ -58,12 +58,8 @@ void USBoardModule_set_channel_active::write(std::ostream& _out) const {
 }
 
 void USBoardModule_set_channel_active::read(std::istream& _in) {
-	std::map<std::string, std::string> _object;
-	vnx::read_object(_in, _object);
-	for(const auto& _entry : _object) {
-		if(_entry.first == "sensors") {
-			vnx::from_string(_entry.second, sensors);
-		}
+	if(auto _json = vnx::read_json(_in)) {
+		from_object(_json->to_object());
 	}
 }
 
@@ -118,18 +114,19 @@ const vnx::TypeCode* USBoardModule_set_channel_active::static_get_type_code() {
 }
 
 std::shared_ptr<vnx::TypeCode> USBoardModule_set_channel_active::static_create_type_code() {
-	std::shared_ptr<vnx::TypeCode> type_code = std::make_shared<vnx::TypeCode>();
+	auto type_code = std::make_shared<vnx::TypeCode>();
 	type_code->name = "pilot.usboard.USBoardModule.set_channel_active";
 	type_code->type_hash = vnx::Hash64(0x4d5fe6cf9c152a42ull);
 	type_code->code_hash = vnx::Hash64(0x59ba2cf5e570d8f3ull);
 	type_code->is_native = true;
 	type_code->is_class = true;
 	type_code->is_method = true;
+	type_code->native_size = sizeof(::pilot::usboard::USBoardModule_set_channel_active);
 	type_code->create_value = []() -> std::shared_ptr<vnx::Value> { return std::make_shared<USBoardModule_set_channel_active>(); };
 	type_code->return_type = ::pilot::usboard::USBoardModule_set_channel_active_return::static_get_type_code();
 	type_code->fields.resize(1);
 	{
-		vnx::TypeField& field = type_code->fields[0];
+		auto& field = type_code->fields[0];
 		field.is_extended = true;
 		field.name = "sensors";
 		field.code = {12, 31};
@@ -162,18 +159,22 @@ void read(TypeInput& in, ::pilot::usboard::USBoardModule_set_channel_active& val
 		}
 	}
 	if(!type_code) {
-		throw std::logic_error("read(): type_code == 0");
+		vnx::skip(in, type_code, code);
+		return;
 	}
 	if(code) {
 		switch(code[0]) {
 			case CODE_STRUCT: type_code = type_code->depends[code[1]]; break;
 			case CODE_ALT_STRUCT: type_code = type_code->depends[vnx::flip_bytes(code[1])]; break;
-			default: vnx::skip(in, type_code, code); return;
+			default: {
+				vnx::skip(in, type_code, code);
+				return;
+			}
 		}
 	}
 	if(type_code->is_matched) {
 	}
-	for(const vnx::TypeField* _field : type_code->ext_fields) {
+	for(const auto* _field : type_code->ext_fields) {
 		switch(_field->native_index) {
 			case 0: vnx::read(in, value.sensors, type_code, _field->code.data()); break;
 			default: vnx::skip(in, type_code, _field->code.data());
@@ -191,7 +192,7 @@ void write(TypeOutput& out, const ::pilot::usboard::USBoardModule_set_channel_ac
 		out.write_type_code(type_code);
 		vnx::write_class_header<::pilot::usboard::USBoardModule_set_channel_active>(out);
 	}
-	if(code && code[0] == CODE_STRUCT) {
+	else if(code && code[0] == CODE_STRUCT) {
 		type_code = type_code->depends[code[1]];
 	}
 	vnx::write(out, value.sensors, type_code, type_code->fields[0].code.data());

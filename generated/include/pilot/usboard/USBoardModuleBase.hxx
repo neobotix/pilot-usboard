@@ -34,10 +34,12 @@ public:
 	static const vnx::Hash64 VNX_TYPE_HASH;
 	static const vnx::Hash64 VNX_CODE_HASH;
 	
+	static constexpr uint64_t VNX_TYPE_ID = 0x43f03ccffe42b23full;
+	
 	USBoardModuleBase(const std::string& _vnx_name);
 	
 	vnx::Hash64 get_type_hash() const override;
-	const char* get_type_name() const override;
+	std::string get_type_name() const override;
 	const vnx::TypeCode* get_type_code() const override;
 	
 	void read(std::istream& _in) override;
@@ -58,6 +60,8 @@ public:
 	static std::shared_ptr<vnx::TypeCode> static_create_type_code();
 	
 protected:
+	using Super::handle;
+	
 	virtual vnx::bool_t is_connected() const = 0;
 	virtual void request_data(const std::vector<vnx::bool_t>& groups) = 0;
 	virtual void request_analog_data() = 0;
@@ -71,7 +75,7 @@ protected:
 	virtual void handle(std::shared_ptr<const ::pilot::base::CAN_Frame> _value) {}
 	virtual void handle(std::shared_ptr<const ::pilot::base::DataPacket> _value) {}
 	
-	void vnx_handle_switch(std::shared_ptr<const vnx::Sample> _sample) override;
+	void vnx_handle_switch(std::shared_ptr<const vnx::Value> _value) override;
 	std::shared_ptr<vnx::Value> vnx_call_switch(std::shared_ptr<const vnx::Value> _method, const vnx::request_id_t& _request_id) override;
 	
 };
@@ -79,5 +83,10 @@ protected:
 
 } // namespace pilot
 } // namespace usboard
+
+
+namespace vnx {
+
+} // vnx
 
 #endif // INCLUDE_pilot_usboard_USBoardModuleBase_HXX_

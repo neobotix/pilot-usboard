@@ -23,8 +23,95 @@
 #include <pilot/usboard/group_config_t.hxx>
 #include <pilot/usboard/sensor_config_t.hxx>
 
+#include <pilot/usboard/package.hxx>
 #include <vnx/vnx.h>
 
+
+
+namespace vnx {
+
+void type<::pilot::usboard::USBoardConfig>::create_dynamic_code(std::vector<uint16_t>& code) {
+	create_dynamic_code(code, ::pilot::usboard::USBoardConfig());
+}
+
+void type<::pilot::usboard::USBoardData>::create_dynamic_code(std::vector<uint16_t>& code) {
+	create_dynamic_code(code, ::pilot::usboard::USBoardData());
+}
+
+void type<::pilot::usboard::USBoardModule_get_config>::create_dynamic_code(std::vector<uint16_t>& code) {
+	create_dynamic_code(code, ::pilot::usboard::USBoardModule_get_config());
+}
+
+void type<::pilot::usboard::USBoardModule_get_config_return>::create_dynamic_code(std::vector<uint16_t>& code) {
+	create_dynamic_code(code, ::pilot::usboard::USBoardModule_get_config_return());
+}
+
+void type<::pilot::usboard::USBoardModule_is_connected>::create_dynamic_code(std::vector<uint16_t>& code) {
+	create_dynamic_code(code, ::pilot::usboard::USBoardModule_is_connected());
+}
+
+void type<::pilot::usboard::USBoardModule_is_connected_return>::create_dynamic_code(std::vector<uint16_t>& code) {
+	create_dynamic_code(code, ::pilot::usboard::USBoardModule_is_connected_return());
+}
+
+void type<::pilot::usboard::USBoardModule_request_analog_data>::create_dynamic_code(std::vector<uint16_t>& code) {
+	create_dynamic_code(code, ::pilot::usboard::USBoardModule_request_analog_data());
+}
+
+void type<::pilot::usboard::USBoardModule_request_analog_data_return>::create_dynamic_code(std::vector<uint16_t>& code) {
+	create_dynamic_code(code, ::pilot::usboard::USBoardModule_request_analog_data_return());
+}
+
+void type<::pilot::usboard::USBoardModule_request_config>::create_dynamic_code(std::vector<uint16_t>& code) {
+	create_dynamic_code(code, ::pilot::usboard::USBoardModule_request_config());
+}
+
+void type<::pilot::usboard::USBoardModule_request_config_return>::create_dynamic_code(std::vector<uint16_t>& code) {
+	create_dynamic_code(code, ::pilot::usboard::USBoardModule_request_config_return());
+}
+
+void type<::pilot::usboard::USBoardModule_request_data>::create_dynamic_code(std::vector<uint16_t>& code) {
+	create_dynamic_code(code, ::pilot::usboard::USBoardModule_request_data());
+}
+
+void type<::pilot::usboard::USBoardModule_request_data_return>::create_dynamic_code(std::vector<uint16_t>& code) {
+	create_dynamic_code(code, ::pilot::usboard::USBoardModule_request_data_return());
+}
+
+void type<::pilot::usboard::USBoardModule_save_config>::create_dynamic_code(std::vector<uint16_t>& code) {
+	create_dynamic_code(code, ::pilot::usboard::USBoardModule_save_config());
+}
+
+void type<::pilot::usboard::USBoardModule_save_config_return>::create_dynamic_code(std::vector<uint16_t>& code) {
+	create_dynamic_code(code, ::pilot::usboard::USBoardModule_save_config_return());
+}
+
+void type<::pilot::usboard::USBoardModule_send_config>::create_dynamic_code(std::vector<uint16_t>& code) {
+	create_dynamic_code(code, ::pilot::usboard::USBoardModule_send_config());
+}
+
+void type<::pilot::usboard::USBoardModule_send_config_return>::create_dynamic_code(std::vector<uint16_t>& code) {
+	create_dynamic_code(code, ::pilot::usboard::USBoardModule_send_config_return());
+}
+
+void type<::pilot::usboard::USBoardModule_set_channel_active>::create_dynamic_code(std::vector<uint16_t>& code) {
+	create_dynamic_code(code, ::pilot::usboard::USBoardModule_set_channel_active());
+}
+
+void type<::pilot::usboard::USBoardModule_set_channel_active_return>::create_dynamic_code(std::vector<uint16_t>& code) {
+	create_dynamic_code(code, ::pilot::usboard::USBoardModule_set_channel_active_return());
+}
+
+void type<::pilot::usboard::group_config_t>::create_dynamic_code(std::vector<uint16_t>& code) {
+	create_dynamic_code(code, ::pilot::usboard::group_config_t());
+}
+
+void type<::pilot::usboard::sensor_config_t>::create_dynamic_code(std::vector<uint16_t>& code) {
+	create_dynamic_code(code, ::pilot::usboard::sensor_config_t());
+}
+
+
+} // namespace vnx
 
 
 namespace pilot {

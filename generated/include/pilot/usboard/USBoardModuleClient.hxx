@@ -23,31 +23,35 @@ public:
 	
 	::vnx::Object vnx_get_config_object();
 	
-	::vnx::Variant vnx_get_config(const std::string& name);
+	::vnx::Variant vnx_get_config(const std::string& name = "");
 	
-	void vnx_set_config_object(const ::vnx::Object& config);
+	void vnx_set_config_object(const ::vnx::Object& config = ::vnx::Object());
 	
-	void vnx_set_config_object_async(const ::vnx::Object& config);
+	void vnx_set_config_object_async(const ::vnx::Object& config = ::vnx::Object());
 	
-	void vnx_set_config(const std::string& name, const ::vnx::Variant& value);
+	void vnx_set_config(const std::string& name = "", const ::vnx::Variant& value = ::vnx::Variant());
 	
-	void vnx_set_config_async(const std::string& name, const ::vnx::Variant& value);
+	void vnx_set_config_async(const std::string& name = "", const ::vnx::Variant& value = ::vnx::Variant());
 	
 	::vnx::TypeCode vnx_get_type_code();
+	
+	std::shared_ptr<const ::vnx::ModuleInfo> vnx_get_module_info();
 	
 	void vnx_restart();
 	
 	void vnx_restart_async();
 	
-	void vnx_close();
+	void vnx_stop();
 	
-	void vnx_close_async();
+	void vnx_stop_async();
+	
+	vnx::bool_t vnx_self_test();
 	
 	vnx::bool_t is_connected();
 	
-	void request_data(const std::vector<vnx::bool_t>& groups);
+	void request_data(const std::vector<vnx::bool_t>& groups = {});
 	
-	void request_data_async(const std::vector<vnx::bool_t>& groups);
+	void request_data_async(const std::vector<vnx::bool_t>& groups = {});
 	
 	void request_analog_data();
 	
@@ -59,17 +63,17 @@ public:
 	
 	std::shared_ptr<const ::pilot::usboard::USBoardConfig> get_config();
 	
-	void set_channel_active(const std::vector<vnx::bool_t>& sensors);
+	void set_channel_active(const std::vector<vnx::bool_t>& sensors = {});
 	
-	void set_channel_active_async(const std::vector<vnx::bool_t>& sensors);
+	void set_channel_active_async(const std::vector<vnx::bool_t>& sensors = {});
 	
-	void send_config(std::shared_ptr<const ::pilot::usboard::USBoardConfig> config);
+	void send_config(std::shared_ptr<const ::pilot::usboard::USBoardConfig> config = nullptr);
 	
-	void send_config_async(std::shared_ptr<const ::pilot::usboard::USBoardConfig> config);
+	void send_config_async(std::shared_ptr<const ::pilot::usboard::USBoardConfig> config = nullptr);
 	
-	void save_config(std::shared_ptr<const ::pilot::usboard::USBoardConfig> config);
+	void save_config(std::shared_ptr<const ::pilot::usboard::USBoardConfig> config = nullptr);
 	
-	void save_config_async(std::shared_ptr<const ::pilot::usboard::USBoardConfig> config);
+	void save_config_async(std::shared_ptr<const ::pilot::usboard::USBoardConfig> config = nullptr);
 	
 };
 

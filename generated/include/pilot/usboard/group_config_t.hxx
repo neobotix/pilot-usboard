@@ -27,8 +27,10 @@ struct group_config_t {
 	static const vnx::Hash64 VNX_TYPE_HASH;
 	static const vnx::Hash64 VNX_CODE_HASH;
 	
+	static constexpr uint64_t VNX_TYPE_ID = 0x54c195694cac61efull;
+	
 	vnx::Hash64 get_type_hash() const;
-	const char* get_type_name() const;
+	std::string get_type_name() const;
 	const vnx::TypeCode* get_type_code() const;
 	
 	static std::shared_ptr<group_config_t> create();
@@ -59,5 +61,15 @@ struct group_config_t {
 
 } // namespace pilot
 } // namespace usboard
+
+
+namespace vnx {
+
+template<>
+struct is_equivalent<::pilot::usboard::group_config_t> {
+	bool operator()(const uint16_t* code, const TypeCode* type_code);
+};
+
+} // vnx
 
 #endif // INCLUDE_pilot_usboard_group_config_t_HXX_
