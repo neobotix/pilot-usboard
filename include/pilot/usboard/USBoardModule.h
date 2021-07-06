@@ -43,8 +43,8 @@ protected:
 
 	void set_channel_active(const std::vector<vnx::bool_t>& sensors) override;
 
-	void handle(std::shared_ptr<const ::pilot::base::CAN_Frame> frame);
-	void handle(std::shared_ptr<const ::pilot::base::DataPacket> data);
+	void handle(std::shared_ptr<const ::pilot::base::CAN_Frame> frame) override;
+	void handle(std::shared_ptr<const ::pilot::base::DataPacket> data) override;
 
 private:
 	enum Command{
