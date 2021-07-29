@@ -5,6 +5,7 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -pthread")
+add_compile_options(-DNOGDI)
 
 file(GLOB GENERATED_SOURCE_FILES generated/src/*.cpp)
 
