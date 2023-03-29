@@ -126,12 +126,16 @@ void USBoardModule::send_config(std::shared_ptr<const USBoardConfig> config, con
 	}
 
 	m_tosendConfig = config->to_can_frames();
-	uint16_t bytesum = 0;
 	for(base::CAN_Frame &frame : m_tosendConfig){
 		frame.id = m_config->can_id;
 		frame.set_uint(0, 8, command, 0);
-		for(size_t i=2; i<8; i++){
-			bytesum += frame.get_uint(i*8, 8, 0);
+	}
+
+	uint16_t bytesum = 0;
+	for(size_t i=0; (i+1)<m_tosendConfig.size(); i++){
+		const auto &frame = m_tosendConfig[i];
+		for(size_t k=2; k<8; k++){
+			bytesum += frame.get_uint(k*8, 8, 0);
 		}
 	}
 
