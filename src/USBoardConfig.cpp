@@ -105,12 +105,13 @@ std::vector<base::CAN_Frame> USBoardConfig::to_can_frames() const
 	result[7].set_uint(7*8, 8, low_pass_gain * 128, 0);
 
 	result[8].set_uint(3*8, 8, hardware_version, 0);
-	if(hardware_version == 20){
-		// USBoard V2 (USS5)
-		result[8].set_uint(4*8, 32, serial_number, 0);
-	}else{
+
+	if(hardware_version == 0){
 		// USBoard V1
 		result[8].set_uint(5*8, 24, serial_number, 0);
+	}else if(hardware_version >= 20){
+		// USBoard V2 (USS5)
+		result[8].set_uint(4*8, 32, serial_number, 0);
 	}
 
 	return result;
