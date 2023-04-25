@@ -44,6 +44,14 @@ void USBoardData::from_can_frames_analog(const std::vector<base::CAN_Frame> &fra
 
 void USBoardData::from_can_frames_data(const std::vector<base::CAN_Frame> &frames)
 {
+	// reset values
+	for(size_t i=0; i<16; i++){
+		sensor[i] = -1;
+	}
+	for(size_t i=0; i<4; i++){
+		signal_source[i] = 0;
+	}
+
 	size_t numframes = frames.size();
 	for(size_t i=0; i<numframes; i++){
 		const base::CAN_Frame &fr = frames[i];
