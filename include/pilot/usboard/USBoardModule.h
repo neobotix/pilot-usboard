@@ -10,7 +10,7 @@
 
 #include <pilot/usboard/USBoardModuleBase.hxx>
 #include <pilot/usboard/IndexCollector.h>
-#include <pilot/usboard/USBoardData.hxx>
+#include <pilot/USBoardData.hxx>
 
 
 namespace pilot {

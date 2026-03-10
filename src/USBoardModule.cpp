@@ -6,12 +6,99 @@
  */
 
 #include <pilot/usboard/USBoardModule.h>
-#include <pilot/usboard/USBoardData.hxx>
-#include <unistd.h>
+
+#include <math.h>
 
 
 namespace pilot {
 namespace usboard {
+
+
+static void from_can_frames_1to8(USBoardData &data, const std::vector<base::CAN_Frame> &frames)
+{
+	for(size_t i=0; i<4; i++){
+		data.sensor[i] = frames[0].get_uint((2+i)*8, 8, 0) / 100.0;
+	}
+	for(size_t i=4; i<8; i++){
+		data.sensor[i] = frames[1].get_uint((2+i-4)*8, 8, 0) / 100.0;
+	}
+}
+
+static void from_can_frames_9to16(USBoardData &data, const std::vector<base::CAN_Frame> &frames)
+{
+	for(size_t i=8; i<12; i++){
+		data.sensor[i] = frames[0].get_uint((2+i-8)*8, 8, 0) / 100.0;
+	}
+	for(size_t i=12; i<16; i++){
+		data.sensor[i] = frames[1].get_uint((2+i-12)*8, 8, 0) / 100.0;
+	}
+}
+
+static void from_can_frames_analog(USBoardData &data, const std::vector<base::CAN_Frame> &frames)
+{
+	const base::CAN_Frame &fr = frames[0];
+	for(size_t i=0; i<4; i++){
+		data.analog_input[i] = fr.get_uint(8+i*8, 8, 0)  + (fr.get_uint(40+i*4, 4, 0) << 8);
+	}
+}
+
+static void from_can_frames_data(USBoardData &data, const std::vector<base::CAN_Frame> &frames)
+{
+	// reset values
+	for(size_t i=0; i<16; i++){
+		data.sensor[i] = -1;
+	}
+	for(size_t i=0; i<4; i++){
+		data.signal_source[i] = 0;
+	}
+
+	size_t numframes = frames.size();
+	for(size_t i=0; i<numframes; i++){
+		const base::CAN_Frame &fr = frames[i];
+		uint8_t groupid = fr.get_uint(8, 2, 0);
+		uint8_t resolution_id = fr.get_uint(8+2, 2, 0);
+		float resolution = 0.01;
+		switch(resolution_id){
+		case 0:
+			resolution = 0.01;
+			break;
+		case 1:
+			resolution = 0.005;
+			break;
+		case 2:
+			resolution = 0.0025;
+			break;
+		case 3:
+			resolution = 0.00125;
+			break;
+		}
+		if(fr.get_uint(8+4, 4, 0) == 0xF){
+			data.signal_source[groupid] = -1;
+		}else{
+			for(char j=0; j<4; j++){
+				if(fr.get_bool(8+4+j*4)){
+					data.signal_source[groupid] = j;
+					break;
+				}
+			}
+		}
+		for(size_t k=0; k<4; k++){
+			uint16_t sensork = fr.get_uint(16+k*8, 8, 0) + (fr.get_uint(48+k*4, 4, 0) << 8);
+			if(sensork == 0) {
+				data.sensor[groupid*4 + k] = -1;
+			} else if(sensork == 1) {
+				data.sensor[groupid*4 + k] = 0;
+			} else if(sensork == 2) {
+				data.sensor[groupid*4 + k] = INFINITY;
+			} else {
+				data.sensor[groupid*4 + k] = sensork*resolution;
+			}
+		}
+	}
+}
+
+
+
 
 USBoardModule::USBoardModule(const std::string& _vnx_name)
 	:	USBoardModuleBase(_vnx_name),
@@ -197,7 +284,7 @@ void USBoardModule::handle_canframe(std::shared_ptr<const ::pilot::base::CAN_Fra
 		m_gotData1To8.push(*frame, index);
 		if(m_gotData1To8.complete()){
 			// complete
-			m_data.from_can_frames_1to8(m_gotData1To8.clear());
+			from_can_frames_1to8(m_data, m_gotData1To8.clear());
 			publish(m_data, output_data);
 		}
 	}else if(baseplus == 4 || baseplus == 5){
@@ -206,7 +293,7 @@ void USBoardModule::handle_canframe(std::shared_ptr<const ::pilot::base::CAN_Fra
 		m_gotData9To16.push(*frame, index);
 		if(m_gotData9To16.complete()){
 			// complete
-			m_data.from_can_frames_9to16(m_gotData9To16.clear());
+			from_can_frames_9to16(m_data, m_gotData9To16.clear());
 			publish(m_data, output_data);
 		}
 	}else if(baseplus == 6){
@@ -227,7 +314,7 @@ void USBoardModule::handle_canframe(std::shared_ptr<const ::pilot::base::CAN_Fra
 	}else if(baseplus == 7){
 		// CMD_GET_ANALOGIN
 		std::vector<base::CAN_Frame> frames = {*frame};
-		m_data.from_can_frames_analog(frames);
+		from_can_frames_analog(m_data, frames);
 		publish(m_data, output_data);
 	}else if(baseplus == 8 || baseplus == 9){
 		// CMD_WRITE_PARASET  and  CMD_WRITE_PARASET_TO_EEPROM
@@ -416,7 +503,7 @@ void USBoardModule::sendconfig_timeout(const vnx::request_id_t& request_id)
 
 void USBoardModule::getdata_send(){
 	m_data.time = vnx::get_time_micros();
-	m_data.from_can_frames_data(m_gotData.clear());
+	from_can_frames_data(m_data, m_gotData.clear());
 	m_gotData.setTargetSize(m_config->count_transmitting_groups());
 	publish(m_data, output_data);
 }

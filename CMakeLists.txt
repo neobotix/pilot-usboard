@@ -13,14 +13,17 @@ add_library(pilot_usboard SHARED
 	${GENERATED_SOURCE_FILES}
 	src/USBoardModule.cpp
 	src/USBoardConfig.cpp
-	src/USBoardData.cpp
 )
 
 target_include_directories(pilot_usboard
 	PUBLIC include generated/include
 )
 
-target_link_libraries(pilot_usboard pilot_base vnx_base)
+target_link_libraries(pilot_usboard
+	pilot_base
+	pilot_public
+	vnx_base
+)
 
 install(DIRECTORY include/ DESTINATION include)
 install(DIRECTORY generated/include/ DESTINATION include)
