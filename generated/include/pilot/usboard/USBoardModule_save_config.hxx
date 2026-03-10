@@ -24,6 +24,8 @@ public:
 	
 	static constexpr uint64_t VNX_TYPE_ID = 0xc5d8f1fd2323ac3bull;
 	
+	USBoardModule_save_config() {}
+	
 	vnx::Hash64 get_type_hash() const override;
 	std::string get_type_name() const override;
 	const vnx::TypeCode* get_type_code() const override;

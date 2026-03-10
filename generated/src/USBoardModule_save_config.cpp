@@ -174,6 +174,7 @@ void read(TypeInput& in, ::pilot::usboard::USBoardModule_save_config& value, con
 			}
 		}
 	}
+	in.read(type_code->total_field_size);
 	if(type_code->is_matched) {
 	}
 	for(const auto* _field : type_code->ext_fields) {

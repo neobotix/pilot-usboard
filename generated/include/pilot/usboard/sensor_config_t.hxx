@@ -23,6 +23,8 @@ struct sensor_config_t {
 	
 	static constexpr uint64_t VNX_TYPE_ID = 0x4992d944965d7b92ull;
 	
+	sensor_config_t() {}
+	
 	vnx::Hash64 get_type_hash() const;
 	std::string get_type_name() const;
 	const vnx::TypeCode* get_type_code() const;

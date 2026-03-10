@@ -43,12 +43,14 @@ public:
 	
 	static constexpr uint64_t VNX_TYPE_ID = 0x9c0fb140354b6e4cull;
 	
+	USBoardConfig() {}
+	
 	vnx::Hash64 get_type_hash() const override;
 	std::string get_type_name() const override;
 	const vnx::TypeCode* get_type_code() const override;
 	
 	virtual std::vector<::pilot::base::CAN_Frame> to_can_frames() const;
-	virtual void from_can_frames(const std::vector<::pilot::base::CAN_Frame>& frames);
+	virtual void from_can_frames(const std::vector<::pilot::base::CAN_Frame>& frames = {});
 	virtual uint32_t count_transmitting_groups() const;
 	
 	static std::shared_ptr<USBoardConfig> create();
